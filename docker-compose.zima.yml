@@ -1,0 +1,20 @@
+services:
+  osmanlica-cevirici:
+    image: berzahbey/osmanlica-cevirici:latest
+    container_name: osmanlica-cevirici
+    restart: unless-stopped
+    ports:
+      - "8088:8000"
+    environment:
+      - OLLAMA_HOST=http://192.168.1.2:11434
+      - OLLAMA_MODEL=qwen2.5:7b
+      - OLLAMA_TIMEOUT=300
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - osmanlica_data:/data
+      - osmanlica_app_data:/app/data
+
+volumes:
+  osmanlica_data:
+  osmanlica_app_data:

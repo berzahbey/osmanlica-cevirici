@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Osmanlıca Çevirici</title>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; background:#faf7f0; color:#2b2b2b; }
+  h1 { font-size: 1.4em; }
+  .box { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+  textarea { width: 100%; min-height: 140px; font-size: 1em; padding: 10px; box-sizing: border-box; }
+  input[type=file] { margin: 10px 0; }
+  button { background: #6b4226; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 1em; }
+  button:disabled { background: #ccc; }
+  #status { margin-top: 15px; font-size: 0.95em; }
+  .tab-btns button { background:#eee; color:#333; margin-right:6px; }
+  .tab-btns button.active { background:#6b4226; color:#fff; }
+  #downloadLink { display:none; margin-top:10px; }
+</style>
+</head>
+<body>
+  <h1>📜 Osmanlıca Çevirici</h1>
+  <p>Metin gir ya da dosya yükle (pdf / epub / txt / jpg / png). Herhangi bir dilde olabilir.</p>
+
+  <div class="tab-btns">
+    <button id="tabTextBtn" class="active" onclick="showTab('text')">Metin</button>
+    <button id="tabFileBtn" onclick="showTab('file')">Dosya</button>
+  </div>
+
+  <div class="box" id="tabText">
+    <textarea id="textInput" placeholder="Çevrilecek metni buraya yaz..."></textarea>
+    <br><br>
+    <label><input type="checkbox" id="ollamaCheckText" checked> Ollama ile imla düzeltmesi yap (yavaş ama daha kaliteli)</label>
+    <br><br>
+    <button onclick="submitText()">Çevir</button>
+  </div>
+
+  <div class="box" id="tabFile" style="display:none">
+    <input type="file" id="fileInput" accept=".pdf,.epub,.txt,.jpg,.jpeg,.png">
+    <br>
+    <label><input type="checkbox" id="ollamaCheckFile" checked> Ollama ile imla düzeltmesi yap (yavaş ama daha kaliteli)</label>
+    <br><br>
+    <button onclick="submitFile()">Yükle ve Çevir</button>
+  </div>
+
+  <div id="status"></div>
+  <a id="downloadLink" href="#">⬇️ Çeviriyi indir</a>
+
+<script>
+function showTab(tab) {
+  document.getElementById('tabText').style.display = tab === 'text' ? 'block' : 'none';
+  document.getElementById('tabFile').style.display = tab === 'file' ? 'block' : 'none';
+  document.getElementById('tabTextBtn').classList.toggle('active', tab === 'text');
+  document.getElementById('tabFileBtn').classList.toggle('active', tab === 'file');
+}
+
+async function submitText() {
+  const text = document.getElementById('textInput').value;
+  const useOllama = document.getElementById('ollamaCheckText').checked;
+  if (!text.trim()) return alert('Metin boş olamaz.');
+  const fd = new FormData();
+  fd.append('text', text);
+  fd.append('use_ollama', useOllama);
+  const res = await fetch('/api/upload-text', { method: 'POST', body: fd });
+  const data = await res.json();
+  pollStatus(data.job_id);
+}
+
+async function submitFile() {
+  const fileEl = document.getElementById('fileInput');
+  const useOllama = document.getElementById('ollamaCheckFile').checked;
+  if (!fileEl.files.length) return alert('Bir dosya seç.');
+  const fd = new FormData();
+  fd.append('file', fileEl.files[0]);
+  fd.append('use_ollama', useOllama);
+  const res = await fetch('/api/upload', { method: 'POST', body: fd });
+  const data = await res.json();
+  pollStatus(data.job_id);
+}
+
+function pollStatus(jobId) {
+  document.getElementById('downloadLink').style.display = 'none';
+  const statusEl = document.getElementById('status');
+  const interval = setInterval(async () => {
+    const res = await fetch('/api/status/' + jobId);
+    const data = await res.json();
+    let msg = 'Durum: ' + data.status;
+    if (data.progress) msg += ` (${data.progress.done}/${data.progress.total} cümle)`;
+    if (data.detected_lang) msg += ` — tespit edilen dil: ${data.detected_lang}`;
+    statusEl.textContent = msg;
+    if (data.status === 'tamamlandi') {
+      clearInterval(interval);
+      const link = document.getElementById('downloadLink');
+      link.href = '/api/download/' + jobId;
+      link.style.display = 'inline-block';
+    } else if (data.status === 'hata') {
+      clearInterval(interval);
+      statusEl.textContent = 'Hata: ' + data.error;
+    }
+  }, 2000);
+}
+</script>
+</body>
+</html>

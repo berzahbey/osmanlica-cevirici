@@ -1,0 +1,20 @@
+services:
+  osmanlica-cevirici:
+    build: .
+    container_name: osmanlica-cevirici
+    restart: unless-stopped
+    ports:
+      - "8088:8000"
+    environment:
+      # Ollama Linux'ta docker container'dan "host.docker.internal" ile erişilemeyebilir,
+      # bu yüzden aşağıdaki extra_hosts satırını ekledik. Eğer Ollama KENDİSİ de bir
+      # docker container ise, onun yerine container adını yazın (örn: http://ollama:11434)
+      - OLLAMA_HOST=http://192.168.1.2:11434
+      - OLLAMA_MODEL=qwen2.5:7b
+      - OLLAMA_TIMEOUT=300
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data:/data
+      # Sözlüğü kalıcı yapmak ve kolayca düzenleyebilmek için:
+      - ./app/data/ottoman_dict.tsv:/app/data/ottoman_dict.tsv
