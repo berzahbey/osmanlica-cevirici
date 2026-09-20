@@ -58,7 +58,7 @@ SUFFIXES = [
     "lerinden", "larından", "lerinin", "larının", "lerine", "larına",
     "lerini", "larını", "lerde", "larda", "lerden", "lardan",
     "leri", "ları", "nden", "ndan",
-    "nin", "nın", "nun", "nün", "min", "mın", "mun", "mün",
+    "nin", "nın", "nun", "nün",
     "sin", "sın", "sun", "sün",
     "dirler", "dırlar", "durlar", "dürler",
     "tirler", "tırlar", "turlar", "türler",
