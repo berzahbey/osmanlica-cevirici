@@ -27,7 +27,7 @@ app = FastAPI(title="Osmanlıca Çevirici")
 JOBS = {}
 
 
-def process_job(job_id: str, input_path: str, output_ext: str, use_ollama: bool):
+def process_job(job_id: str, input_path: str, output_ext: str, use_ollama: bool, orig_stem: str = "osmanlica_ceviri"):
     job = JOBS[job_id]
     try:
         job["status"] = "metin_cikariliyor"
@@ -45,7 +45,7 @@ def process_job(job_id: str, input_path: str, output_ext: str, use_ollama: bool)
         job["status"] = "render_ediliyor"
         out_dir = WORK_DIR / job_id
         out_dir.mkdir(parents=True, exist_ok=True)
-        out_path = str(out_dir / f"osmanlica_ceviri{output_ext}")
+        out_path = str(out_dir / f"{orig_stem}{output_ext}")
         render_for_format(result["ottoman_text"], output_ext, out_path)
 
         # jpg/png girdiler pdf olarak çıkıyor, gerçek yolu güncelle
@@ -75,8 +75,12 @@ async def upload(file: UploadFile = File(...), use_ollama: bool = Form(True)):
     with open(input_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
 
+    import re
+    raw_stem = os.path.splitext(file.filename)[0]
+    safe_stem = re.sub(r"[^\w\-() ]", "_", raw_stem).strip() or "osmanlica_ceviri"
+
     JOBS[job_id] = {"status": "kuyrukta", "progress": None, "error": None, "output_path": None}
-    t = threading.Thread(target=process_job, args=(job_id, input_path, ext, use_ollama), daemon=True)
+    t = threading.Thread(target=process_job, args=(job_id, input_path, ext, use_ollama, safe_stem), daemon=True)
     t.start()
 
     return {"job_id": job_id}

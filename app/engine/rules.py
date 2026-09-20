@@ -52,6 +52,8 @@ EXCEPTIONS = {
     "gibi": "گبی",
     "için": "ايچون",
     "ile": "ایله",
+    "ve": "و",
+    "neden": "ندن",
     "tekvîr": "تکویر",
     "tekvir": "تکویر",
     "küvvirat": "کورت",
@@ -63,6 +65,14 @@ EXCEPTIONS = {
     "hunnes": "خنس",
     "baş": "باش",
     "başıboş": "باشیبوش",
+    "kadir": "قادر",
+    "kadîr": "قادر",
+    "hesap": "حساب",
+    "hesabı": "حسابی",
+    "hesabını": "حسابنی",
+    "hesabına": "حسابنا",
+    "kaya": "قایا",
+    "bun": "بون",
 }
 
 
@@ -134,7 +144,7 @@ def _historicize_participle(word: str) -> str:
     return word
 
 
-def transliterate_word(word: str) -> str:
+def transliterate_word(word: str, treat_last_as_final: bool = True) -> str:
     """Tek bir Turkce kelimeyi (Latin harfli, kucuk harfli) Osmanlica
     yazimina cevirir. Once EXCEPTIONS sozlugune bakar."""
     word = turkish_lower(word).strip()
@@ -149,21 +159,37 @@ def transliterate_word(word: str) -> str:
     n = len(word)
     out = []
 
+    seen_vowel = False
     for i, ch in enumerate(word):
-        is_first = (i == 0)
-        is_last = (i == n - 1)
+        # SADECE "a" harfi, kelimenin ilk unlusu oldugunda (onunde tek
+        # bir unsuz olsa bile) "kelime basi" kuralina gore yazilir -
+        # orn. "yaz-" -> yaz, "yarat-" -> yarat. Diger unluler (e, i,
+        # i, o, o, u, u) eski (index==0) davranisini korur - ozellikle
+        # yuvarlak unluler onlerinde bir unsuz varsa elif+vav ALMAMALI,
+        # sadece tek vav yeterlidir (orn. "gog-e" -> tek vav, elif
+        # gerekmez cunku "g" zaten kelimeyi baslatiyor).
+        is_first = (not seen_vowel) if ch == "a" else (i == 0)
+        is_last = (i == n - 1) and treat_last_as_final
         prev_is_vowel = i > 0 and word[i - 1] in TUM_UNLULER
 
         if ch in TUM_UNLULER:
             if is_first:
-                out.append(_vowel_letter(ch, "initial"))
+                letter = _vowel_letter(ch, "initial")
             elif is_last:
-                out.append(_vowel_letter(ch, "final"))
+                letter = _vowel_letter(ch, "final")
             elif prev_is_vowel:
                 # hiatus: iki unlu yan yana - "final" kuraliyla yaz (her zaman gorunur olsun)
-                out.append(_vowel_letter(ch, "final"))
+                letter = _vowel_letter(ch, "final")
             else:
-                out.append(_vowel_letter(ch, "medial"))
+                letter = _vowel_letter(ch, "medial")
+            # "ilk unlu" sayilmak icin GERCEKTEN bir harf uretilmis
+            # olmasi gerekir - sadece "bir unluye denk gelindi" yetmez.
+            # Aksi halde dusen (medial, sessiz) bir "e" gibi, kendisinden
+            # sonraki asil onemli unluyu (orn. "hesaBI" -> "a") yanlislikla
+            # "ilk degil" sayip dusurebilir.
+            if letter:
+                seen_vowel = True
+            out.append(letter)
         elif ch in ("k", "g", "ğ"):
             resolved = _resolve_k_g(ch, harmony)
             if ch == "ğ" and is_last:
@@ -202,15 +228,6 @@ def _transliterate_suffix(suf: str, harmony: str) -> str:
         if ch in TUM_UNLULER:
             position = "final" if is_last else "medial"
             letter = _vowel_letter(ch, position)
-            if not letter:
-                if ch in ("i", "ı"):
-                    letter = YE
-                elif ch == "e":
-                    letter = HE
-                elif ch == "a":
-                    letter = ELIF
-                else:
-                    letter = VAV
             out.append(letter)
         elif ch in ("k", "g", "ğ"):
             out.append(_resolve_k_g(ch, harmony))
@@ -231,6 +248,32 @@ def transliterate_word_with_suffix(word: str) -> str:
     if word in EXCEPTIONS:
         return EXCEPTIONS[word]
 
+    harmony = _harmony_class(word)
+
+    # Once, EXCEPTIONS sozlugune ulasana kadar ust uste ek soymayi
+    # dene (maks 3 ek, orn. "kadir"+"ler"+"dir"). SADECE boyle bir kok
+    # gercekten bulunursa bu yol kullanilir - aksi halde asagidaki
+    # eski (tek ek) davranisina donulur, boylece mevcut dogru
+    # calisan kelimelerde regresyon riski alinmaz.
+    remaining = word
+    suffixes_found = []
+    for _ in range(3):
+        best_suf = None
+        for suf in SUFFIXES:
+            if remaining.endswith(suf) and len(remaining) - len(suf) >= 2:
+                if best_suf is None or len(suf) > len(best_suf):
+                    best_suf = suf
+        if not best_suf:
+            break
+        suffixes_found.append(best_suf)
+        remaining = remaining[: -len(best_suf)]
+        if remaining in EXCEPTIONS:
+            result = EXCEPTIONS[remaining]
+            for suf in reversed(suffixes_found):
+                result += _transliterate_suffix(suf, harmony)
+            return result
+
+    # EXCEPTIONS'a ulasilamadi - guvenli, eski (tek ek) davranisa don
     best_suf = None
     for suf in SUFFIXES:
         if word.endswith(suf) and len(word) - len(suf) >= 2:
@@ -239,8 +282,7 @@ def transliterate_word_with_suffix(word: str) -> str:
 
     if best_suf:
         stem = word[: -len(best_suf)]
-        harmony = _harmony_class(word)
-        return transliterate_word(stem) + _transliterate_suffix(best_suf, harmony)
+        return transliterate_word(stem, treat_last_as_final=False) + _transliterate_suffix(best_suf, harmony)
 
     return transliterate_word(word)
 
