@@ -122,7 +122,14 @@ async def download(job_id: str):
     if not job or job["status"] != "tamamlandi":
         raise HTTPException(404, "Dosya hazır değil")
     path = job["output_path"]
-    return FileResponse(path, filename=os.path.basename(path))
+    media_types = {
+        ".epub": "application/epub+zip",
+        ".pdf": "application/pdf",
+        ".txt": "text/plain",
+    }
+    ext = os.path.splitext(path)[1].lower()
+    media_type = media_types.get(ext, "application/octet-stream")
+    return FileResponse(path, filename=os.path.basename(path), media_type=media_type)
 
 
 app.mount("/", StaticFiles(directory=str(APP_DIR / "static"), html=True), name="static")
