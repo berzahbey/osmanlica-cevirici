@@ -75,12 +75,25 @@ def _merge_orphan_numbers(text: str) -> str:
     return re.sub(r'(?m)^([ \t]*\d+[.\)])[ \t]*\n[ \t]*', r'\1 ', text)
 
 
+
+
+def _remove_hyphens(text: str) -> str:
+    """Gercek Osmanlica yazida tire (-) diye bir isaret hic kullanilmaz -
+    bu tamamen modern Latin alfabesine gecisten sonra turemis bir
+    noktalama kuralidir (orn. 'Divan-i Kebir' gibi izafet tamlamalarinda).
+    Osmanliya cevirmeden once tireyi bosluga cevirip kaldiriyoruz ki hem
+    ciktida hic gorunmesin hem de kelimeler yapismasin."""
+    import re
+    return re.sub(r"-", " ", text)
+
+
 def transliterate_text(
     turkish_text: str,
     use_ollama_refine: bool = True,
     progress_callback=None,
 ) -> str:
     turkish_text = _merge_orphan_numbers(turkish_text)
+    turkish_text = _remove_hyphens(turkish_text)
     """Türkçe metni (zaten Türkçe olduğu varsayılır) Osmanlıcaya çevirir.
     Ollama'ya cümle cümle değil, BATCH_SIZE'lık gruplar halinde TEK istekte
     gönderir - bu, istek sayısını (ve dolayısıyla süreyi) ciddi oranda azaltır."""

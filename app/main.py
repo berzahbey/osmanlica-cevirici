@@ -46,7 +46,7 @@ def process_job(job_id: str, input_path: str, output_ext: str, use_ollama: bool,
         out_dir = WORK_DIR / job_id
         out_dir.mkdir(parents=True, exist_ok=True)
         out_path = str(out_dir / f"{orig_stem}{output_ext}")
-        render_for_format(result["ottoman_text"], output_ext, out_path)
+        render_for_format(result["ottoman_text"], output_ext, out_path, title=orig_stem)
 
         # jpg/png girdiler pdf olarak çıkıyor, gerçek yolu güncelle
         if output_ext.lower() in (".jpg", ".jpeg", ".png") and not os.path.exists(out_path):
