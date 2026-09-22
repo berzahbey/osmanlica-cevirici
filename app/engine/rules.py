@@ -72,6 +72,37 @@ EXCEPTIONS = {
     "hesabını": "حسابنی",
     "hesabına": "حسابنا",
     "kaya": "قایا",
+    "yirmi": "یگرمی",
+    "iki": "ایکی",
+    "üç": "اوچ",
+    "dört": "دورت",
+    "beş": "بش",
+    "altı": "آلتی",
+    "yedi": "یدی",
+    "sekiz": "سکز",
+    "dokuz": "طوقوز",
+    "on": "اون",
+    "otuz": "اوتوز",
+    "kırk": "قرق",
+    "elli": "اللی",
+    "altmış": "آلتمش",
+    "yetmiş": "یتمش",
+    "seksen": "سکسان",
+    "doksan": "طوقسان",
+    "yüz": "یوز",
+    "bin": "بیڭ",
+    "etmek": "ایتمك",
+    "vermek": "ویرمك",
+    "ermek": "ایرمك",
+    "demek": "دیمك",
+    "gece": "گیجه",
+    "güveyi": "گوکی",
+    "üveyi": "اوکی",
+    "dövmek": "دوکمك",
+    "güvercin": "گوکرجین",
+    "kuzu": "قوزی",
+    "kuru": "قوری",
+    "doğru": "طوغری",
     "bun": "بون",
     "ı": "ی",
     "i": "ی",
@@ -113,7 +144,13 @@ def _vowel_letter(ch: str, position: str) -> str:
         if ch == "e":
             return HE
         if ch == "a":
-            return ELIF
+            # Kelime sonu "a" sesi: ISIM (ve isme gelen -a datif eki
+            # dahil) icin HE, FIIL (ve fiile gelen -a eki) icin ELIF
+            # kullanilir (kaynak: Vikikitap Osmanlica dersleri). Isimler
+            # coplu fiil koklerinden COK daha yaygin oldugu icin varsayilan
+            # HE - fiil kokleri (basla-, ara-, oyna- gibi) karsilastikca
+            # EXCEPTIONS sozlugune elif olarak eklenir.
+            return HE
         if ch in ("i", "ı"):
             return YE
         if ch in ("o", "ö", "u", "ü"):
@@ -128,11 +165,11 @@ def _vowel_letter(ch: str, position: str) -> str:
     else:  # medial
         if ch in ("o", "ö", "u", "ü"):
             return VAV
-        if ch == "i":
+        if ch in ("i", "ı"):
             return YE
-        if ch == "ı":
-            return ""
-        if ch in ("a", "e"):
+        if ch == "a":
+            return ELIF
+        if ch == "e":
             return ""
     return ELIF  # beklenmeyen durum icin guvenli varsayilan
 
