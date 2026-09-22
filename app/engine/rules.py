@@ -185,11 +185,48 @@ def _historicize_participle(word: str) -> str:
     return word
 
 
+
+
+def _historicize_et_ver(word: str) -> str:
+    """etmek/vermek aileleri: fiil kok+ek birlesimlerini tarihsel
+    (Osmanlica) forma cevirir: et->it, ed->id (unsuz/unlu once/sonra
+    kurallarina gore), ver->vir. SADECE tam kelime eslesmesiyle calisir
+    (regex/prefix DEGIL) - boylece 'etraf', 'etki', 'edebiyat', 'vergi'
+    gibi alakasiz kelimeler asla etkilenmez. Kapsamadigi nadir cekim
+    bicimlerini karsilastikca genisletiriz."""
+    et_suffixes = ["mek", "meden", "meyen", "meyip", "meksizin", "meli",
+                   "melisin", "meliyim", "meliyiz", "meliler",
+                   "tig", "tigi", "tigin", "tigim", "tigimiz",
+                   "sin", "sinler", "ti", "tim", "tin", "tik", "tiniz", "tiler"]
+    for suf in et_suffixes:
+        if word == "et" + suf:
+            return "it" + suf
+    ed_suffixes = ["iyor", "iyorum", "iyorsun", "iyoruz", "iyorsunuz", "iyorlar",
+                   "er", "erim", "ersin", "eriz", "ersiniz", "erler",
+                   "ecek", "ecegim", "eceksin", "ecegiz", "ecekler",
+                   "ilen", "ilmis", "ilmistir", "ilecek", "ilir"]
+    for suf in ed_suffixes:
+        if word == "ed" + suf:
+            return "id" + suf
+    ver_suffixes = ["mek", "meden", "meyen", "meyip", "meksizin", "meli", "melisin",
+                    "dig", "digi", "digin", "digim", "digimiz",
+                    "sin", "sinler", "di", "dim", "din", "dik", "diniz", "diler",
+                    "iyor", "iyorum", "iyorsun", "iyoruz", "iyorsunuz", "iyorlar",
+                    "ir", "irim", "irsin", "iriz", "irsiniz", "irler",
+                    "ecek", "ecegim", "eceksin", "ecegiz", "ecekler",
+                    "ilen", "ilmis", "ilmistir", "ilecek", "ilir"]
+    for suf in ver_suffixes:
+        if word == "ver" + suf:
+            return "vir" + suf
+    return word
+
+
 def transliterate_word(word: str, treat_last_as_final: bool = True) -> str:
     """Tek bir Turkce kelimeyi (Latin harfli, kucuk harfli) Osmanlica
     yazimina cevirir. Once EXCEPTIONS sozlugune bakar."""
     word = turkish_lower(word).strip()
     word = _historicize_participle(word)
+    word = _historicize_et_ver(word)
     if not word:
         return ""
 
@@ -283,6 +320,7 @@ def transliterate_word_with_suffix(word: str) -> str:
     farkinda) kurallarla, ek ise kendi kurallariyla cevrilir."""
     word = turkish_lower(word).strip()
     word = _historicize_participle(word)
+    word = _historicize_et_ver(word)
     if not word:
         return ""
 
