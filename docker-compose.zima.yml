@@ -18,3 +18,6 @@ services:
 volumes:
   osmanlica_data_test:
   osmanlica_app_data_test:
+
+x-casaos:
+  icon: "https://raw.githubusercontent.com/berzahbey/osmanlica-cevirici/main/cover.png"
