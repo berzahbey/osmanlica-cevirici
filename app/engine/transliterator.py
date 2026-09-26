@@ -66,7 +66,11 @@ def draft_transliterate_sentence(sentence: str) -> str:
             return hit[0] + rules.ekleri_yaz(root, sufs, [], harmony, rules.ek_guvenilir(root, sufs))
         return rules.transliterate_word_with_suffix(word)
 
-    return WORD_RE.sub(repl, sentence)
+    return WORD_RE.sub(lambda m: _ek_duzelt(repl(m)), sentence)
+
+
+def _ek_duzelt(w: str) -> str:
+    return w[:-4] + "یله" if w.endswith("ییله") else w
 
 
 BATCH_SIZE = int(__import__("os").environ.get("OLLAMA_BATCH_SIZE", "12"))

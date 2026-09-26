@@ -312,6 +312,10 @@ for _forms, _yazim in [
     ("leri ları", "لری"), ("lerini larını", "لرینی"), ("lerine larına", "لرینه"),
     ("lerinin larının", "لرینڭ"), ("lerinden larından", "لریندن"),
     ("lerde larda", "لرده"), ("lerden lardan", "لردن"),
+    ("la le", "له"), ("yla yle", "یله"),
+    ("lık luk", "لق"), ("lik lük", "لك"), ("lı li", "لی"), ("lu lü", "لو"),
+    ("lığı luğu", "لغی"), ("liği lüğü", "لگی"), ("lığını luğunu", "لغنی"), ("liğini lüğünü", "لگنی"),
+    ("lığa luğa", "لغه"), ("liğe lüğe", "لگه"),
 ]:
     OTTOMAN_SUFFIX.update({f: _yazim for f in _forms.split()})
 
@@ -331,6 +335,10 @@ for _forms, _bas, _bit in [
     ("e a ye ya yi yı yu yü de da te ta den dan ten tan nden ndan nin nın nun nün", 3, {3}),
     ("dir dır dur dür tir tır tur tür dirler dırlar durlar dürler tirler tırlar turlar türler sin sın sun sün",
      4, {4}),
+    ("lık lik luk lük lı li lu lü", 0.5, {0.5}),
+    ("lığı liği luğu lüğü", 0.5, {2}),
+    ("lığını liğini luğunu lüğünü lığa liğe luğa lüğe", 0.5, {3}),
+    ("la le yla yle", 3, {3}),
 ]:
     for _f in _forms.split():
         _SIRA[_f] = (_bas, _bit)
@@ -501,6 +509,14 @@ def _fiil_ekleri():
     add("mek mak", "مك", "مق")
     add("mekte makta", "مكده", "مقده")
     add("mektedir maktadır", "مكده" + _ZW + "در", "مقده" + _ZW + "در")
+    # ortaç -acağı/-eceği (anlaşılacağını -> آڭلاشیله‌جغنی)
+    for y, sart in (("", "unsuz"), ("y", "unlu")):
+        b = ("یه" if y else "ه") + _ZW + "ج"
+        for son, yaz in (("", "ی"), ("nı", "نی"), ("na", "نه"), ("nda", "نده"), ("ndan", "ندن"),
+                         ("mız", "مز"), ("nız", "ڭز"), ("m", "م")):
+            son_i = son.replace("ı", "i").replace("a", "e")
+            add(f"{y}acağı{son}", b + "غ" + yaz, sart=sart)
+            add(f"{y}eceği{son_i}", b + "گ" + yaz, sart=sart)
     # olumsuz emir (çoğul)
     add("meyin mayın", "میڭ")
     return sorted(L, key=lambda x: -len(x[0]))
@@ -534,7 +550,7 @@ def _fiil_ayir(word):
             continue
         if ek in ("tik", "tık") and kok.endswith("ek") and len(kok) >= 5:  # diyalektik, eklektik
             continue
-        return kok, yazim, ek[0] == "y"
+        return kok, yazim, ek[0] == "y" and kok[-1] != "e" and not kok.endswith("ma")
     return None
 
 

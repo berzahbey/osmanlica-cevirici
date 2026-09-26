@@ -72,13 +72,18 @@ SUFFIXES = [
 ]
 
 
+# Sadece sözlük aramasında kullanılan ek ekler: -la/-le (ile), yapım ekleri -lık/-lı ve birleşimleri
+EXTRA_LOOKUP_SUFFIXES = ("la le yla yle lık lik luk lük lı li lu lü lığı liği luğu lüğü "
+                         "lığını liğini luğunu lüğünü lığa liğe luğa lüğe").split()
+LOOKUP_SUFFIXES = SUFFIXES + [x for x in EXTRA_LOOKUP_SUFFIXES if x not in SUFFIXES]
+
 def _load_extra_from_tsv() -> dict:
     extra = {}
     if DATA_FILE.exists():
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             reader = csv.reader(f, delimiter="\t")
             for row in reader:
-                if len(row) >= 3 and not row[0].startswith("#"):
+                if len(row) >= 3 and not row[0].startswith("#") and row[1].strip():
                     latin, osmanli, origin = row[0].strip(), row[1].strip(), row[2].strip()
                     extra[turkish_lower(latin)] = (osmanli, origin)
     return extra
@@ -144,7 +149,7 @@ def _lookup_with_suffix_stripping(word: str):
     tek tek deneyerek kok halini sozlukte arar. (kok_hit, ek) dondurur -
     ek bilgisi kaybolmasin diye ayri dondurulur, cagiran taraf ekin
     Osmanlica karsiligini kendisi ekler."""
-    for suf in SUFFIXES:
+    for suf in LOOKUP_SUFFIXES:
         if word.endswith(suf):
             stem = word[: -len(suf)]
             if len(stem) < 2:
@@ -186,14 +191,14 @@ def lookup_with_suffix(word: str):
             return hit, list(reversed(peeled))
         # Tek bir ek ayrılınca sözlükte bulunan kökler varsa, kökü EN UZUN olanı seç
         # (ahirete -> ahiret + e; "ahire + te" değil).
-        direct = [(suf, _get_soft(current[: -len(suf)])) for suf in SUFFIXES
+        direct = [(suf, _get_soft(current[: -len(suf)])) for suf in LOOKUP_SUFFIXES
                   if current.endswith(suf) and len(current) - len(suf) >= 2]
         direct = [(suf, h) for suf, h in direct if h]
         if direct:
             suf, h = min(direct, key=lambda x: len(x[0]))
             return h, list(reversed(peeled + [suf]))
         best_suf = None
-        for suf in SUFFIXES:
+        for suf in LOOKUP_SUFFIXES:
             if current.endswith(suf) and len(current) - len(suf) >= 2:
                 if best_suf is None or len(suf) > len(best_suf):
                     best_suf = suf
