@@ -158,10 +158,13 @@ def full_pipeline(
     raw_text: str,
     use_ollama_refine: bool = True,
     progress_callback=None,
+    assume_turkish: bool = False,
 ) -> dict:
     """Tam hat: dil tespiti -> (gerekirse) Türkçeye çeviri -> Osmanlıca çeviri."""
-    lang = detect_language(raw_text)
-    ollama_up = ollama_client.is_available()
+    # assume_turkish: metin zaten Türkçe (ör. Dedplay Stüdyo); dil tespiti atlanır,
+    # kısa/yabancı isimli metinler yanlışlıkla "başka dil" sanılıp çevrilmez.
+    lang = "tr" if assume_turkish else detect_language(raw_text)
+    ollama_up = ollama_client.is_available() if lang != "tr" else False
 
     if lang != "tr":
         if ollama_up:

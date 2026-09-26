@@ -27,7 +27,8 @@ app = FastAPI(title="Osmanlıca Çevirici")
 JOBS = {}
 
 
-def process_job(job_id: str, input_path: str, output_ext: str, use_ollama: bool, orig_stem: str = "osmanlica_ceviri"):
+def process_job(job_id: str, input_path: str, output_ext: str, use_ollama: bool, orig_stem: str = "osmanlica_ceviri",
+                assume_turkish: bool = False):
     job = JOBS[job_id]
     try:
         job["status"] = "metin_cikariliyor"
@@ -40,7 +41,8 @@ def process_job(job_id: str, input_path: str, output_ext: str, use_ollama: bool,
         def progress_cb(done, total):
             job["progress"] = {"done": done, "total": total}
 
-        result = full_pipeline(raw_text, use_ollama_refine=use_ollama, progress_callback=progress_cb)
+        result = full_pipeline(raw_text, use_ollama_refine=use_ollama, progress_callback=progress_cb,
+                               assume_turkish=assume_turkish)
 
         job["status"] = "render_ediliyor"
         out_dir = WORK_DIR / job_id
@@ -87,7 +89,7 @@ async def upload(file: UploadFile = File(...), use_ollama: bool = Form(True)):
 
 
 @app.post("/api/upload-text")
-async def upload_text(text: str = Form(...), use_ollama: bool = Form(True)):
+async def upload_text(text: str = Form(...), use_ollama: bool = Form(True), turkce: bool = Form(False)):
     job_id = str(uuid.uuid4())
     job_dir = WORK_DIR / job_id
     job_dir.mkdir(parents=True, exist_ok=True)
@@ -96,7 +98,8 @@ async def upload_text(text: str = Form(...), use_ollama: bool = Form(True)):
         f.write(text)
 
     JOBS[job_id] = {"status": "kuyrukta", "progress": None, "error": None, "output_path": None}
-    t = threading.Thread(target=process_job, args=(job_id, input_path, ".txt", use_ollama), daemon=True)
+    t = threading.Thread(target=process_job, args=(job_id, input_path, ".txt", use_ollama, "osmanlica_ceviri", turkce),
+                         daemon=True)
     t.start()
 
     return {"job_id": job_id}
