@@ -532,6 +532,8 @@ def _fiil_ayir(word):
         # "-dın/-din" (sen ...-dın) sadece olumsuzla: görmedin mi? (Haldun, Nureddin gibi isimler karışmasın)
         if ek in _IKINCI_TEKIL and not kok.endswith(("me", "ma")):
             continue
+        if ek in ("tik", "tık") and kok.endswith("ek") and len(kok) >= 5:  # diyalektik, eklektik
+            continue
         return kok, yazim, ek[0] == "y"
     return None
 

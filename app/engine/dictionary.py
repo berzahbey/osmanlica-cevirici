@@ -119,6 +119,21 @@ def _get(key: str):
     return DICTIONARY.get(key) or FLAT.get(key) or DICTIONARY.get(_flat(key))
 
 
+_SERTLES = {"ğ": "k", "b": "p", "c": "ç"}
+_YUMUSAMA_KOKEN = {"ar", "fa", "ar-fa", "fa-ar"}
+
+
+def _get_soft(stem: str):
+    """Kök sözlükte yoksa, ek önünde yumuşamış son ünsüzü geri sertleştirip dener: mantığ -> mantık.
+    Sadece Arapça/Farsça kökenli kelimelerde: Osmanlıcada onlarda yumuşama yazıya yansımaz (منطقی),
+    Türkçe kelimelerde ise yansır (çocuğu -> چوجوغی), o yüzden Türkçe kelimelere uygulanmaz."""
+    hit = _get(stem)
+    if hit or len(stem) < 3 or stem[-1] not in _SERTLES:
+        return hit
+    alt = _get(stem[:-1] + _SERTLES[stem[-1]])
+    return alt if alt and alt[1] in _YUMUSAMA_KOKEN else None
+
+
 def lookup_exact(word: str):
     """Ek ayırmadan, sadece kelimenin kendisini arar."""
     return _get(turkish_lower(word).strip())
@@ -171,7 +186,7 @@ def lookup_with_suffix(word: str):
             return hit, list(reversed(peeled))
         # Tek bir ek ayrılınca sözlükte bulunan kökler varsa, kökü EN UZUN olanı seç
         # (ahirete -> ahiret + e; "ahire + te" değil).
-        direct = [(suf, _get(current[: -len(suf)])) for suf in SUFFIXES
+        direct = [(suf, _get_soft(current[: -len(suf)])) for suf in SUFFIXES
                   if current.endswith(suf) and len(current) - len(suf) >= 2]
         direct = [(suf, h) for suf, h in direct if h]
         if direct:
