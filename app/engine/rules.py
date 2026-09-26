@@ -403,6 +403,139 @@ def _transliterate_suffix(suf: str, harmony: str, last: bool = True, known_root:
             out.append(ch)
     return "".join(out)
 
+
+# ---------------- Fiil çekimi (Osmanlıca ek imlası) ----------------
+# Sözlükte bulunmayan kelimelerde fiil ekleri tanınır; kök kendi ses uyumuyla yazılır,
+# ek Osmanlıcadaki yerleşik yazımıyla eklenir (durup -> طوروب, gelecek -> گله‌جك).
+_ZW = "\u200c"
+_INCE = set("eiöü")
+_UNLU = set("aeıioöuü")
+_SERT_F = set("çfhkpsşt")
+
+
+def _v(form):
+    """Ekin kendi ünlüsüne göre kalın/ince: ك/گ (ince) ya da ق/غ (kalın)."""
+    for ch in form:
+        if ch in _UNLU:
+            return ch in _INCE
+    return True
+
+
+def _fiil_ekleri():
+    L = []  # (ek, yazım, şart)  şart: any | sert | yumusak | unlu | unsuz | r
+    def add(forms, yazim_ince, yazim_kalin=None, sart="any"):
+        for f in forms.split():
+            L.append((f, yazim_ince if (yazim_kalin is None or _v(f)) else yazim_kalin, sart))
+    # zarf-fiil -ıp/-ip
+    add("ıp ip up üp", "وب", sart="unsuz")
+    add("yıp yip yup yüp", "یوب", sart="unlu")
+    # -arak/-erek
+    add("erek arak", "ه" + _ZW + "رك", "ه" + _ZW + "رق", sart="unsuz")
+    add("yerek yarak", "یه" + _ZW + "رك", "یه" + _ZW + "رق", sart="unlu")
+    # gelecek zaman
+    for y, sart in (("", "unsuz"), ("y", "unlu")):
+        b = "یه" if y else "ه"
+        add(f"{y}ecek {y}acak", b + _ZW + "جك", b + _ZW + "جق", sart)
+        add(f"{y}ecekler {y}acaklar", b + _ZW + "جكلر", b + _ZW + "جقلر", sart)
+        add(f"{y}ecektir {y}acaktır", b + _ZW + "جكدر", b + _ZW + "جقدر", sart)
+        add(f"{y}eceklerdir {y}acaklardır", b + _ZW + "جكلردر", b + _ZW + "جقلردر", sart)
+        add(f"{y}ecekti {y}acaktı", b + _ZW + "جكدی", b + _ZW + "جقدی", sart)
+        add(f"{y}eceksin {y}acaksın", b + _ZW + "جكسڭ", b + _ZW + "جقسڭ", sart)
+        add(f"{y}eceksiniz {y}acaksınız", b + _ZW + "جكسڭز", b + _ZW + "جقسڭز", sart)
+        add(f"{y}eceğim {y}acağım", b + _ZW + "جگم", b + _ZW + "جغم", sart)
+        add(f"{y}eceğiz {y}acağız", b + _ZW + "جگز", b + _ZW + "جغز", sart)
+    # öğrenilen geçmiş -mış/-miş
+    m = "mış miş muş müş"
+    add(m, "مش")
+    add(" ".join(x + "lar" if not _v(x) else x + "ler" for x in m.split()), "مشلر")
+    add(" ".join(x + t for x in m.split() for t in ("tır", "tir", "tur", "tür")), "مشدر")
+    add(" ".join(x + t for x in m.split() for t in ("lardır", "lerdir")), "مشلردر")
+    add(" ".join(x + t for x in m.split() for t in ("tı", "ti", "tu", "tü")), "مشدی")
+    add(" ".join(x + t for x in m.split() for t in ("tık", "tik", "tuk", "tük")), "مشدك", "مشدق")
+    add(" ".join(x + t for x in m.split() for t in ("tınız", "tiniz", "tunuz", "tünüz")), "مشدڭز")
+    add(" ".join(x + t for x in m.split() for t in ("sınız", "siniz", "sunuz", "sünüz")), "مشسڭز")
+    add(" ".join(x + t for x in m.split() for t in ("sın", "sin", "sun", "sün")), "مشسڭ")
+    # şimdiki zaman -ıyor/-iyor (kökün ünlüsü düşmüş hâliyle: anl-ıyor, sor-uyor)
+    for son, yaz in (("", "یور"), ("lar", "یورلر"), ("um", "یورم"), ("sun", "یورسڭ"), ("uz", "یورز"),
+                     ("sunuz", "یورسڭز"), ("du", "یوردی"), ("dum", "یوردم"), ("duk", "یوردق"),
+                     ("dunuz", "یوردڭز"), ("lardı", "یورلردی"), ("sa", "یورسه"), ("muş", "یورمش"),
+                     ("sanız", "یورسه" + _ZW + "ڭز"), ("larsa", "یورلرسه")):
+        add(" ".join(v + "yor" + son for v in "ıiuü"), yaz, sart="unsuz")
+    # görülen geçmiş -dı/-di (t'li hâller sert ünsüzden sonra)
+    for son, yaz, yaz_k in (("", "دی", None), ("lar", "دیلر", None), ("ler", "دیلر", None), ("m", "دم", None),
+                            ("n", "دڭ", None), ("k", "دك", "دق"), ("nız", "دڭز", None), ("niz", "دڭز", None),
+                            ("nuz", "دڭز", None), ("nüz", "دڭز", None)):
+        for d, sart in (("d", "yumusak"), ("t", "sert")):
+            forms = [d + v + son for v in "ıiuü"]
+            if son in ("lar", "ler"):
+                forms = [d + v + son for v in ("ı", "u")] if son == "lar" else [d + v + son for v in ("i", "ü")]
+            if son in ("nız", "niz", "nuz", "nüz"):
+                forms = [d + {"nız": "ı", "niz": "i", "nuz": "u", "nüz": "ü"}[son] + son]
+            add(" ".join(forms), yaz, yaz_k, sart)
+    # ortaç -dığı/-diği (Latin -duğu/-düğü önceden -dığı/-diği'ye çevriliyor)
+    for son, yaz in (("", "ی"), ("nı", "نی"), ("ni", "نی"), ("na", "نه"), ("ne", "نه"), ("nda", "نده"),
+                     ("nde", "نده"), ("ndan", "ندن"), ("nden", "ندن"), ("mız", "مز"), ("miz", "مز"),
+                     ("nız", "ڭز"), ("niz", "ڭز"), ("m", "م"), ("n", "ڭ")):
+        for d, sart in (("d", "yumusak"), ("t", "sert")):
+            for kok, harf in (("ığı", "غ"), ("iği", "گ")):
+                f = d + kok + son
+                if son and ((harf == "غ") != (not _v(son) if any(c in _UNLU for c in son) else harf == "غ")):
+                    continue
+                add(f, "دی" + harf + yaz, sart=sart)
+    for son, yi, yk in (("ları", "دكلری", "دقلری"), ("larını", "دكلرینی", "دقلرینی"),
+                        ("larına", "دكلرینه", "دقلرینه"), ("larından", "دكلریندن", "دقلریندن"),
+                        ("ça", "دكجه", "دقجه")):
+        son_i = son.replace("a", "e").replace("ı", "i")
+        for d, sart in (("d", "yumusak"), ("t", "sert")):
+            add(f"{d}ık{son} {d}uk{son}", yk, sart=sart)
+            add(f"{d}ik{son_i} {d}ük{son_i}", yi, sart=sart)
+    # şart
+    add("seydi saydı", "سه" + _ZW + "یدی")
+    add("se sa", "سه", sart="r")
+    add("seniz sanız", "سه" + _ZW + "ڭز", sart="r")
+    add("seler salar", "سه" + _ZW + "لر", sart="r")
+    # zarf-fiil -ınca/-ince
+    add("ınca ince unca ünce", "نجه", sart="unsuz")
+    add("yınca yince yunca yünce", "ینجه", sart="unlu")
+    # mastar
+    add("mek mak", "مك", "مق")
+    add("mekte makta", "مكده", "مقده")
+    add("mektedir maktadır", "مكده" + _ZW + "در", "مقده" + _ZW + "در")
+    # olumsuz emir (çoğul)
+    add("meyin mayın", "میڭ")
+    return sorted(L, key=lambda x: -len(x[0]))
+
+
+_FIIL_EKLERI = _fiil_ekleri()
+_IKINCI_TEKIL = set("dın din dun dün tın tin tun tün".split())
+
+
+def _fiil_ayir(word):
+    """(kök, ek_yazımı, kök_sonu_yazılsın_mı) ya da None."""
+    for ek, yazim, sart in _FIIL_EKLERI:
+        if not word.endswith(ek) or len(word) - len(ek) < 2:
+            continue
+        kok = word[: -len(ek)]
+        if not any(c in _UNLU for c in kok):
+            continue
+        son = kok[-1]
+        if sart == "unlu" and son not in _UNLU:
+            continue
+        if sart == "unsuz" and son in _UNLU:
+            continue
+        if sart == "sert" and son not in _SERT_F:
+            continue
+        if sart == "yumusak" and son in _SERT_F:
+            continue
+        if sart == "r" and son != "r":
+            continue
+        # "-dın/-din" (sen ...-dın) sadece olumsuzla: görmedin mi? (Haldun, Nureddin gibi isimler karışmasın)
+        if ek in _IKINCI_TEKIL and not kok.endswith(("me", "ma")):
+            continue
+        return kok, yazim, ek[0] == "y"
+    return None
+
+
 def transliterate_word_with_suffix(word: str) -> str:
     """Kelimeyi mumkunse kok+ek olarak ayirir. Kok normal (pozisyon
     farkinda) kurallarla, ek ise kendi kurallariyla cevrilir."""
@@ -414,6 +547,11 @@ def transliterate_word_with_suffix(word: str) -> str:
 
     if word in EXCEPTIONS:
         return EXCEPTIONS[word]
+
+    fiil = _fiil_ayir(word)
+    if fiil:
+        kok, yazim, kok_sonu = fiil
+        return transliterate_word(kok, treat_last_as_final=kok_sonu) + yazim
 
     harmony = _harmony_class(word)
 
