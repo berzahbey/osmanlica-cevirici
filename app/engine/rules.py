@@ -296,9 +296,97 @@ SUFFIX_NO_VOWEL = {"ler": "لر", "lar": "لر"}
 SUFFIX_NO_VOWEL = {"ler": "لر", "lar": "لر"}
 
 
-def _transliterate_suffix(suf: str, harmony: str) -> str:
+# ---------------- Osmanlıca ek imlası ----------------
+# Osmanlıcada ekler ses uyumundan bağımsız SABİT yazılır (-dır/-dir/-tır... -> در, -dan/-den -> دن,
+# -da/-de -> ده, ilgi -ın/-in -> ڭ, belirtme -ı/-i -> ی, yönelme -a/-e -> ه). Ama sözlükteki ek
+# ayırma bazen yanlıştır (has+tan+e, dur+um); o yüzden sabit yazım SADECE güvenilir ayırmada
+# uygulanır, aksi hâlde eski (okunuşa göre) yazım sürer.
+OTTOMAN_SUFFIX = {}
+for _forms, _yazim in [
+    ("dir dır dur dür tir tır tur tür", "در"),
+    ("dirler dırlar durlar dürler tirler tırlar turlar türler", "درلر"),
+    ("den dan ten tan", "دن"), ("nden ndan", "ندن"), ("de da te ta", "ده"),
+    ("nin nın nun nün", "نڭ"), ("in ın un ün", "ڭ"),
+    ("i ı u ü", "ی"), ("yi yı yu yü", "یی"), ("e a", "ه"), ("ye ya", "یه"),
+    ("si sı su sü", "سی"), ("sin sın sun sün", "سڭ"),
+    ("leri ları", "لری"), ("lerini larını", "لرینی"), ("lerine larına", "لرینه"),
+    ("lerinin larının", "لرینڭ"), ("lerinden larından", "لریندن"),
+    ("lerde larda", "لرده"), ("lerden lardan", "لردن"),
+]:
+    OTTOMAN_SUFFIX.update({f: _yazim for f in _forms.split()})
+
+_SERT = set("çfhkpsşt")
+_T_EKLER = set("tir tır tur tür tirler tırlar turlar türler ten tan te ta".split())
+_ONLY_FINAL = set("in ın un ün sin sın sun sün".split())   # ortadaysa iyelik + kaynaştırma n'si
+_GUVENLI_BILINMEYEN = set("dir dır dur dür dirler dırlar durlar dürler tir tır tur tür tirler tırlar "
+                          "turlar türler nden ndan nin nın nun nün leri ları lerini larını lerine larına "
+                          "lerinin larının lerinden larından lerde larda lerden lardan".split())
+
+# Ek sırası: 1 çoğul, 2 iyelik, 3 hâl, 4 ek-fiil. (başlangıç, olası bitişler)
+_SIRA = {}
+for _forms, _bas, _bit in [
+    ("ler lar", 1, {1}), ("leri ları", 1, {2}),
+    ("lerini larını lerine larına lerinin larının lerinden larından lerde larda lerden lardan", 1, {3}),
+    ("si sı su sü im ım um üm", 2, {2}), ("i ı u ü in ın un ün", 2, {2, 3}),
+    ("e a ye ya yi yı yu yü de da te ta den dan ten tan nden ndan nin nın nun nün", 3, {3}),
+    ("dir dır dur dür tir tır tur tür dirler dırlar durlar dürler tirler tırlar turlar türler sin sın sun sün",
+     4, {4}),
+]:
+    for _f in _forms.split():
+        _SIRA[_f] = (_bas, _bit)
+
+
+def ek_sirasi_gecerli(sufs) -> bool:
+    son = 0
+    for s in sufs:
+        bas, bit = _SIRA.get(s, (None, None))
+        if bas is None:
+            return False
+        uygun = sorted(b for b in bit if b > son and (b == bas or bas > son))
+        if not uygun:
+            return False
+        son = uygun[0]
+    return True
+
+
+def ek_guvenilir(root: str, sufs) -> bool:
+    """Sözlükten gelen kök + ek ayırması sabit ek yazımına güvenecek kadar sağlam mı?"""
+    if not sufs:
+        return True
+    if not ek_sirasi_gecerli(sufs):
+        return False
+    return len(root) >= 4 or (len(root) == 3 and all(len(s) >= 2 for s in sufs))
+
+
+def _sabit_uygun(suf, last, known_root, prev) -> bool:
+    if suf not in OTTOMAN_SUFFIX:
+        return False
+    if suf in _T_EKLER and (not prev or prev[-1] not in _SERT):
+        return False
+    if suf in _ONLY_FINAL and not last:
+        return False
+    if not known_root and suf not in _GUVENLI_BILINMEYEN:
+        return False
+    return True
+
+
+def ekleri_yaz(root: str, sufs, tails, harmony: str, guvenilir: bool = True) -> str:
+    """Sözlükten gelen ekleri (sufs) ve kesme işaretiyle ayrılmış ekleri (tails) yazar."""
+    ekler = [(s, guvenilir) for s in (sufs or [])] + [(t, True) for t in (tails or []) if t]
+    out, prev = "", root
+    for i, (s, known) in enumerate(ekler):
+        out += _transliterate_suffix(s, harmony, last=(i == len(ekler) - 1), known_root=known, prev=prev)
+        prev += s
+    return out
+
+
+def _transliterate_suffix(suf: str, harmony: str, last: bool = True, known_root: bool = True,
+                          prev: str = "") -> str:
     if suf in SUFFIX_NO_VOWEL:
         return SUFFIX_NO_VOWEL[suf]
+    # prev (bağlam) verilmişse ve ayırma güvenilirse Osmanlıca sabit yazım; yoksa eski davranış
+    if prev and _sabit_uygun(suf, last, known_root, prev):
+        return OTTOMAN_SUFFIX[suf]
     n = len(suf)
     out = []
     for i, ch in enumerate(suf):
@@ -361,7 +449,8 @@ def transliterate_word_with_suffix(word: str) -> str:
 
     if best_suf:
         stem = word[: -len(best_suf)]
-        return transliterate_word(stem, treat_last_as_final=False) + _transliterate_suffix(best_suf, harmony)
+        return transliterate_word(stem, treat_last_as_final=False) + _transliterate_suffix(
+            best_suf, harmony, known_root=False, prev=stem)
 
     return transliterate_word(word)
 

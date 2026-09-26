@@ -49,26 +49,21 @@ def draft_transliterate_sentence(sentence: str) -> str:
                     break
             harmony = rules._harmony_class(turkish_lower(word).replace("'", ""))
             hit, sufs = dictionary.lookup_with_suffix(base)
+            b = turkish_lower(base).replace("'", "")
+            tails_l = [turkish_lower(t) for t in tails if t]
             if hit:
-                base_osmanli = hit[0]
-                if sufs:
-                    for suf in sufs:
-                        base_osmanli = base_osmanli + rules._transliterate_suffix(suf, harmony)
-            else:
-                base_osmanli = rules.transliterate_word_with_suffix(base)
-            for tail in tails:
-                if tail:
-                    base_osmanli = base_osmanli + rules._transliterate_suffix(tail.lower(), harmony)
-            return base_osmanli
+                root = b[: len(b) - len("".join(sufs))] if sufs else b
+                return hit[0] + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs))
+            return rules.transliterate_word_with_suffix(base) + rules.ekleri_yaz(b, [], tails_l, harmony)
 
         hit, sufs = dictionary.lookup_with_suffix(word)
         if hit:
-            osmanli = hit[0]
-            if sufs:
-                harmony = rules._harmony_class(turkish_lower(word))
-                for suf in sufs:
-                    osmanli = osmanli + rules._transliterate_suffix(suf, harmony)
-            return osmanli
+            if not sufs:
+                return hit[0]
+            w = turkish_lower(word)
+            root = w[: len(w) - len("".join(sufs))]
+            harmony = rules._harmony_class(w)
+            return hit[0] + rules.ekleri_yaz(root, sufs, [], harmony, rules.ek_guvenilir(root, sufs))
         return rules.transliterate_word_with_suffix(word)
 
     return WORD_RE.sub(repl, sentence)
