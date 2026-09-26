@@ -97,12 +97,47 @@ def _remove_hyphens(text: str) -> str:
     return re.sub(r"-", " ", text)
 
 
+def _letter(name: str) -> str:
+    """Harf adı için şapkalı/şapkasız esnek desen: Lâm -> L[aâ]m"""
+    return "".join("[aâ]" if c == "a" else "[iîİI]" if c == "i" else "[uû]" if c == "u" else c for c in name)
+
+
+# Surelerin başındaki mukatta harfleri (en uzunlar önce)
+_MUKATTAA = [
+    (("elif", "lam", "mim", "sad"), "المص"), (("elif", "lam", "mim", "ra"), "المر"),
+    (("kaf", "ha", "ya", "ayn", "sad"), "كهیعص"), (("elif", "lam", "mim"), "الم"),
+    (("elif", "lam", "ra"), "الر"), (("ta", "sin", "mim"), "طسم"), (("ayn", "sin", "kaf"), "عسق"),
+    (("ta", "sin"), "طس"), (("ta", "ha"), "طه"), (("ya", "sin"), "یس"), (("ha", "mim"), "حم"),
+]
+_MUKATTAA_RE = [(re.compile(r"(?<![\wâîû])" + r"[\s\-–,]+".join(_letter(p) for p in parts) + r"(?![\wâîû])", re.I), ar)
+                for parts, ar in _MUKATTAA]
+_TEK_HARF_RE = re.compile(r"(?m)^(\s*[\d٠-٩]+[.)]\s*)(S[âa]d|K[âa]f|N[ûu]n)(?=\s*[.,])", re.I)
+_TEK_HARF = {"s": "ص", "k": "ق", "n": "ن"}
+
+
+def _quran_phrases(text: str) -> str:
+    """Mukatta harflerini Kur'an'daki yazımıyla yazar: Elif-Lâm-Mîm -> الم, Yâ-Sîn -> یس."""
+    for rx, ar in _MUKATTAA_RE:
+        text = rx.sub(ar, text)
+    return _TEK_HARF_RE.sub(lambda m: m.group(1) + _TEK_HARF[m.group(2)[0].lower()], text)
+
+
+# İzafet: ünsüzle biten kelimeden sonraki -ı/-i Osmanlıcada yazılmaz (Kur'ân-ı Kerîm -> قرآن كریم)
+_IZAFET_RE = re.compile(r"(?<=[^\W\d_])-(?:y)?[ıiuü](?=[\s\-–]|$)", re.M)
+
+
+def _drop_izafet(text: str) -> str:
+    return _IZAFET_RE.sub("", text)
+
+
 def transliterate_text(
     turkish_text: str,
     use_ollama_refine: bool = True,
     progress_callback=None,
 ) -> str:
     turkish_text = _merge_orphan_numbers(turkish_text)
+    turkish_text = _quran_phrases(turkish_text)
+    turkish_text = _drop_izafet(turkish_text)
     turkish_text = _remove_hyphens(turkish_text)
     """Türkçe metni (zaten Türkçe olduğu varsayılır) Osmanlıcaya çevirir.
     Ollama'ya cümle cümle değil, BATCH_SIZE'lık gruplar halinde TEK istekte
