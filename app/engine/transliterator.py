@@ -37,6 +37,16 @@ def draft_transliterate_sentence(sentence: str) -> str:
             parts = word.replace("\u2019", "'").split("'")
             base = parts[0]
             tails = parts[1:]
+            # Kesme işareti kelimenin kendi parçası olabilir (Kur'an, Mes'ud, san'at):
+            # önce birleşik hâlini sözlükte ara, kalan parçaları ek say. Kur'an'ın -> Kur'an + ın
+            for k in range(len(parts), 1, -1):
+                joined = "'".join(parts[:k])
+                if dictionary.lookup_exact(joined):
+                    base, tails = joined, parts[k:]
+                    break
+                if dictionary.lookup_exact(joined.replace("'", "")):
+                    base, tails = joined.replace("'", ""), parts[k:]
+                    break
             harmony = rules._harmony_class(turkish_lower(word).replace("'", ""))
             hit, sufs = dictionary.lookup_with_suffix(base)
             if hit:
@@ -134,7 +144,14 @@ def transliterate_text(
         result.append(s)
         if i < len(separators):
             result.append("\n" if "\n" in separators[i] else " ")
-    return "".join(result)
+    return _ottoman_punctuation("".join(result))
+
+
+def _ottoman_punctuation(text: str) -> str:
+    """Latin noktalamayı Osmanlıca karşılıklarına çevirir: , -> ،  ; -> ؛  ? -> ؟
+    (Sayıların içindeki virgüle dokunmaz: 3,5 aynen kalır.)"""
+    text = re.sub(r",(?!\d)|(?<!\d),", "\u060c", text)
+    return text.replace(";", "\u061b").replace("?", "\u061f")
 
 
 def full_pipeline(

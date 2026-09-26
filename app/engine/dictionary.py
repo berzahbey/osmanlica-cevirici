@@ -92,6 +92,37 @@ def load_dictionary() -> dict:
 
 DICTIONARY = load_dictionary()
 
+# Osmanlıca yazımda tutarlılık: Arapça ye (ي) yerine Osmanlıca/Farsça ye (ی), Farsça kef (ک) yerine kef (ك)
+DICTIONARY = {k: (v[0].replace("\u064a", "\u06cc").replace("\u06a9", "\u0643"), v[1]) for k, v in DICTIONARY.items()}
+
+
+def _flat(s: str) -> str:
+    """Şapkaları kaldırır: âhiret -> ahiret, îman -> iman, ûlâ -> ula."""
+    return s.replace("â", "a").replace("î", "i").replace("û", "u")
+
+
+# Şapkası farklı olunca anlamı değişen, günlük Türkçede şapkasız yazılan kelimeler:
+# bunlarda şapkasız eşleştirme YAPILMAZ (kar≠kâr, hala≠hâlâ ...).
+_FLAT_EXCLUDE = {"hala", "kar", "ama", "yar", "hal", "alem", "adet", "asik", "aşık", "dahi",
+                 "rahim", "alim", "katil", "hakim", "sura", "şura", "yarim", "yaran"}
+
+# Sözlükte şapkalı kayıtlı kelimeler için şapkasız ek anahtarlar (âhiret -> ahiret).
+FLAT = {}
+for _k, _v in DICTIONARY.items():
+    _fk = _flat(_k)
+    if _fk != _k and len(_fk) >= 4 and _fk not in DICTIONARY and _fk not in _FLAT_EXCLUDE:
+        FLAT.setdefault(_fk, _v)
+
+
+def _get(key: str):
+    """Tam eşleşme; yoksa şapkasız eşleşme (ahiret -> âhiret, ya da tersi)."""
+    return DICTIONARY.get(key) or FLAT.get(key) or DICTIONARY.get(_flat(key))
+
+
+def lookup_exact(word: str):
+    """Ek ayırmadan, sadece kelimenin kendisini arar."""
+    return _get(turkish_lower(word).strip())
+
 
 def _lookup_with_suffix_stripping(word: str):
     """Dogrudan bulunamayan kelime icin, yaygin Turkce eklerini sondan
@@ -103,7 +134,7 @@ def _lookup_with_suffix_stripping(word: str):
             stem = word[: -len(suf)]
             if len(stem) < 2:
                 continue
-            hit = DICTIONARY.get(stem)
+            hit = _get(stem)
             if hit:
                 return hit, suf
     return None, None
@@ -115,7 +146,7 @@ def lookup(word: str):
     UYARI: ek bilgisini atar - suffix'i de istiyorsan lookup_with_suffix
     kullan."""
     w = turkish_lower(word).strip()
-    hit = DICTIONARY.get(w)
+    hit = _get(w)
     if hit:
         return hit
     hit, _ = _lookup_with_suffix_stripping(w)
@@ -128,16 +159,24 @@ def lookup_with_suffix(word: str):
     EKLERI TEK TEK, en uzun eslesenden baslayarak ardisik soyar - boylece
     'yildizlara' -> 'yildiz' + ['lar','a'] gibi coklu ek de yakalanir."""
     w = turkish_lower(word).strip()
-    hit = DICTIONARY.get(w)
+    hit = _get(w)
     if hit:
         return hit, []
 
     peeled = []
     current = w
     for _ in range(3):  # en fazla 3 ek ust uste (guvenlik siniri)
-        hit = DICTIONARY.get(current)
+        hit = _get(current)
         if hit:
             return hit, list(reversed(peeled))
+        # Tek bir ek ayrılınca sözlükte bulunan kökler varsa, kökü EN UZUN olanı seç
+        # (ahirete -> ahiret + e; "ahire + te" değil).
+        direct = [(suf, _get(current[: -len(suf)])) for suf in SUFFIXES
+                  if current.endswith(suf) and len(current) - len(suf) >= 2]
+        direct = [(suf, h) for suf, h in direct if h]
+        if direct:
+            suf, h = min(direct, key=lambda x: len(x[0]))
+            return h, list(reversed(peeled + [suf]))
         best_suf = None
         for suf in SUFFIXES:
             if current.endswith(suf) and len(current) - len(suf) >= 2:
@@ -148,7 +187,7 @@ def lookup_with_suffix(word: str):
         peeled.append(best_suf)
         current = current[: -len(best_suf)]
 
-    hit = DICTIONARY.get(current)
+    hit = _get(current)
     if hit:
         return hit, list(reversed(peeled))
     return None, []
