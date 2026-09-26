@@ -378,12 +378,33 @@ def _sabit_uygun(suf, last, known_root, prev) -> bool:
     return True
 
 
+def _ekleri_bol(tails):
+    """Kesme işaretinden sonraki ek tanınmıyorsa iki bilinen eke bölmeyi dener (ındır -> ın + dır)."""
+    out = []
+    for t in (tails or []):
+        if not t:
+            continue
+        if t in OTTOMAN_SUFFIX:
+            out.append(t)
+            continue
+        for i in range(len(t) - 1, 0, -1):
+            a, b = t[:i], t[i:]
+            if a in OTTOMAN_SUFFIX and b in OTTOMAN_SUFFIX and ek_sirasi_gecerli([a, b]):
+                out += [a, b]
+                break
+        else:
+            out.append(t)
+    return out
+
+
 def ekleri_yaz(root: str, sufs, tails, harmony: str, guvenilir: bool = True) -> str:
     """Sözlükten gelen ekleri (sufs) ve kesme işaretiyle ayrılmış ekleri (tails) yazar."""
-    ekler = [(s, guvenilir) for s in (sufs or [])] + [(t, True) for t in (tails or []) if t]
+    ekler = [(s, guvenilir) for s in (sufs or [])] + [(t, True) for t in _ekleri_bol(tails)]
     out, prev = "", root
     for i, (s, known) in enumerate(ekler):
-        out += _transliterate_suffix(s, harmony, last=(i == len(ekler) - 1), known_root=known, prev=prev)
+        sonraki = ekler[i + 1][0] if i + 1 < len(ekler) else None
+        son_gibi = sonraki is None or _SIRA.get(sonraki, (0,))[0] == 4
+        out += _transliterate_suffix(s, harmony, last=son_gibi, known_root=known, prev=prev)
         prev += s
     return out
 

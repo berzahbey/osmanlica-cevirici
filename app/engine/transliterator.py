@@ -93,7 +93,7 @@ def _remove_hyphens(text: str) -> str:
     Osmanliya cevirmeden once tireyi bosluga cevirip kaldiriyoruz ki hem
     ciktida hic gorunmesin hem de kelimeler yapismasin."""
     import re
-    return re.sub(r"-", " ", text)
+    return re.sub(r" {2,}", " ", re.sub(r"(?<!\d)-|-(?!\d)", " ", text))
 
 
 def _letter(name: str) -> str:
@@ -125,6 +125,16 @@ def _quran_phrases(text: str) -> str:
 _IZAFET_RE = re.compile(r"(?<=[^\W\d_])-(?:y)?[ıiuü](?=[\s\-–]|$)", re.M)
 
 
+_ROMA = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
+         "XI": 11, "XII": 12, "XIII": 13, "XIV": 14, "XV": 15, "XVI": 16, "XVII": 17, "XVIII": 18, "XIX": 19, "XX": 20}
+_ROMA_RE = re.compile(r"(?<![\w'’])(" + "|".join(sorted(_ROMA, key=len, reverse=True)) + r")(?![\w'’])")
+
+
+def _roma_rakam(text: str) -> str:
+    """Tek başına duran büyük harfli Roma rakamlarını sayıya çevirir: BÖLÜM I -> BÖLÜM 1."""
+    return _ROMA_RE.sub(lambda m: str(_ROMA[m.group(1)]), text)
+
+
 def _drop_izafet(text: str) -> str:
     return _IZAFET_RE.sub("", text)
 
@@ -136,6 +146,7 @@ def transliterate_text(
 ) -> str:
     turkish_text = _merge_orphan_numbers(turkish_text)
     turkish_text = _quran_phrases(turkish_text)
+    turkish_text = _roma_rakam(turkish_text)
     turkish_text = _drop_izafet(turkish_text)
     turkish_text = _remove_hyphens(turkish_text)
     """Türkçe metni (zaten Türkçe olduğu varsayılır) Osmanlıcaya çevirir.
