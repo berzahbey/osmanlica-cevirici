@@ -276,6 +276,8 @@ def transliterate_word(word: str, treat_last_as_final: bool = True) -> str:
                 out.append(resolved)
             else:
                 out.append(resolved)
+        elif ch in ("s", "t", "d") and _kalin_unsuz(word, i, ch):
+            out.append("ص" if ch == "s" else "ط")
         elif ch in CONSONANT_MAP_TURKISH and CONSONANT_MAP_TURKISH[ch]:
             out.append(CONSONANT_MAP_TURKISH[ch])
         elif ch.isalpha():
@@ -284,6 +286,31 @@ def transliterate_word(word: str, treat_last_as_final: bool = True) -> str:
             out.append(ch)
 
     return "".join(out)
+
+
+_KALIN_SET = set("aıouâû")
+_UNLU_SET = set("aeıioöuüâîû")
+# Türkçede olmayan ses kalıpları: kelime başında iki ünsüz, "sy/ks/ps", sonda "-ns/-nk/-ks"
+_YABANCI_RE = __import__("re").compile(r"^[^aeıioöuüâîû]{2}|sy|ks|ps|ns$|nk$")
+
+
+def _kalin_unsuz(word: str, i: int, ch: str) -> bool:
+    """Türkçe kelimelerde kalın ünsüz yazımı: s -> ص (kalın ünlüyle birlikteyse; sor- صور, kısa قیصه),
+    kelime başında t/d -> ط (ardından kalın ünlü geliyorsa; taş طاش, dur- طور)."""
+    if ch in ("t", "d") and i != 0:
+        return False
+    if _YABANCI_RE.search(word):  # Avrupa kökenli kelimeler: sosyal, standart, dans, taksi, psikoloji
+        return False
+    if ch == "s" and i != 0:
+        # Sadece kökteki s: ilk ünlünün hemen ardındaki (basmak, kısa, yosun). Daha ilerideki s çoğunlukla
+        # ektir (-sa, -sınız, -sı) ve ekler kalın ünsüz almaz: olursanız, arasını -> س
+        ilk = next((k for k, c in enumerate(word) if c in _UNLU_SET), None)
+        if ilk is None or i != ilk + 1:
+            return False
+    sonraki = next((c for c in word[i + 1:] if c in _UNLU_SET), None)
+    if sonraki is None:  # kelime sonundaki s: önceki ünlüye bak
+        sonraki = next((c for c in reversed(word[:i]) if c in _UNLU_SET), None)
+    return sonraki in _KALIN_SET
 
 
 # --- Ek (suffix) farkinda transliterasyon ---
@@ -316,6 +343,7 @@ for _forms, _yazim in [
     ("lık luk", "لق"), ("lik lük", "لك"), ("lı li", "لی"), ("lu lü", "لو"),
     ("lığı luğu", "لغی"), ("liği lüğü", "لگی"), ("lığını luğunu", "لغنی"), ("liğini lüğünü", "لگنی"),
     ("lığa luğa", "لغه"), ("liğe lüğe", "لگه"),
+    ("cı ci cu cü", "جی"), ("çı çi çu çü", "چی"),
 ]:
     OTTOMAN_SUFFIX.update({f: _yazim for f in _forms.split()})
 
@@ -339,6 +367,7 @@ for _forms, _bas, _bit in [
     ("lığı liği luğu lüğü", 0.5, {2}),
     ("lığını liğini luğunu lüğünü lığa liğe luğa lüğe", 0.5, {3}),
     ("la le yla yle", 3, {3}),
+    ("cı ci cu cü çı çi çu çü", 0.5, {0.5}),
 ]:
     for _f in _forms.split():
         _SIRA[_f] = (_bas, _bit)
