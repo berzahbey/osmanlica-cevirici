@@ -284,7 +284,7 @@ arakdâr	عرقدار	ar-fa
 arakçîn	عرقچين	ar-fa
 arakıyye	عرقيه	ar
 araz	عرض	ar
-arazi	تخطيط اراضی	ar-fa
+arazi	اراضی	ar
 arbede	عربده	ar
 arbedecû	عربده جو	ar-fa
 ard	آرد	fa
@@ -2649,7 +2649,7 @@ halef	خلف	ar
 halel	خلل	ar
 halen	حالا	ar
 halhal	خلخال	ar
-halk	حلق	ar
+halk	خلق	ar
 halka	حلقه	ar
 halkabegûş	حلقه بگوش	ar-fa
 halkiyat	خلقيات	ar
@@ -3054,7 +3054,7 @@ hirâs	هراس	fa
 hiss	حس	ar
 hisse	حصه	ar
 hissedar	حصه دار	ar-fa
-hisset	خست	ar
+hisset	حس ایت	ar
 hisseyâb	حصه یاب	ar-fa
 hissiye	حسيه	ar
 hissiyât	حسيات	ar
@@ -3464,7 +3464,7 @@ icâbet	اجابت	ar
 icâre	اجاره	ar
 icâzet	اجازت	ar
 icâzetnâme	اجازت نامه	ar-fa
-idare	حسن اداره	ar-fa
+idare	اداره	ar
 idbâr	ادبار	ar
 iddiâ	ادعا	ar
 idhâl	ادخال	ar
@@ -4533,7 +4533,7 @@ lihye	لحيه	ar
 lihâf	لحاف	ar
 likâ	لقا	ar
 lisanî	لسانی	ar
-lise	لثه	ar
+lise	لیسه	fr
 lisân	لسان	ar
 lisâniyyat	لسانيات	ar
 livata	لواطه	ar
@@ -10933,7 +10933,7 @@ damm	ضم	sozlukler
 damân	ضمان	sozlukler
 dan	دان	sozlukler
 dana	طانه	sozlukler
-dar	دار	sozlukler
+dar	طار	tr
 dara	طاره	sozlukler
 darbızlı	داربیزلی	sozlukler
 darçın	دارچین	sozlukler
@@ -11446,7 +11446,7 @@ esenlik	اسنلك	sozlukler
 esenn	اسن	sozlukler
 esgal	اثقل	sozlukler
 esim	اثیم	sozlukler
-esir	اثیر	sozlukler
+esir	اسیر	ar
 esirane	اسیرانه	sozlukler
 esirci	اسیرجی	sozlukler
 esirgemek	اسیرگمك	sozlukler
@@ -12045,7 +12045,7 @@ gırâr	غرار	sozlukler
 gırâre	غراره	sozlukler
 gıtâ	غطاء	sozlukler
 gışâî	غشائی	sozlukler
-ha	ح	sozlukler
+ha	ها	tr
 haberdâr	خبردار	sozlukler
 habeş	حبش	sozlukler
 habîs	خبیث	sozlukler
@@ -16203,7 +16203,7 @@ savn	صون	sozlukler
 savâ'ık	صواعق	sozlukler
 savâbdîde	صوابدیده	sozlukler
 savârif	صوارف	sozlukler
-say	سای	sozlukler
+say	صای	tr
 saydalânî	صیدلانی	sozlukler
 sayfiyye	صیفیه	sozlukler
 sayfî	صیفی	sozlukler
@@ -17348,7 +17348,7 @@ turşu	ترشی	sozlukler
 tuvân	توان	sozlukler
 tuvânger	توانگر	sozlukler
 tuvânâ	توانا	sozlukler
-tuz	توز	sozlukler
+tuz	طوز	tr
 tuğrayi	طغرایی	sozlukler
 tuğrâ	طغرا	sozlukler
 tuğrâkeşlık	طغراكشلك	sozlukler
@@ -24028,7 +24028,7 @@ tul	طول	sozlukler
 tula	طولی	sozlukler
 tullab	طلاب	sozlukler
 turûs	تروس	sozlukler
-tut	توت	sozlukler
+tut	طوت	tr
 tuvan	توان	sozlukler
 tuvana	توانا	sozlukler
 tuyur	طیور	sozlukler
@@ -27595,7 +27595,7 @@ hasıyyet	خاصیت	sozlukler
 havariyyun	حواریون	sozlukler
 haşi	خاشع	sozlukler
 hirman	خرامان	sozlukler
-hissi	خصی	sozlukler
+hissi	حسّی	ar
 huda	خدا	sozlukler
 hunnak	خناق	sozlukler
 huruc	خروج	sozlukler
@@ -50414,7 +50414,7 @@ hariz	حریز	sozlukler
 harkuş	خركوش	sozlukler
 hasne	حسنه	sozlukler
 hassaten	خاصة	sozlukler
-hava	حواء	sozlukler
+hava	هوا	ar
 hayfa'	خیفاء	sozlukler
 haşayiş	حشایش	sozlukler
 haşif	حشیف	sozlukler
@@ -51170,3 +51170,17 @@ samsun	صامسون	tr
 saksı	صاقسی	tr
 sarı	صاری	tr
 atkı	آتقی	tr
+nehir	نهر	ar
+resmi	رسمی	ar
+yara	یاره	tr
+çalış	چالیش	tr
+indi	ایندی	tr
+elime	المه	tr
+budur	بودر	tr
+durur	طورور	tr
+arka	آرقه	tr
+adlı	آدلی	tr
+ayna	آینه	fa
+feci	فجیع	ar
+mükemmel	مكمّل	ar
+belli	بللی	tr

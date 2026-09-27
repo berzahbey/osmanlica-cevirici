@@ -100,6 +100,51 @@ DICTIONARY = load_dictionary()
 # Osmanlıca yazımda tutarlılık: Arapça ye (ي) yerine Osmanlıca/Farsça ye (ی), Farsça kef (ک) yerine kef (ك)
 DICTIONARY = {k: (v[0].replace("\u064a", "\u06cc").replace("\u06a9", "\u0643"), v[1]) for k, v in DICTIONARY.items()}
 
+# ---------------- Şedde (ّ) ----------------
+# Arapça/Farsça kökenli kelimelerde ikizleşen harfin üzerine şedde konur: muallim -> معلّم, cennet -> جنّت.
+# İkizleşme Latin yazımdaki çift harften anlaşılır. Harfin karşılığı belirsizse şedde konmaz.
+# Türkçe kelimelerde şedde kullanılmaz. Kapatmak için: OSM_SEDDE=0
+import os as _os
+_SEDDE = "\u0651"
+_HARF_KARSILIK = {"b": "ب", "c": "ج", "ç": "چ", "d": "دض", "f": "ف", "g": "غگ", "h": "حهخ", "j": "ژ",
+                  "k": "كق", "l": "ل", "m": "م", "n": "ن", "p": "پ", "r": "ر", "s": "سصث", "ş": "ش",
+                  "t": "تط", "v": "و", "y": "ی", "z": "زذضظ"}
+_SEDDE_KOKEN = {"ar", "ar-fa", "fa-ar", "sozlukler"}
+_TURKCE_CIFT = {"elli", "anne", "yassı", "belli", "bellik", "bellek", "belli", "ille", "dokkuz"}
+
+
+def _sedde_koy(latin: str, osm: str) -> str:
+    if _SEDDE in osm or " " in osm.strip():  # iki kelimelik kayıtlar (emretti -> امر ایتدی): Türkçe kısma şedde konmaz
+        return osm
+    for i in range(len(latin) - 1):
+        ch = latin[i]
+        if ch != latin[i + 1] or ch not in _HARF_KARSILIK or (i > 0 and latin[i - 1] == ch):
+            continue
+        adaylar = _HARF_KARSILIK[ch]
+        # Latin'de bu ünsüzün kaç "grubu" var (çift harf tek grup sayılır) ve bizimki kaçıncı?
+        gruplar, sira, j = 0, None, 0
+        while j < len(latin):
+            if latin[j] == ch:
+                if j == i:
+                    sira = gruplar
+                gruplar += 1
+                while j + 1 < len(latin) and latin[j + 1] == ch:
+                    j += 1
+            j += 1
+        konumlar = [k for k, c in enumerate(osm) if c in adaylar]
+        if sira is None or len(konumlar) != gruplar:
+            continue  # belirsiz: şedde koyma
+        k = konumlar[sira]
+        osm = osm[:k + 1] + _SEDDE + osm[k + 1:]
+    return osm
+
+
+if _os.environ.get("OSM_SEDDE", "1") != "0":
+    DICTIONARY = {k: ((_sedde_koy(k, v[0]), v[1]) if (v[1] in _SEDDE_KOKEN and k not in _TURKCE_CIFT
+                                                      and any(k[i] == k[i + 1] and k[i] in _HARF_KARSILIK
+                                                              for i in range(len(k) - 1))) else v)
+                  for k, v in DICTIONARY.items()}
+
 
 def _flat(s: str) -> str:
     """Şapkaları kaldırır: âhiret -> ahiret, îman -> iman, ûlâ -> ula."""
@@ -137,6 +182,14 @@ def _get_soft(stem: str):
         return hit
     alt = _get(stem[:-1] + _SERTLES[stem[-1]])
     return alt if alt and alt[1] in _YUMUSAMA_KOKEN else None
+
+
+_T_EKLER_SES = set("tir tır tur tür ten tan te ta tirler tırlar turlar türler".split())
+
+
+def _ek_ses_uygun(stem: str, suf: str) -> bool:
+    """t'li ekler sadece sert ünsüzden (ç f h k p s ş t) sonra gelir."""
+    return not (suf in _T_EKLER_SES and stem[-1:] not in "çfhkpsşt")
 
 
 def lookup_exact(word: str):
@@ -192,14 +245,15 @@ def lookup_with_suffix(word: str):
         # Tek bir ek ayrılınca sözlükte bulunan kökler varsa, kökü EN UZUN olanı seç
         # (ahirete -> ahiret + e; "ahire + te" değil).
         direct = [(suf, _get_soft(current[: -len(suf)])) for suf in LOOKUP_SUFFIXES
-                  if current.endswith(suf) and len(current) - len(suf) >= 2]
+                  if current.endswith(suf) and len(current) - len(suf) >= 2
+                  and _ek_ses_uygun(current[: -len(suf)], suf)]
         direct = [(suf, h) for suf, h in direct if h]
         if direct:
             suf, h = min(direct, key=lambda x: len(x[0]))
             return h, list(reversed(peeled + [suf]))
         best_suf = None
         for suf in LOOKUP_SUFFIXES:
-            if current.endswith(suf) and len(current) - len(suf) >= 2:
+            if current.endswith(suf) and len(current) - len(suf) >= 2 and _ek_ses_uygun(current[: -len(suf)], suf):
                 if best_suf is None or len(suf) > len(best_suf):
                     best_suf = suf
         if not best_suf:
