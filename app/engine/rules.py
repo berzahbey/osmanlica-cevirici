@@ -292,6 +292,8 @@ _KALIN_SET = set("aıouâû")
 _UNLU_SET = set("aeıioöuüâîû")
 # Türkçede olmayan ses kalıpları: kelime başında iki ünsüz, "sy/ks/ps", sonda "-ns/-nk/-ks"
 _YABANCI_RE = __import__("re").compile(r"^[^aeıioöuüâîû]{2}|sy|ks|ps|ns$|nk$")
+# Türkçe olmayan kelime işaretleri: şapkalı harf, şedde (çift ünsüz), yan yana iki ünlü (saat, tatbik, sâbit)
+_TURKCE_DEGIL_RE = __import__("re").compile(r"[âîû]|([^aeıioöuü])\1|[aeıioöuü]{2}")
 
 
 def _kalin_unsuz(word: str, i: int, ch: str) -> bool:
@@ -301,6 +303,12 @@ def _kalin_unsuz(word: str, i: int, ch: str) -> bool:
         return False
     if _YABANCI_RE.search(word):  # Avrupa kökenli kelimeler: sosyal, standart, dans, taksi, psikoloji
         return False
+    if _TURKCE_DEGIL_RE.search(word):  # sözlükte olmayan Arapça/Farsça kelimeler
+        return False
+    if ch == "s" and word.startswith("sars") and i == 3:  # istisna: sars- -> صارص
+        return True
+    if ch == "s" and i != 0 and word[0] == "s" and not word.startswith("sus"):
+        return False  # aynı kelimedeki 2. kalın s -> س (sıska -> صیسقه); istisna: sus- -> صوص
     if ch == "s" and i != 0:
         # Sadece kökteki s: ilk ünlünün hemen ardındaki (basmak, kısa, yosun). Daha ilerideki s çoğunlukla
         # ektir (-sa, -sınız, -sı) ve ekler kalın ünsüz almaz: olursanız, arasını -> س
