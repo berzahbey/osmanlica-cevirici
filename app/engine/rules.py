@@ -293,6 +293,8 @@ _UNLU_SET = set("aeıioöuüâîû")
 # Türkçede olmayan ses kalıpları: kelime başında iki ünsüz, "sy/ks/ps", sonda "-ns/-nk/-ks"
 _YABANCI_RE = __import__("re").compile(r"^[^aeıioöuüâîû]{2}|sy|ks|ps|ns$|nk$")
 # Türkçe olmayan kelime işaretleri: şapkalı harf, şedde (çift ünsüz), yan yana iki ünlü (saat, tatbik, sâbit)
+# "sus-" fiili (sus, susmak, sustu): ardından ünsüz gelir; "susam" gibi isimler değil
+_SUS_FIIL_RE = __import__("re").compile(r"^sus($|[^aeıioöuü])")
 _TURKCE_DEGIL_RE = __import__("re").compile(r"[âîû]|([^aeıioöuü])\1|[aeıioöuü]{2}")
 
 
@@ -307,8 +309,8 @@ def _kalin_unsuz(word: str, i: int, ch: str) -> bool:
         return False
     if ch == "s" and word.startswith("sars") and i == 3:  # istisna: sars- -> صارص
         return True
-    if ch == "s" and i != 0 and word[0] == "s" and not word.startswith("sus"):
-        return False  # aynı kelimedeki 2. kalın s -> س (sıska -> صیسقه); istisna: sus- -> صوص
+    if ch == "s" and i != 0 and word[0] == "s" and not _SUS_FIIL_RE.match(word):
+        return False  # aynı kelimedeki 2. kalın s -> س (sıska, susam, saksı); istisna: sus- fiili -> صوص
     if ch == "s" and i != 0:
         # Sadece kökteki s: ilk ünlünün hemen ardındaki (basmak, kısa, yosun). Daha ilerideki s çoğunlukla
         # ektir (-sa, -sınız, -sı) ve ekler kalın ünsüz almaz: olursanız, arasını -> س
@@ -351,7 +353,8 @@ for _forms, _yazim in [
     ("lık luk", "لق"), ("lik lük", "لك"), ("lı li", "لی"), ("lu lü", "لو"),
     ("lığı luğu", "لغی"), ("liği lüğü", "لگی"), ("lığını luğunu", "لغنی"), ("liğini lüğünü", "لگنی"),
     ("lığa luğa", "لغه"), ("liğe lüğe", "لگه"),
-    ("cı ci cu cü", "جی"), ("çı çi çu çü", "چی"),
+    ("cı ci cu cü", "جی"), ("çı çi çu çü", "چی"), ("sız siz suz süz", "سز"),
+    ("sızlık suzluk", "سزلق"), ("sizlik süzlük", "سزلك"), ("sızlığı", "سزلغی"), ("sizliği", "سزلگی"),
 ]:
     OTTOMAN_SUFFIX.update({f: _yazim for f in _forms.split()})
 
@@ -375,7 +378,8 @@ for _forms, _bas, _bit in [
     ("lığı liği luğu lüğü", 0.5, {2}),
     ("lığını liğini luğunu lüğünü lığa liğe luğa lüğe", 0.5, {3}),
     ("la le yla yle", 3, {3}),
-    ("cı ci cu cü çı çi çu çü", 0.5, {0.5}),
+    ("cı ci cu cü çı çi çu çü sız siz suz süz sızlık sizlik suzluk süzlük", 0.5, {0.5}),
+    ("sızlığı sizliği", 0.5, {2}),
 ]:
     for _f in _forms.split():
         _SIRA[_f] = (_bas, _bit)

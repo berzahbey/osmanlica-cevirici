@@ -74,7 +74,7 @@ SUFFIXES = [
 
 # Sadece sözlük aramasında kullanılan ek ekler: -la/-le (ile), yapım ekleri -lık/-lı ve birleşimleri
 EXTRA_LOOKUP_SUFFIXES = ("la le yla yle lık lik luk lük lı li lu lü lığı liği luğu lüğü "
-                         "lığını liğini luğunu lüğünü lığa liğe luğa lüğe cı ci cu cü çı çi çu çü").split()
+                         "lığını liğini luğunu lüğünü lığa liğe luğa lüğe cı ci cu cü çı çi çu çü sız siz suz süz sızlık sizlik suzluk süzlük sızlığı sizliği").split()
 LOOKUP_SUFFIXES = SUFFIXES + [x for x in EXTRA_LOOKUP_SUFFIXES if x not in SUFFIXES]
 
 def _load_extra_from_tsv() -> dict:
