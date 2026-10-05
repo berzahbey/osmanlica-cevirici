@@ -120,6 +120,30 @@ def _harmony_class(word: str) -> str:
     return "kalin"
 
 
+def _kg_uyum(word: str, i: int, varsayilan: str) -> str:
+    """k/g/ğ'nin kalın/inceliği yanındaki ünlüden (kelimenin son ünlüsünden değil): bugün -> بوگون, günah -> گناه,
+    çıkabilir -> چیقابیلیر. Önce hemen sonraki ünlü (k/g'den sonra â/û inceltir: kâr, gâh), sonra önceki ünlü,
+    o da yoksa sonraki ilk ünlü."""
+    nxt = word[i + 1] if i + 1 < len(word) else ""
+    if word[i] in ("k", "g") and nxt in ("â", "û"):
+        return "ince"
+    if nxt in KALIN_UNLULER:
+        return "kalin"
+    if nxt in INCE_UNLULER:
+        return "ince"
+    for c in reversed(word[:i]):
+        if c in KALIN_UNLULER:
+            return "kalin"
+        if c in INCE_UNLULER:
+            return "ince"
+    for c in word[i + 1:]:
+        if c in KALIN_UNLULER:
+            return "kalin"
+        if c in INCE_UNLULER:
+            return "ince"
+    return varsayilan
+
+
 def _resolve_k_g(ch: str, harmony: str) -> str:
     if ch == "k":
         return KALIN_KEF if harmony == "kalin" else INCE_KEF
@@ -221,7 +245,7 @@ def _historicize_et_ver(word: str) -> str:
     return word
 
 
-def transliterate_word(word: str, treat_last_as_final: bool = True) -> str:
+def transliterate_word(word: str, treat_last_as_final: bool = True, devam: str = "") -> str:
     """Tek bir Turkce kelimeyi (Latin harfli, kucuk harfli) Osmanlica
     yazimina cevirir. Once EXCEPTIONS sozlugune bakar."""
     word = turkish_lower(word).strip()
@@ -269,7 +293,7 @@ def transliterate_word(word: str, treat_last_as_final: bool = True) -> str:
                 seen_vowel = True
             out.append(letter)
         elif ch in ("k", "g", "ğ"):
-            resolved = _resolve_k_g(ch, harmony)
+            resolved = _resolve_k_g(ch, _kg_uyum(word + devam, i, harmony))  # devam: ayrılan ek (bug+ün)
             if ch == "ğ" and is_last:
                 # kelime sonu yumusak g genelde onceki unluyu uzatir,
                 # ayri harf olarak yazilmayabilir - yaklasik olarak yine yaziyoruz
@@ -631,7 +655,7 @@ def transliterate_word_with_suffix(word: str) -> str:
     fiil = _fiil_ayir(word)
     if fiil:
         kok, yazim, kok_sonu = fiil
-        return transliterate_word(kok, treat_last_as_final=kok_sonu) + yazim
+        return transliterate_word(kok, treat_last_as_final=kok_sonu, devam=word[len(kok):]) + yazim
 
     harmony = _harmony_class(word)
 
@@ -667,7 +691,7 @@ def transliterate_word_with_suffix(word: str) -> str:
 
     if best_suf:
         stem = word[: -len(best_suf)]
-        return transliterate_word(stem, treat_last_as_final=False) + _transliterate_suffix(
+        return transliterate_word(stem, treat_last_as_final=False, devam=best_suf) + _transliterate_suffix(
             best_suf, harmony, known_root=False, prev=stem)
 
     return transliterate_word(word)

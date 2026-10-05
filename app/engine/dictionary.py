@@ -13,6 +13,8 @@ from pathlib import Path
 from .alphabet import turkish_lower
 
 DATA_FILE = Path(__file__).parent.parent / "data" / "ottoman_dict.tsv"
+# Türkçe kelime düzeltmeleri: sözlükten sonra okunur (sözlük kaydı Türkçe kelimeyle çakışınca Türkçe kazanır)
+DUZELTME_FILE = Path(__file__).parent.parent / "data" / "duzeltmeler.tsv"
 
 SEED_DICTIONARY = {
     "kitap": ("كتاب", "ar"), "kalem": ("قلم", "ar"), "insan": ("انسان", "ar"),
@@ -79,8 +81,10 @@ LOOKUP_SUFFIXES = SUFFIXES + [x for x in EXTRA_LOOKUP_SUFFIXES if x not in SUFFI
 
 def _load_extra_from_tsv() -> dict:
     extra = {}
-    if DATA_FILE.exists():
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
+    for dosya in (DATA_FILE, DUZELTME_FILE):
+        if not dosya.exists():
+            continue
+        with open(dosya, "r", encoding="utf-8") as f:
             reader = csv.reader(f, delimiter="\t")
             for row in reader:
                 if len(row) >= 3 and not row[0].startswith("#") and row[1].strip():
