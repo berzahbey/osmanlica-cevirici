@@ -99,10 +99,45 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     """Matbaa yazımında birkaç Türkçe ek: -ıyor/-iyor (ünsüzden sonra) ییور (ediyor ایدییور, geliyor كلییور);
     -ınız/-iniz ڭز (bakınız باقیڭز)."""
     l = turkish_lower(latin)
-    if re.search(r"[^aeıioöuüâîû][ıi]yor", l) and "ییور" not in osm and "یور" in osm:
-        osm = osm.replace("یور", "ییور", 1)
+    # -yor: fiil kökü ünlüyle bitiyorsa o ünlü (iste-yor ایسته‌یور، sakla-yor صاقلایور، oku-yor اوقویور), ünsüzle bitiyorsa
+    # -ıyor/-iyor ییور (ایدییور), -uyor/-üyor ویور (گورویور) — Risale matbaa nüshası
+    m = re.match(r"^(.+?)([ıiuü])yor", l)
+    if m and "یور" in osm and "ییور" not in osm and "ویور" not in osm and "هیور" not in osm and "ایور" not in osm:
+        x, v = m.group(1), m.group(2)
+        unsuz_kok = bool(dictionary.lookup_exact(x + "mak") or dictionary.lookup_exact(x + "mek"))   # gör-mek, ol-mak
+        kok_unlu = None if unsuz_kok else \
+            next((u for u in "aeıiuü" if dictionary.lookup_exact(x + u + ("mak" if u in "aıu" else "mek"))), None)
+        if not kok_unlu and re.search(r"[^aeıioöuüâîû][lrnm]$", x):
+            # ünsüz + l/r/n/m ile biten kök ünlüyle biter: sakl-a, bekl-e, söyl-e, titr-e
+            son_unlu = next((c for c in reversed(x) if c in "aeıioöuüâîû"), "a")
+            kok_unlu = "a" if son_unlu in "aıouâû" else "e"
+        if kok_unlu:
+            harf = {"a": "ا", "e": "ه", "ı": "ی", "i": "ی", "u": "و", "ü": "و"}[kok_unlu]
+        elif x[-1:] not in "aeıioöuüâîû":
+            harf = {"ı": "ی", "i": "ی", "u": "و", "ü": "و"}[v]
+        else:
+            harf = ""
+        if x == "ol":
+            harf = ""                                    # oluyor: matbaada اولیور
+        if harf:
+            i = osm.rfind("یور")                      # kökteki "یور" değil, ekteki (yürüyor)
+            osm = osm[:i] + harf + osm[i:]
     if re.search(r"[ıi]n[ıi]z$", l) and osm.endswith("ینیز"):
         osm = osm[:-4] + "یڭز"
+    # -sen/-san (şart, 2. tekil) سهڭ: istersen ایسترسهڭ, görsen گورسهڭ (sözlükte olmayan fiil çekimlerinde)
+    if re.search(r"s[ae]n$", l) and len(l) >= 5 and osm.endswith("سن") and not dictionary.lookup_with_suffix(l)[0]:
+        osm = osm[:-2] + "سهڭ"
+    # aŋla-, diŋle-, beŋze- (eski ñ): آڭلامق، دیڭله، بڭزر
+    for lat, eski, yeni in (("anla", "آنلا", "آڭلا"), ("anlı", "آنل", "آڭل"), ("dinle", "دینله", "دیڭله"),
+                            ("dinle", "دینل", "دیڭله"), ("benze", "بنز", "بڭز")):
+        if l.startswith(lat) and osm.startswith(eski) and not re.match(r"anlam(?!a)", l):   # anlam, anlamı (isim) değişmez
+            osm = yeni + osm[len(eski):]
+    # -makla/-mekle matbaada مقله/مكله: اولمقله
+    if l.endswith(("makla", "mekle")) and osm.endswith(("ماقله", "مكله")):
+        osm = osm[:-5] + "مقله" if osm.endswith("ماقله") else osm
+    # Farsça -hâne: ماتمخانه
+    if "hane" in l and "هانه" in osm:
+        osm = osm.replace("هانه", "خانه")
     # -sız/-siz eki matbaada yesiz: sayısız صاییسز, şüphesiz شبهه‌سز
     if re.search(r"s[ıiuü]z(l[ıiuü][kğ]\w*|ca|ce|dır|dir|lar|ler)?$", l) and "سیز" in osm:
         osm = osm[::-1].replace("زیس", "زس", 1)[::-1]

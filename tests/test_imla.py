@@ -81,6 +81,11 @@ CUMLE = {
     "ediyor": "ایدییور", "bakınız": "باقیڭز", "edemez": "ایده‌مز", "sayısız": "صاییسز", "yalnız": "یالڭز", "şeyi": "شیئی",
     "olarak": "اولارق", "olacak": "اولاجق", "olacaktır": "اولاجقدر", "bırakacağım": "بیراقاجغم", "görecekti": "گوره‌جكدی",
     "onun": "اونڭ", "bundan": "بوندن", "şundan": "شوندن", "onlar": "اونلر", "ona": "اوڭا", "onları": "اونلری",
+    # imlâ turu 8 (Sözler Osmanlıca nüshası)
+    "istiyor": "ایستهیور", "saklıyor": "صاقلایور", "görüyor": "گورویور", "okuyorlar": "اوقویورلر", "yürüyor": "یورویور",
+    "istersen": "ایسترسهڭ", "nefsim": "نفسم", "anlamak": "آڭلامق", "anlıyor": "آڭلایور", "benzer": "بڭزر",
+    "etmemek": "ایتمهمك", "vermeyip": "ویرمهیوب", "olmakla": "اولمقله", "yolu": "یولی", "matemhane": "ماتمخانه",
+    "Allâh": "الله", "der": "دیر", "dört": "درت", "dokuz": "طقوز", "kalsın": "قالسین", "oluyor": "اولیور", "durumda": "طورومده", "kuru": "قورو",
     "küçük": "كوچك", "karşı": "قارشو", "yeni": "یڭی", "üçüncü": "اوچنجی", "içinde": "ایچنده", "işte": "ایشته",
 }
 

@@ -384,6 +384,7 @@ for _forms, _yazim in [
     ("sızlık suzluk", "سزلق"), ("sizlik süzlük", "سزلك"), ("sızlığı", "سزلغی"), ("sizliği", "سزلگی"),
     # imlâ turu 2: iyelik çokluk ekleri, -ki, n'li hâl ekleri (matbaa yazımı: قلبمز، قلبڭز، شكلندكی)
     ("imiz ımız umuz ümüz miz mız muz müz", "مز"), ("iniz ınız unuz ünüz niz nız nuz nüz", "ڭز"),
+    ("im ım um üm", "م"),   # 1. tekil iyelik/ek-fiil: نفسم، نفسمه (Risale)
     ("ki", "كی"), ("deki daki teki taki", "دكی"), ("ndeki ndaki", "ندكی"),
     ("nde nda", "نده"), ("ne na", "نه"), ("ni nı nu nü", "نی"),
 ]:
@@ -503,6 +504,8 @@ def ekleri_yaz(root: str, sufs, tails, harmony: str, guvenilir: bool = True) -> 
     if birlesik in _IYELIK_HAL:
         return _IYELIK_HAL[birlesik]
     ekler = [(s, guvenilir) for s in (sufs or [])] + [(t, True) for t in _ekleri_bol(tails)]
+    if [e for e, _ in ekler] in (["u"], ["ü"]) and root[-1:] not in "aeıioöuü":
+        return "ی"   # iyelik/belirtme -u/-ü matbaada ی: یولی، كوزی (Risale)
     out, prev = "", root
     for i, (s, known) in enumerate(ekler):
         sonraki = ekler[i + 1][0] if i + 1 < len(ekler) else None
@@ -707,6 +710,11 @@ def transliterate_word_with_suffix(word: str) -> str:
         return EXCEPTIONS[word]
 
     _f = _fiil_ayir(word)
+    if _f and len(_f[0]) >= 4 and _f[0][-2:] in ("me", "ma") and _f[0][-3] not in "aeıioöuü":
+        # olumsuzluk eki -ma/-me ünlüsüyle yazılır: etmemek ایتمه‌مك, vermeyip ویرمه‌یوب, olmamakla اولمامقله
+        taban = _f[0][:-2]
+        return transliterate_word(_tarihi_kok(taban), treat_last_as_final=False, devam=_f[0][-2:]) + \
+            ("مه" if _f[0].endswith("me") else "ما") + _f[1]
     if re.match(r"^(et[mst]|ed[eiı])", word) and len(word) >= 4 \
             and (word.startswith("edebil") or not word.startswith(("edeb", "edep", "edib", "edip", "etki", "etra"))) \
             and (not _f or _f[0] not in ("et", "ed", "edil", "edin")):
