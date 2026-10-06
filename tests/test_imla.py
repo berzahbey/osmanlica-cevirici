@@ -34,6 +34,9 @@ BEKLENEN = {
     "nitekim": "نته‌كیم", "buna": "بوڭا", "birşey": "بر شی", "Ali": "علی", "Hasan": "حسن", "Mısır": "مصر",
     # derin ek ayırma (Arapça kök + iyelik/hâl ekleri)
     "âyetlerimizi": "آیتلرمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلیندكی",
+    # imlâ turu 3: OpenITI sıklık listesiyle gözden geçirilen kelimeler
+    "tevilat": "تأویلات", "istidadı": "استعدادی", "münezzehtir": "منزّهدر", "rububiyet": "ربوبیت", "muvahhid": "موحّد",
+    "mübiyn": "مبین", "risalet": "رسالت", "bizzat": "بالذّات",
 }
 
 # Cümle düzeyi (tırnak, yabancı dil, "Hak Teâlâ")
