@@ -25,7 +25,7 @@ BEKLENEN = {
     # imlâ turu 2: sözlük denetleyicisinin bulduğu bozuk kayıtlar
     "mal": "مال", "malları": "ماللری", "dakika": "دقیقه", "mahlukat": "مخلوقات", "vehm": "وهم", "kabr": "قبر",
     "felsefe": "فلسفه", "irşad": "ارشاد", "oysa": "اویسه", "celal": "جلال", "zemin": "زمین", "elif": "الف",
-    "Hakk'a": "حقّه", "Rabb'e": "ربّه", "Âdem'i": "آدمی", "nev'i": "نوع", "O'nun": "آنڭ", "Kur'an'ın": "قرآنڭ",
+    "Hakk'a": "حقّه", "Rabb'e": "ربّه", "Âdem'i": "آدمی", "nev'i": "نوع", "O'nun": "اونڭ", "Kur'an'ın": "قرآنڭ",
     "Ali'lerdir": "علیلردر",
     # Türkçe fiillerin tarihî yazımı, kelime başında medli elif
     "ettiği": "ایتدیگی", "edilmiştir": "ایدیلمشدر", "verdiği": "ویردیگی", "demiştir": "دیمشدر", "dediğimiz": "دیدیگمز",
@@ -79,6 +79,8 @@ CUMLE = {
     # imlâ turu 6 (Mesnevî-i Nûriye Osmanlıca nüshasıyla karşılaştırma)
     "hükmünde": "حكمنده", "hükmündedir": "حكمندهدر", "arkasından": "آرقهسندن", "vazifesinde": "وظیفهسنده", "sikkesini": "سكّهسنی", "birinin": "برینڭ",
     "ediyor": "ایدییور", "bakınız": "باقیڭز", "edemez": "ایده‌مز", "sayısız": "صاییسز", "yalnız": "یالڭز", "şeyi": "شیئی",
+    "olarak": "اولارق", "olacak": "اولاجق", "olacaktır": "اولاجقدر", "bırakacağım": "بیراقاجغم", "görecekti": "گوره‌جكدی",
+    "onun": "اونڭ", "bundan": "بوندن", "şundan": "شوندن", "onlar": "اونلر", "ona": "اوڭا", "onları": "اونلری",
     "küçük": "كوچك", "karşı": "قارشو", "yeni": "یڭی", "üçüncü": "اوچنجی", "içinde": "ایچنده", "işte": "ایشته",
 }
 

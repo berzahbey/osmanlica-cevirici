@@ -107,7 +107,8 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     if re.search(r"s[ıiuü]z(l[ıiuü][kğ]\w*|ca|ce|dır|dir|lar|ler)?$", l) and "سیز" in osm:
         osm = osm[::-1].replace("زیس", "زس", 1)[::-1]
     # iyelik + n'li hâl eki (kural motorundan gelen kelimelerde de): kapısında قاپوسنده, yüzünde یوزنده
-    if len(l) >= 6 and re.search(r"([ıiuü]n(da|de|dan|den|daki|deki)|s[ıiuü]n[ıiuüae]|s[ıiuü]n[ıiuü]n)(d[ıiuü]r|t[ıiuü]r)?$", l):
+    if len(l) >= 6 and not re.match(r"^(bu|şu|o)n(da|dan|daki|un|lar)", l) and \
+            re.search(r"([ıiuü]n(da|de|dan|den|daki|deki)|s[ıiuü]n[ıiuüae]|s[ıiuü]n[ıiuü]n)(d[ıiuü]r|t[ıiuü]r)?$", l):
         osm = re.sub(r"(?:ین|ون)(ده|دن|دهكی|دكی|ی|ه|ڭ)(در)?$", r"ن\1\2", osm)
     return osm
 

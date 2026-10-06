@@ -562,20 +562,22 @@ def _fiil_ekleri():
     add("ıp ip up üp", "وب", sart="unsuz")
     add("yıp yip yup yüp", "یوب", sart="unlu")
     # -arak/-erek
-    add("erek arak", "ه" + _ZW + "رك", "ه" + _ZW + "رق", sart="unsuz")
-    add("yerek yarak", "یه" + _ZW + "رك", "یه" + _ZW + "رق", sart="unlu")
+    # kalında elif, incede he (Risale matbaa nüshası: اولارق، ایده‌رك)
+    add("erek arak", "ه" + _ZW + "رك", "ارق", sart="unsuz")
+    add("yerek yarak", "یه" + _ZW + "رك", "یارق", sart="unlu")
     # gelecek zaman
     for y, sart in (("", "unsuz"), ("y", "unlu")):
         b = "یه" if y else "ه"
-        add(f"{y}ecek {y}acak", b + _ZW + "جك", b + _ZW + "جق", sart)
-        add(f"{y}ecekler {y}acaklar", b + _ZW + "جكلر", b + _ZW + "جقلر", sart)
-        add(f"{y}ecektir {y}acaktır", b + _ZW + "جكدر", b + _ZW + "جقدر", sart)
-        add(f"{y}eceklerdir {y}acaklardır", b + _ZW + "جكلردر", b + _ZW + "جقلردر", sart)
-        add(f"{y}ecekti {y}acaktı", b + _ZW + "جكدی", b + _ZW + "جقدی", sart)
-        add(f"{y}eceksin {y}acaksın", b + _ZW + "جكسڭ", b + _ZW + "جقسڭ", sart)
-        add(f"{y}eceksiniz {y}acaksınız", b + _ZW + "جكسڭز", b + _ZW + "جقسڭز", sart)
-        add(f"{y}eceğim {y}acağım", b + _ZW + "جگم", b + _ZW + "جغم", sart)
-        add(f"{y}eceğiz {y}acağız", b + _ZW + "جگز", b + _ZW + "جغز", sart)
+        k = "یا" if y else "ا"   # kalında elif: اولاجق، آڭلایاجق، بیراقاجغم (Risale matbaa nüshası); incede he: كوره‌جك
+        add(f"{y}ecek {y}acak", b + _ZW + "جك", k + "جق", sart)
+        add(f"{y}ecekler {y}acaklar", b + _ZW + "جكلر", k + "جقلر", sart)
+        add(f"{y}ecektir {y}acaktır", b + _ZW + "جكدر", k + "جقدر", sart)
+        add(f"{y}eceklerdir {y}acaklardır", b + _ZW + "جكلردر", k + "جقلردر", sart)
+        add(f"{y}ecekti {y}acaktı", b + _ZW + "جكدی", k + "جقدی", sart)
+        add(f"{y}eceksin {y}acaksın", b + _ZW + "جكسڭ", k + "جقسڭ", sart)
+        add(f"{y}eceksiniz {y}acaksınız", b + _ZW + "جكسڭز", k + "جقسڭز", sart)
+        add(f"{y}eceğim {y}acağım", b + _ZW + "جگم", k + "جغم", sart)
+        add(f"{y}eceğiz {y}acağız", b + _ZW + "جگز", k + "جغز", sart)
     # öğrenilen geçmiş -mış/-miş
     m = "mış miş muş müş"
     add(m, "مش")
