@@ -11,7 +11,7 @@ BEKLENEN = {
     # sözlükteki asıl (şapkalı) kelimeler korunur
     "bâk": "باك", "köşk": "كوشك", "hâkdan": "خاكدان",
     # kural motoru: k/g yanındaki ünlüye göre (kalın: ق غ, ince: ك گ)
-    "bugün": "بوگون", "herhangi": "هرهانگی", "çıkabilir": "چیقابیلیر", "gidiyor": "گیدیور", "dergâh": "درگاه",
+    "bugün": "بوگون", "herhangi": "هرهانگی", "çıkabilir": "چیقابیلیر", "gidiyor": "گیدییور", "dergâh": "درگاه",
     # g sesi gaf, k sesi kef (sözlük düzeltmesi)
     "hângâh": "خانگاه", "tengdil": None, "kedûret": "كدورت", "mürekkib": "مركّب",
     # Arapça/Farsça kelimeler aslî imlâsıyla
@@ -33,7 +33,7 @@ BEKLENEN = {
     # sık kelimeler ve özel adlar
     "nitekim": "نته‌كیم", "buna": "بوڭا", "birşey": "بر شی", "Ali": "علی", "Hasan": "حسن", "Mısır": "مصر",
     # derin ek ayırma (Arapça kök + iyelik/hâl ekleri)
-    "âyetlerimizi": "آیتلرمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلیندكی",
+    "âyetlerimizi": "آیتلرمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلندكی",
     # imlâ turu 3: OpenITI sıklık listesiyle gözden geçirilen kelimeler
     "tevilat": "تأویلات", "istidadı": "استعدادی", "münezzehtir": "منزّهدر", "rububiyet": "ربوبیت", "muvahhid": "موحّد",
     "mübiyn": "مبین", "risalet": "رسالت", "bizzat": "بالذّات",
@@ -51,6 +51,7 @@ CUMLE = {
     "Hz. Muhammed (s.a.v)'in sözü": "حضرت محمّد (صلّی الله علیه وسلّم)ڭ سوزی",
     "İsa (a.s) ve Ali (r.a.) geldi.": "عیسی (علیه السلام) و علی (رضی الله عنه) گلدی.",
     "Adem'e secde edin.": "آدمه سجده ایدیڭ.",
+    "vardır ki öyle": "واردركه اویله",
     # imlâ turu 4: Arapça harf-i tarif ve tamlamalar
     "Kitâbü’t-Tevhîd": "كتاب التوحید",
     "Ebü’l-Hasan el-Eş’arî": "ابو الحسن الاشعری",
@@ -75,6 +76,10 @@ CUMLE = {
     "kādir": "قادر",
     "in’am": "انعام",
     "maahâza": "مع هذا",
+    # imlâ turu 6 (Mesnevî-i Nûriye Osmanlıca nüshasıyla karşılaştırma)
+    "hükmünde": "حكمنده", "hükmündedir": "حكمندهدر", "arkasından": "آرقهسندن", "vazifesinde": "وظیفهسنده", "sikkesini": "سكّهسنی", "birinin": "برینڭ",
+    "ediyor": "ایدییور", "bakınız": "باقیڭز", "edemez": "ایده‌مز", "sayısız": "صاییسز", "yalnız": "یالڭز", "şeyi": "شیئی",
+    "küçük": "كوچك", "karşı": "قارشو", "yeni": "یڭی", "üçüncü": "اوچنجی", "içinde": "ایچنده", "işte": "ایشته",
 }
 
 kalan = 0

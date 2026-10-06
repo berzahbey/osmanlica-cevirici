@@ -484,8 +484,24 @@ def _ek_bolumu(t, n):
     return None
 
 
+# İyelik (3. tekil) + n'li hâl eki matbaada yesiz yazılır: hükmünde حكمنده, arkasından آرقهسندن, sikkesini سكّهسنی
+_IYELIK_HAL = {}
+for _formlar, _yazim in [
+    ("sında sinde sunda sünde", "سنده"), ("ında inde unda ünde", "نده"),
+    ("sından sinden sundan sünden", "سندن"), ("ından inden undan ünden", "ندن"),
+    ("sını sini sunu sünü", "سنی"), ("ını ini unu ünü", "نی"),
+    ("sına sine suna süne", "سنه"), ("ına ine una üne", "نه"),
+    ("sının sinin sunun sünün", "سنڭ"),   # -ının ise yeli kalır: برینڭ، فهملرینڭ (matbaa)
+    ("sındaki sindeki sundaki sündeki", "سندهكی"), ("ındaki indeki undaki ündeki", "ندهكی"),
+]:
+    _IYELIK_HAL.update({f: _yazim for f in _formlar.split()})
+
+
 def ekleri_yaz(root: str, sufs, tails, harmony: str, guvenilir: bool = True) -> str:
     """Sözlükten gelen ekleri (sufs) ve kesme işaretiyle ayrılmış ekleri (tails) yazar."""
+    birlesik = "".join(list(sufs or []) + [t for t in (tails or []) if t])
+    if birlesik in _IYELIK_HAL:
+        return _IYELIK_HAL[birlesik]
     ekler = [(s, guvenilir) for s in (sufs or [])] + [(t, True) for t in _ekleri_bol(tails)]
     out, prev = "", root
     for i, (s, known) in enumerate(ekler):
@@ -692,7 +708,9 @@ def transliterate_word_with_suffix(word: str) -> str:
     if re.match(r"^(et[mst]|ed[eiı])", word) and len(word) >= 4 \
             and (word.startswith("edebil") or not word.startswith(("edeb", "edep", "edib", "edip", "etki", "etra"))) \
             and (not _f or _f[0] not in ("et", "ed", "edil", "edin")):
-        return transliterate_word_with_suffix("i" + word[1:])   # etmez -> ایتمز, edemez -> ایدمز, etse -> ایتسه
+        if word.startswith(("edeme", "edebil")):
+            return "ایده\u200c" + transliterate_word_with_suffix("y" + word[3:])[1:]   # edemez -> ایده‌مز, edebilir -> ایده‌بیلیر
+        return transliterate_word_with_suffix("i" + word[1:])   # etmez -> ایتمز, etse -> ایتسه
     fiil = _fiil_ayir(word)
     if fiil:
         kok, yazim, kok_sonu = fiil

@@ -92,7 +92,24 @@ def draft_transliterate_sentence(sentence: str) -> str:
         return kok + isaret + tam[len(kok):]
 
     sentence = _TIRNAK_EK_RE.sub(tirnak_eki, sentence)
-    return WORD_RE.sub(lambda m: _ek_duzelt(repl(m)), sentence)
+    return WORD_RE.sub(lambda m: _matbaa_ekleri(m.group(0), _ek_duzelt(repl(m))), sentence)
+
+
+def _matbaa_ekleri(latin: str, osm: str) -> str:
+    """Matbaa yazımında birkaç Türkçe ek: -ıyor/-iyor (ünsüzden sonra) ییور (ediyor ایدییور, geliyor كلییور);
+    -ınız/-iniz ڭز (bakınız باقیڭز)."""
+    l = turkish_lower(latin)
+    if re.search(r"[^aeıioöuüâîû][ıi]yor", l) and "ییور" not in osm and "یور" in osm:
+        osm = osm.replace("یور", "ییور", 1)
+    if re.search(r"[ıi]n[ıi]z$", l) and osm.endswith("ینیز"):
+        osm = osm[:-4] + "یڭز"
+    # -sız/-siz eki matbaada yesiz: sayısız صاییسز, şüphesiz شبهه‌سز
+    if re.search(r"s[ıiuü]z(l[ıiuü][kğ]\w*|ca|ce|dır|dir|lar|ler)?$", l) and "سیز" in osm:
+        osm = osm[::-1].replace("زیس", "زس", 1)[::-1]
+    # iyelik + n'li hâl eki (kural motorundan gelen kelimelerde de): kapısında قاپوسنده, yüzünde یوزنده
+    if len(l) >= 6 and re.search(r"([ıiuü]n(da|de|dan|den|daki|deki)|s[ıiuü]n[ıiuüae]|s[ıiuü]n[ıiuü]n)(d[ıiuü]r|t[ıiuü]r)?$", l):
+        osm = re.sub(r"(?:ین|ون)(ده|دن|دهكی|دكی|ی|ه|ڭ)(در)?$", r"ن\1\2", osm)
+    return osm
 
 
 # Arapça harf-i tarif (Türkçe yazımda kesmeli/tireli): Kitâbü't-Tevhîd -> كتاب التوحید, Ebü'l-Hasan -> ابو الحسن,
@@ -435,7 +452,9 @@ def transliterate_text(
         result.append(s)
         if i < len(separators):
             result.append("\n" if "\n" in separators[i] else " ")
-    return _yabancilari_geri_koy(_ottoman_punctuation("".join(result)), _saklanan)
+    sonuc = _ottoman_punctuation("".join(result))
+    sonuc = re.sub(r"(?<=[\u0621-\u06D3]) كه(?=[\s،.!؟:؛\"”]|$)", "كه", sonuc)   # ki öncesine bitişik: ناصلكه، واردركه
+    return _yabancilari_geri_koy(sonuc, _saklanan)
 
 
 def _ottoman_punctuation(text: str) -> str:
