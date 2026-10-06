@@ -93,7 +93,14 @@ CUMLE = {
     # imlâ turu 10 (Emirdağ Lâhikası Osmanlıca nüshası)
     "dedim": "دیدم", "verdiler": "ویردیلر", "kalmadı": "قالمدی", "etmedi": "ایتمدی", "kurtarmaya": "قورتارمغه",
     "etsem": "ایتسهم", "olsam": "اولسهم", "bilmiyor": "بیلمییور", "işimizle": "ایشمزله", "eserlerimi": "اثرلریمی",
-    "kardeşlerim": "قرداشلرم", "hizmetçi": "خدمتجی", "adliye": "عدلیه", "kişiye": "كشییه", "Ankara": "آنقره",
+    "kardeşlerim": "قرداشلرم", "hizmetçi": "خدمتجی", "adliye": "عدلیه", "kişiye": "كیشییه", "Ankara": "آنقره",
+    # imlâ turu 11 (Gençlik Rehberi Osmanlıca nüshası)
+    "istemez": "ایستهمز", "gelebiliyor": "گلهبیلییور", "bilemez": "بیلهمز", "gelmez": "گلمز", "düşersin": "دوشرسڭ",
+    "nuruyla": "نوریله", "kızdan": "قیزدن", "kazanmak": "قزانمق", "önündeki": "اوڭندهكی", "gençlik": "گنچلك",
+    "dinsizler": "دینسزلر", "yine": "یینه", "altında": "آلتنده", "kişi": "كیشی",
+    # Şefkat Tokatları
+    "yedim": "ییدم", "yemiş": "ییمش", "bilirim": "بیلیرم", "olabiliriz": "اولابیلیرز", "gelmesin": "گلمهسین",
+    "geçirsin": "گچیرسین", "yazsın": "یازسین", "kalmıyordu": "قالمایوردی", "çavuş": "چاووش", "arkadaş": "آرقداش",
     "küçük": "كوچك", "karşı": "قارشو", "yeni": "یڭی", "üçüncü": "اوچنجی", "içinde": "ایچنده", "işte": "ایشته",
 }
 

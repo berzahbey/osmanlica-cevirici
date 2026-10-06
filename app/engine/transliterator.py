@@ -96,6 +96,10 @@ def draft_transliterate_sentence(sentence: str) -> str:
     return WORD_RE.sub(lambda m: _matbaa_ekleri(m.group(0), _ek_duzelt(repl(m))), sentence)
 
 
+# "-in/-ün" ile biten Arapça kökler: din+den دیندن (iyelik eki sanılıp yesi silinmesin)
+_IN_ILE_BITEN_KOKLER = {"din", "yemin", "metin", "telkin", "zemin", "emin", "mümin", "mü'min", "yakîn", "tayin", "ta'yin",
+                        "temin", "tahsin", "tezyin", "tebyin", "miskin", "hazin", "tekvin", "tazmin", "takdim"}
+
 _SIK_FIIL_KOKLERI = {"ol", "et", "ed", "al", "ver", "gel", "git", "bil", "gör", "yap", "bul", "kal", "bak", "bırak", "de", "ye",
                      "iste", "söyle", "oku", "yaz", "çalış", "anla", "sor", "tut", "çık", "gir", "ver", "düşün", "kork"}
 
@@ -113,7 +117,7 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         kok_unlu = None if unsuz_kok else \
             next((u for u in "aeıiuü" if dictionary.lookup_exact(x + u + ("mak" if u in "aıu" else "mek"))), None)
         if not kok_unlu and x.endswith("m") and v in "ıi" and x[-2:-1] not in "aeıioöuüâîû":
-            kok_unlu = "ı"                                   # olumsuz -mı-yor: بیلمییور، قاریشمییور
+            kok_unlu = "a" if v == "ı" else "ı"              # olumsuz -mı-yor: قالمایوردی، طانیمایور; -mi-yor: بیلمییور
         if not kok_unlu and re.search(r"[^aeıioöuüâîû][lrnm]$", x):
             # ünsüz + l/r/n/m ile biten kök ünlüyle biter: sakl-a, bekl-e, söyl-e, titr-e
             son_unlu = next((c for c in reversed(x) if c in "aeıioöuüâîû"), "a")
@@ -136,7 +140,7 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         osm = osm[:-2] + "سهڭ"
     # aŋla-, diŋle-, beŋze- (eski ñ): آڭلامق، دیڭله، بڭزر
     for lat, eski, yeni in (("anla", "آنلا", "آڭلا"), ("anlı", "آنل", "آڭل"), ("dinle", "دینله", "دیڭله"),
-                            ("dinle", "دینل", "دیڭله"), ("benze", "بنز", "بڭز")):
+                            ("dinle", "دینل", "دیڭله") if not l.startswith("dinler") else ("dinle", "\0", ""), ("benze", "بنز", "بڭز")):
         if l.startswith(lat) and osm.startswith(eski) and not re.match(r"anlam(?!a)", l):   # anlam, anlamı (isim) değişmez
             osm = yeni + osm[len(eski):]
     # geniş zaman -ir/-ır, kök r ile bitiyorsa (ver-ir, çevir-ir, bildir-ir): ویرر، چویرر، بیلدیرر (Risale)
@@ -147,7 +151,9 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     if m_iy and "ییه" in osm:
         g = m_iy.group(1)
         taban = dictionary.lookup_exact(g + "i")
-        arapca = bool(dictionary.lookup_exact(g + "î")) or bool(taban and taban[1] in ("ar", "fa", "ar-fa", "fa-ar"))
+        _ak = ("ar", "fa", "ar-fa", "fa-ar", "sozlukler")
+        _sapkali = dictionary.lookup_exact(g + "î")
+        arapca = bool(_sapkali and _sapkali[1] in _ak) or bool(taban and taban[1] in _ak)
         if arapca or (not taban and len(g) >= 4):   # Arapça nisbe (ilâhî, ezelî); şimdi+ye, kişi+ye Türkçe: dokunma
             osm = osm.replace("ییه", "یه")
     # ayrılma/bulunma eki -tan/-ten, -ta/-te matbaada دن/ده: اوزاقدن، میكروپدن
@@ -186,6 +192,48 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     # -cı/-ci ünsüzden sonra ج: حریتجی، خدمتجی
     if re.search(r"[ts]ç[ıi]", l):
         osm = osm.replace("تچی", "تجی").replace("سچی", "سجی")
+    # ünlüyle biten fiil kökünün ünlüsü yazılır: iste-mez ایسته‌مز، bekle-yen بكله‌ین، söyle-diğim سویله‌دیگم
+    for lat, kok in (("iste", "ایست"), ("bekle", "بكل"), ("söyle", "سویل")):
+        if l.startswith(lat) and l[len(lat):len(lat) + 1] != "r" and osm.startswith(kok) and not osm.startswith(kok + "ه"):
+            osm = kok + "ه" + osm[len(kok):]
+    # yeterlik -ebil/-abil ve -eme/-ama (ünsüzden sonra): گله‌بیلیر، بیله‌مز، یتیشه‌مزسڭ (Risale)
+    if re.search(r"[^aeıioöuüâîû][ea]bil", l) and "بیل" in osm:
+        i = osm.find("بیل", 1)
+        if i > 0 and osm[i - 1] not in "اه\u200c":
+            osm = osm[:i] + ("ا" if re.search(r"[^aeıioöuüâîû]abil", l) else "ه") + osm[i:]
+    if re.search(r"[^aeıioöuüâîû][ea]m[ea]z", l) and not dictionary.lookup_with_suffix(l)[0] \
+            and not l.startswith(("yem", "dem")):
+        i = osm.rfind("مز")
+        if i > 0 and osm[i - 1] not in "اه\u200c":
+            osm = osm[:i] + ("ا" if re.search(r"[^aeıioöuüâîû]amaz", l) else "ه") + osm[i:]
+    # 2. kişi -sın/-sin (fiilde), -sınız: دوشرسڭ، گورونورسڭ، ییمزسڭز
+    # geniş zaman 2. tekil (düşersin, görünürsün, yetişemezsin) سڭ; 3. tekil emir (geçirsin, çıkarsın, yazsın) سین kalır
+    if re.search(r"([eüu]r|m[ea]z)s[ıiuü]n$", l):
+        osm = re.sub(r"(سین|سون|سن)$", "سڭ", osm)
+    elif re.search(r"([eüuıia]r|m[ea]z)s[ıiuü]n[ıiuü]z$", l):
+        osm = re.sub(r"(سینیز|سونوز|سیڭز|سنیز)$", "سڭز", osm)
+    # -uyla/-üyle (iyelik + ile): نوریله، یولیله
+    if re.search(r"[^aeıioöuüâîû][uü]yl[ae]$", l) and osm.endswith("ویله"):
+        osm = osm[:-4] + "یله"
+    # ayrılma eki -dan matbaada دن (sözlükte olmayan kelimede): قیزدن
+    if l.endswith("dan") and osm.endswith("دان") and not dictionary.lookup_exact(l):
+        osm = osm[:-3] + "دن"
+    # kazan-: قزانمق؛ ön (eski ñ): اوڭنده
+    if l.startswith("kazan") and osm.startswith("قازان"):
+        osm = "قزان" + osm[5:]
+    if re.match(r"^ön(ü|e|de|den|ce|üm|ün)", l) and osm.startswith("اون"):
+        osm = "اوڭ" + osm[3:]
+    # yemek fiili: ییدم، ییمش، ییمز، ییمه‌یور (yedi "7" ve yer "mekân" belirsiz, dokunulmaz)
+    if re.match(r"^ye(dim|dik|diler|miş|mek|mez|miyor|sin|meleri|meli)", l) and osm.startswith("ی") and not osm.startswith("یی"):
+        osm = "ی" + osm
+    # geniş zaman 1. kişi -ırım/-iriz: بیلیرم، اولابیلیرز
+    if re.search(r"[ıiuü]r[ıiuü]m$", l) and not dictionary.lookup_exact(l):   # durum, korum gibi kelimeler değil
+        osm = re.sub(r"(یریم|وروم)$", lambda m: "یرم" if m.group(1) == "یریم" else "ورم", osm)
+    elif re.search(r"[ıiuü]r[ıiuü]z$", l) and not dictionary.lookup_exact(l):
+        osm = re.sub(r"(یریز|وروز)$", lambda m: "یرز" if m.group(1) == "یریز" else "ورز", osm)
+    # olumsuz emir -mesin/-masın: گلمه‌سین، گورمه‌سین
+    if re.search(r"m(e|a)s[ıi]n(ler|lar)?$", l):
+        osm = re.sub(r"مسین(لر)?$", lambda m: ("مه" if re.search(r"mes[ıi]n", l) else "ما") + "سین" + (m.group(1) or ""), osm)
     # ölüm, ölmek: ئولوم (Risale)
     if l.startswith("öl") and osm.startswith("اول"):
         osm = "ئو" + osm[2:]
@@ -204,7 +252,11 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     if re.search(r"s[ıiuü]z(l[ıiuü][kğ]\w*|ca|ce|dır|dir|lar|ler)?$", l) and "سیز" in osm:
         osm = osm[::-1].replace("زیس", "زس", 1)[::-1]
     # iyelik + n'li hâl eki (kural motorundan gelen kelimelerde de): kapısında قاپوسنده, yüzünde یوزنده
-    if len(l) >= 6 and not re.match(r"^(bu|şu|o)n(da|dan|daki|un|lar)", l) and \
+    _kh, _ks = dictionary.lookup_with_suffix(l)
+    _kok = l[: len(l) - len("".join(_ks))] if (_kh and _ks) else ""
+    # din+den, zemin+de: "-in" kökün kendi harfleri (iyelik değil); iç+in+den, üst+ün+de ise iyelik
+    _kok_n = _kok in _IN_ILE_BITEN_KOKLER and bool(_ks) and _ks[0][:1] in "dt"
+    if len(l) >= 6 and not _kok_n and not re.match(r"^(bu|şu|o)n(da|dan|daki|un|lar)", l) and \
             re.search(r"([ıiuü]n(da|de|dan|den|daki|deki)|s[ıiuü]n[ıiuüae]|s[ıiuü]n[ıiuü]n)(d[ıiuü]r|t[ıiuü]r)?$", l):
         osm = re.sub(r"(?:ین|ون)(ده|دن|دهكی|دكی|ی|ه|ڭ)(در)?$", r"ن\1\2", osm)
     return osm
