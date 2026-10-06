@@ -96,6 +96,10 @@ def draft_transliterate_sentence(sentence: str) -> str:
     return WORD_RE.sub(lambda m: _matbaa_ekleri(m.group(0), _ek_duzelt(repl(m))), sentence)
 
 
+_SIK_FIIL_KOKLERI = {"ol", "et", "ed", "al", "ver", "gel", "git", "bil", "gör", "yap", "bul", "kal", "bak", "bırak", "de", "ye",
+                     "iste", "söyle", "oku", "yaz", "çalış", "anla", "sor", "tut", "çık", "gir", "ver", "düşün", "kork"}
+
+
 def _matbaa_ekleri(latin: str, osm: str) -> str:
     """Matbaa yazımında birkaç Türkçe ek: -ıyor/-iyor (ünsüzden sonra) ییور (ediyor ایدییور, geliyor كلییور);
     -ınız/-iniz ڭز (bakınız باقیڭز)."""
@@ -108,6 +112,8 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         unsuz_kok = bool(dictionary.lookup_exact(x + "mak") or dictionary.lookup_exact(x + "mek"))   # gör-mek, ol-mak
         kok_unlu = None if unsuz_kok else \
             next((u for u in "aeıiuü" if dictionary.lookup_exact(x + u + ("mak" if u in "aıu" else "mek"))), None)
+        if not kok_unlu and x.endswith("m") and v in "ıi" and x[-2:-1] not in "aeıioöuüâîû":
+            kok_unlu = "ı"                                   # olumsuz -mı-yor: بیلمییور، قاریشمییور
         if not kok_unlu and re.search(r"[^aeıioöuüâîû][lrnm]$", x):
             # ünsüz + l/r/n/m ile biten kök ünlüyle biter: sakl-a, bekl-e, söyl-e, titr-e
             son_unlu = next((c for c in reversed(x) if c in "aeıioöuüâîû"), "a")
@@ -137,10 +143,12 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     if (re.search(r"[iı]r[ıi]r(ler|lar)?$", l) or re.match(r"^ver[ıi]r(ler)?$", l)) and re.search(r"ریر(لر)?$", osm):
         osm = re.sub(r"ریر(لر)?$", r"رر\1", osm)
     # Arapça -iyye/-iye sıfatları tek ye: الهیه، ایمانیه، معنویه
-    m_iy = re.search(r"([a-zçğıöşüâîû]{4,})iy?ye", l)
+    m_iy = re.search(r"([a-zçğıöşüâîû']{3,})iy?ye", l)
     if m_iy and "ییه" in osm:
-        taban = dictionary.lookup_exact(m_iy.group(1) + "i")
-        if not (taban and taban[1] == "tr"):              # şimdi+ye, bilgi+ye: Türkçe yönelme eki, dokunma
+        g = m_iy.group(1)
+        taban = dictionary.lookup_exact(g + "i")
+        arapca = bool(dictionary.lookup_exact(g + "î")) or bool(taban and taban[1] in ("ar", "fa", "ar-fa", "fa-ar"))
+        if arapca or (not taban and len(g) >= 4):   # Arapça nisbe (ilâhî, ezelî); şimdi+ye, kişi+ye Türkçe: dokunma
             osm = osm.replace("ییه", "یه")
     # ayrılma/bulunma eki -tan/-ten, -ta/-te matbaada دن/ده: اوزاقدن، میكروپدن
     if re.search(r"[pçtksşhf]t[ae]n$", l) and re.search(r"(تان|تن)$", osm) and len(l) > 4:   # yaratan, tutan değil
@@ -151,6 +159,33 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     # -daki/-deki/-taki/-teki: دهكی (Risale: اصلندهكی، عالمدهكی)
     if re.search(r"[dt][ae]ki$", l):
         osm = re.sub(r"(داكی|دكی|تاكی|تكی)$", "دهكی", osm)
+    # demek, vermek kökleri tarihî yazımla (kural motorunun çözemediği çekimlerde): dedim دیدم، verdiler ویردیلر
+    if l.startswith("ded") and osm.startswith("دد"):
+        osm = "دید" + osm[2:]
+    if re.match(r"^ver(d|m|i|e|s|y|l)", l) and not l.startswith(("verem", "vergi")) and osm.startswith("ور") and not osm.startswith("ویر"):
+        osm = "ویر" + osm[2:]
+    # -maya/-meye (mastar + yönelme): قورتارمغه، گیتمگه (Risale)
+    if re.search(r"(?<=[^aeıioöuüâîû])m(aya|eye)$", l) and re.search(r"م(ایه|یه|هیه)$", osm):
+        osm = re.sub(r"م(ایه|یه|هیه)$", "مغه" if l.endswith("aya") else "مگه", osm)
+    # şart -sam/-sem/-sak/-sek/-sanız/-seniz/-salar/-seler: ایتسهم، بیراقسهق، چالیشسهڭز
+    m_s = re.search(r"s(am|em|ak|ek|anız|eniz|alar|eler)$", l)
+    if m_s and len(l) >= 5 and not dictionary.lookup_with_suffix(l)[0] and (
+            rules._fiil_ayir(l) or dictionary.lookup_exact(l[:m_s.start()] + "mak") or dictionary.lookup_exact(l[:m_s.start()] + "mek")
+            or l[:m_s.start()] in _SIK_FIIL_KOKLERI):
+        for eski, yeni in (("سام", "سهم"), ("ساق", "سهق"), ("سم", "سهم"), ("سق", "سهق"), ("سك", "سهك"), ("سانیز", "سهڭز"), ("سنیز", "سهڭز"),
+                           ("سڭز", "سهڭز"), ("سالر", "سهلر"), ("سلر", "سهلر")):
+            if osm.endswith(eski):
+                osm = osm[: -len(eski)] + yeni
+                break
+    # -imiz/-ımız (iyelik, 1. çoğul) yesiz: ایشمزله، بیلدیكمزدن، برائتمزه
+    if re.search(r"[ıiuü]m[ıiuü]z", l):
+        osm = osm.replace("یمیز", "مز").replace("یموز", "مز")
+    # -lerimi/-lerime: ye kalır (اثرلریمی، كتابلریمی)
+    if re.search(r"l[ae]r[ıi]m(i|ı|e|a|in|ın|de|da|den|dan)$", l):
+        osm = re.sub(r"لرم(ی|ه|ڭ|ده|دن)$", r"لریم\1", osm)
+    # -cı/-ci ünsüzden sonra ج: حریتجی، خدمتجی
+    if re.search(r"[ts]ç[ıi]", l):
+        osm = osm.replace("تچی", "تجی").replace("سچی", "سجی")
     # ölüm, ölmek: ئولوم (Risale)
     if l.startswith("öl") and osm.startswith("اول"):
         osm = "ئو" + osm[2:]

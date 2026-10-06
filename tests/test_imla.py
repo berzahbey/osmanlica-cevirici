@@ -90,6 +90,10 @@ CUMLE = {
     "verir": "ویرر", "çevirir": "چویرر", "gösterir": "گوستریر", "getirir": "گتیرر", "gelir": "گلیر", "ederek": "ایدرك", "İlahiye": "الهیه", "uzaktan": "اوزاقدن",
     "yetiştirmek": "یتیشدیرمك", "ölüm": "ئولوم", "olacağını": "اولاجغنی", "şifa": "شفا", "mahiyeti": "ماهیتی",
     "manasıyla": "معناسیله", "meyvesi": "میوهسی", "karanlık": "قراڭلق", "içindeki": "ایچندهكی",
+    # imlâ turu 10 (Emirdağ Lâhikası Osmanlıca nüshası)
+    "dedim": "دیدم", "verdiler": "ویردیلر", "kalmadı": "قالمدی", "etmedi": "ایتمدی", "kurtarmaya": "قورتارمغه",
+    "etsem": "ایتسهم", "olsam": "اولسهم", "bilmiyor": "بیلمییور", "işimizle": "ایشمزله", "eserlerimi": "اثرلریمی",
+    "kardeşlerim": "قرداشلرم", "hizmetçi": "خدمتجی", "adliye": "عدلیه", "kişiye": "كشییه", "Ankara": "آنقره",
     "küçük": "كوچك", "karşı": "قارشو", "yeni": "یڭی", "üçüncü": "اوچنجی", "içinde": "ایچنده", "işte": "ایشته",
 }
 

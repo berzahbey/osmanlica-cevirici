@@ -715,8 +715,10 @@ def transliterate_word_with_suffix(word: str) -> str:
     if _f and len(_f[0]) >= 4 and _f[0][-2:] in ("me", "ma") and _f[0][-3] not in "aeıioöuü":
         # olumsuzluk eki -ma/-me ünlüsüyle yazılır: etmemek ایتمه‌مك, vermeyip ویرمه‌یوب, olmamakla اولمامقله
         taban = _f[0][:-2]
-        return transliterate_word(_tarihi_kok(taban), treat_last_as_final=False, devam=_f[0][-2:]) + \
-            ("مه" if _f[0].endswith("me") else "ما") + _f[1]
+        govde = transliterate_word(_tarihi_kok(taban), treat_last_as_final=False, devam=_f[0][-2:])
+        if _f[1].startswith("د"):
+            return govde + "م" + _f[1]        # geçmiş zaman: etmedi ایتمدی، kalmadı قالمدی (Risale)
+        return govde + ("مه" if _f[0].endswith("me") else "ما") + _f[1]
     if re.match(r"^(et[mst]|ed[eiı])", word) and len(word) >= 4 \
             and (word.startswith("edebil") or not word.startswith(("edeb", "edep", "edib", "edip", "etki", "etra"))) \
             and (not _f or _f[0] not in ("et", "ed", "edil", "edin")):
