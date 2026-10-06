@@ -39,12 +39,23 @@ def draft_transliterate_sentence(sentence: str) -> str:
             tails = parts[1:]
             # Kesme işareti kelimenin kendi parçası olabilir (Kur'an, Mes'ud, san'at):
             # önce birleşik hâlini sözlükte ara, kalan parçaları ek say. Kur'an'ın -> Kur'an + ın
+            # Kesmeli kelimenin son parçasına ek bitişmiş olabilir: Kur'anı -> Kur'an + ı
+            if len(parts) == 2:
+                son = turkish_lower(parts[1])
+                for i in range(len(son) - 1, 0, -1):
+                    if _ek_mi(son[i:]) and dictionary.lookup_exact(parts[0] + "'" + parts[1][:i]):
+                        parts = [parts[0] + "'" + parts[1][:i], parts[1][i:]]
+                        base, tails = parts[0], parts[1:]
+                        break
             for k in range(len(parts), 1, -1):
                 joined = "'".join(parts[:k])
                 if dictionary.lookup_exact(joined):
                     base, tails = joined, parts[k:]
                     break
-                if dictionary.lookup_exact(joined.replace("'", "")):
+                birlesik = dictionary.lookup_exact(joined.replace("'", ""))
+                if birlesik and not (k == 2 and re.search(r"([^aeıioöuüâîû])\1$", turkish_lower(parts[0]))
+                                     and _ek_mi(turkish_lower(parts[1])) and dictionary.lookup_exact(parts[0])):
+                    # Şeddeli kök + ek: Hakk'a -> Hakk + a (حقّه); sözlükteki "hakka" (حقا, "gerçekten") başka kelime
                     base, tails = joined.replace("'", ""), parts[k:]
                     break
             harmony = rules._harmony_class(turkish_lower(word).replace("'", ""))
@@ -66,7 +77,46 @@ def draft_transliterate_sentence(sentence: str) -> str:
             return hit[0] + rules.ekleri_yaz(root, sufs, [], harmony, rules.ek_guvenilir(root, sufs))
         return rules.transliterate_word_with_suffix(word)
 
+    def tirnak_eki(m):
+        kelime, isaret, ek = m.group(1), m.group(2), m.group(3)
+        if not _ek_mi(turkish_lower(ek)):
+            return m.group(0)
+        tam = _ek_duzelt(repl(_Eslesme(kelime + "'" + ek)))
+        kok = _ek_duzelt(repl(_Eslesme(kelime)))
+        if not tam.startswith(kok):
+            return m.group(0)
+        return kok + isaret + tam[len(kok):]
+
+    sentence = _TIRNAK_EK_RE.sub(tirnak_eki, sentence)
     return WORD_RE.sub(lambda m: _ek_duzelt(repl(m)), sentence)
+
+
+class _Eslesme:
+    """repl() için WORD_RE eşleşmesi gibi davranan küçük sarmalayıcı."""
+    def __init__(self, metin):
+        self._m = metin
+
+    def group(self, i=0):
+        return self._m
+
+
+# Kapanan tırnak/parantezden hemen sonra boşluksuz gelen Türkçe ek: “O”dur, “Hak”tan, (Rahman)'a değil
+_TIRNAK_EK_RE = re.compile(r"([A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû]+(?:['’][A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû]+)*)([”\"»\)\]]+)([a-zçğıöşüâîû]{1,9})(?![A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû'’])")
+
+
+def _ek_mi(s: str) -> bool:
+    """s bir ya da üst üste en çok üç Türkçe ekten mi oluşuyor (dur, tan, nın, ının, da...)."""
+    if not s:
+        return False
+    eks = dictionary.LOOKUP_SUFFIXES
+
+    def bol(x, n):
+        if not x:
+            return True
+        if n == 0:
+            return False
+        return any(x.startswith(e) and bol(x[len(e):], n - 1) for e in eks)
+    return bol(s, 3)
 
 
 def _ek_duzelt(w: str) -> str:
@@ -139,12 +189,119 @@ def _drop_izafet(text: str) -> str:
     return _IZAFET_RE.sub("", text)
 
 
+# ---------------- Latin harfli yabancı dil dizileri (Zahir'in kararı: aslı olduğu gibi kalır) ----------------
+# Yalnız Türkçede kelime olarak bulunmayan yabancı kelimeler (ne, her, an, on, et, der, al, has, son, la, fi... Türkçede de var)
+_YABANCI_KELIME = {"the", "of", "and", "to", "was", "were", "with", "by", "for", "from", "which", "who", "what",
+                   "this", "that", "these", "those", "said", "says", "his", "they", "she", "you", "your", "our",
+                   "their", "my", "but", "have", "been", "des", "du", "les", "une", "sur", "dans", "par", "pour",
+                   "aux", "avec", "comme", "est", "sont", "pas", "qui", "que", "nous", "vous", "elle", "cette",
+                   "die", "das", "und", "von", "mit", "ein", "eine", "ist", "nicht", "auf", "zu"}
+_YABANCI_IZ_RE = re.compile(r"[qwx]|th|ph|sh|gh|ck|ou|oe|ae|ea|ee|oo|eau|tion$|^ch|[^aeıioöuü\s]y[^aeıioöuü]")
+_LATIN_KELIME_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿĞğİıŞş]+(?:['’][A-Za-zÀ-ÖØ-öø-ÿ]+)*")
+_TURKCE_HARF_RE = re.compile(r"[çğıöşüÇĞİÖŞÜâîûÂÎÛ]")
+
+
+def _yabanci_mi(kelime: str) -> bool:
+    k = kelime.lower()
+    if _TURKCE_HARF_RE.search(kelime):
+        return False
+    return k in _YABANCI_KELIME or bool(_YABANCI_IZ_RE.search(k)) or bool(re.search(r"[À-ÖØ-öø-ÿ]", kelime))
+
+
+def _yabancilari_sakla(metin: str):
+    """En az iki yabancı kelime içeren, kelimelerinin yarısından çoğu yabancı Latin dizilerini (ör. Fransızca/İngilizce
+    kitap adı) çeviriye sokmadan ayırır; yerlerine işaret koyar. Tek tek özel adlar ve Türkçe yazılmış terimler çevrilir."""
+    saklanan = []
+    kelimeler = list(_LATIN_KELIME_RE.finditer(metin))
+    i = 0
+    parcalar = []
+    son = 0
+    while i < len(kelimeler):
+        j = i
+        while j + 1 < len(kelimeler) and re.fullmatch(r"[\s,;:\-–'’]*", metin[kelimeler[j].end():kelimeler[j + 1].start()]):
+            j += 1
+        dizi = kelimeler[i:j + 1]
+        # dizinin içinden yabancı çekirdeği bul: baştan/sondan Türkçe kelimeleri at
+        bas, bit = 0, len(dizi) - 1
+        while bas <= bit and not _yabanci_mi(dizi[bas].group(0)):
+            bas += 1
+        while bit >= bas and not _yabanci_mi(dizi[bit].group(0)):
+            bit -= 1
+        if bas <= bit:
+            asil = dizi[bas:bit + 1]
+            yab = sum(1 for k in asil if _yabanci_mi(k.group(0)))
+            yeterli = yab >= 2 and yab * 2 > len(asil)
+            # çekirdeğin hemen yanındaki, Türkçe harfsiz büyük harfli kelimeler de dizinin parçası (Essai, Paris, Socrates)
+            def yanina_katilir(k):
+                t = k.group(0)
+                return t[:1].isupper() and not _TURKCE_HARF_RE.search(t)
+            def kisa(k):  # "de", "la" gibi araya giren kısa kelime
+                t = k.group(0)
+                return len(t) <= 3 and t.islower() and not _TURKCE_HARF_RE.search(t)
+            while True:
+                if bas > 0 and yanina_katilir(dizi[bas - 1]):
+                    bas -= 1
+                elif bas > 1 and kisa(dizi[bas - 1]) and yanina_katilir(dizi[bas - 2]):
+                    bas -= 2
+                else:
+                    break
+            while True:
+                if bit + 1 < len(dizi) and yanina_katilir(dizi[bit + 1]):
+                    bit += 1
+                elif bit + 2 < len(dizi) and kisa(dizi[bit + 1]) and yanina_katilir(dizi[bit + 2]):
+                    bit += 2
+                else:
+                    break
+            cekirdek = dizi[bas:bit + 1]
+            if yeterli:
+                a, b = cekirdek[0].start(), cekirdek[-1].end()
+                parcalar.append(metin[son:a])
+                parcalar.append("\ue000%d\ue001" % len(saklanan))
+                saklanan.append(metin[a:b])
+                son = b
+        i = j + 1
+    parcalar.append(metin[son:])
+    return "".join(parcalar), saklanan
+
+
+def _yabancilari_geri_koy(metin: str, saklanan) -> str:
+    return re.sub("\ue000(\\d+)\ue001", lambda m: saklanan[int(m.group(1))], metin)
+
+
+# Dua kısaltmaları açık yazılır: (s.a.v) -> (صلّی الله علیه وسلّم), (a.s) -> (علیه السلام), (r.a) -> (رضی الله عنه)
+_KISALTMA = [
+    (re.compile(r"(?<![\w.])s\.\s?a\.\s?v\.?(?![\w])", re.I), "صلّی الله علیه وسلّم"),
+    (re.compile(r"(?<=\()\s*a\.\s?s\.?\s*(?=\))", re.I), "علیه السلام"),
+    (re.compile(r"(?<![\w.])r\.\s?a\.?(?![\w])", re.I), "رضی الله عنه"),
+]
+
+
+_PARANTEZ_EKI = {"nin": "ڭ", "nın": "ڭ", "nun": "ڭ", "nün": "ڭ", "in": "ڭ", "ın": "ڭ", "un": "ڭ", "ün": "ڭ",
+                 "ye": "ه", "ya": "ه", "e": "ه", "a": "ه", "de": "ده", "da": "ده", "te": "ده", "ta": "ده",
+                 "den": "دن", "dan": "دن", "ten": "دن", "tan": "دن", "yi": "ی", "yı": "ی", "i": "ی", "ı": "ی",
+                 "le": "له", "la": "له", "yle": "یله", "yla": "یله"}
+_PARANTEZ_EK_RE = re.compile(r"(?<=[\u0600-\u06FF])([)\]”])['’]?(" + "|".join(sorted(_PARANTEZ_EKI, key=len, reverse=True))
+                             + r")(?![A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû])")
+
+
+def _kisaltmalar(metin: str) -> str:
+    metin = re.sub(r"\bHz\.\s*", "Hazret ", metin)          # Hz. Muhammed -> حضرت محمّد
+    metin = re.sub(r"\bAdem(?=[a-zçğıöşü'’]|\b)", "Âdem", metin)  # büyük harfli Adem peygamberdir (عدم değil)
+    metin = re.sub(r"\bAlim(?!ler|lerin|lik)(?=[a-zçğıöşü'’”)]|\b)", "Aliym", metin)  # büyük harfli Alim: Allah'ın ismi علیم
+    for rx, ar in _KISALTMA:
+        metin = rx.sub(ar, metin)
+    # Arapça açılımdan sonra gelen ek: (s.a.v)'in -> (صلّی الله علیه وسلّم)ڭ
+    return _PARANTEZ_EK_RE.sub(lambda m: m.group(1) + _PARANTEZ_EKI[m.group(2)], metin)
+
+
 def transliterate_text(
     turkish_text: str,
     use_ollama_refine: bool = True,
     progress_callback=None,
 ) -> str:
     turkish_text = _merge_orphan_numbers(turkish_text)
+    turkish_text, _saklanan = _yabancilari_sakla(turkish_text)
+    turkish_text = _kisaltmalar(turkish_text)
     turkish_text = _quran_phrases(turkish_text)
     turkish_text = _roma_rakam(turkish_text)
     turkish_text = _drop_izafet(turkish_text)
@@ -189,7 +346,7 @@ def transliterate_text(
         result.append(s)
         if i < len(separators):
             result.append("\n" if "\n" in separators[i] else " ")
-    return _ottoman_punctuation("".join(result))
+    return _yabancilari_geri_koy(_ottoman_punctuation("".join(result)), _saklanan)
 
 
 def _ottoman_punctuation(text: str) -> str:

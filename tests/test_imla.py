@@ -1,4 +1,4 @@
-"""Osmanlıca imlâ gerileme testi (k/g harfleri, Arapça/Farsça kelimelerin aslî yazımı). Kod klasöründe:
+"""Osmanlıca imlâ gerileme testi (k/g harfleri, Arapça/Farsça kelimelerin aslî yazımı, tırnak ekleri, yabancı dil). Kod klasöründe:
   docker run --rm -v "$PWD":/k -w /k berzahbey/osmanlica-cevirici:latest python tests/test_imla.py"""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "app"))
@@ -22,6 +22,32 @@ BEKLENEN = {
     "günah": "گناه", "kitap": "كتاب", "zevk": "ذوق", "teşvik": "تشویق", "kâr": "كار", "kâğıt": "كاغد",
     "gelmek": "گلمك", "gece": "گیجه", "değil": "دگل", "doğru": "طوغری", "yirmi": "یگرمی", "bir": "بر",
     "karargâh": "قرارگاه", "tebliğ": "تبلیغ", "Kur'an": "قرآن", "Allah": "الله", "evet": "اوت", "yap": "یاپ",
+    # imlâ turu 2: sözlük denetleyicisinin bulduğu bozuk kayıtlar
+    "mal": "مال", "malları": "ماللری", "dakika": "دقیقه", "mahlukat": "مخلوقات", "vehm": "وهم", "kabr": "قبر",
+    "felsefe": "فلسفه", "irşad": "ارشاد", "oysa": "اویسه", "celal": "جلال", "zemin": "زمین", "elif": "الف",
+    "Hakk'a": "حقّه", "Rabb'e": "ربّه", "Âdem'i": "آدمی", "nev'i": "نوع", "O'nun": "آنڭ", "Kur'an'ın": "قرآنڭ",
+    "Ali'lerdir": "علیلردر",
+    # Türkçe fiillerin tarihî yazımı, kelime başında medli elif
+    "ettiği": "ایتدیگی", "edilmiştir": "ایدیلمشدر", "verdiği": "ویردیگی", "demiştir": "دیمشدر", "dediğimiz": "دیدیگمز",
+    "anlam": "آنلام", "açık": "آچیق", "almak": "آلمق",
+    # sık kelimeler ve özel adlar
+    "nitekim": "نته‌كیم", "buna": "بوڭا", "birşey": "بر شی", "Ali": "علی", "Hasan": "حسن", "Mısır": "مصر",
+    # derin ek ayırma (Arapça kök + iyelik/hâl ekleri)
+    "âyetlerimizi": "آیتلرمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلیندكی",
+}
+
+# Cümle düzeyi (tırnak, yabancı dil, "Hak Teâlâ")
+CUMLE = {
+    "Hak Teâlâ buyurdu.": "حقّ تعالی بویوردی.",
+    "“O”dur.": "“او”در.",
+    "“Hak”tan geldi.": "“حقّ”دن گلدی.",
+    "Bkz. Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.":
+        "بقز. Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.",
+    "Sokrates “Know thyself, said Socrates.” demiştir.": "سقراط “Know thyself, said Socrates.” دیمشدر.",
+    "ne zarar ne fayda, her an": "نه ضرر نه فایده، هر آن",
+    "Hz. Muhammed (s.a.v)'in sözü": "حضرت محمّد (صلّی الله علیه وسلّم)ڭ سوزی",
+    "İsa (a.s) ve Ali (r.a.) geldi.": "عیسی (علیه السلام) و علی (رضی الله عنه) گلدی.",
+    "Adem'e secde edin.": "آدمه سجده ایدیڭ.",
 }
 
 kalan = 0
@@ -29,6 +55,14 @@ for latin, osm in BEKLENEN.items():
     if osm is None:
         continue
     sonuc = cevir(latin)
+    if sonuc == osm:
+        print("GECTI", latin, sonuc)
+    else:
+        kalan += 1
+        print("KALDI", latin, "beklenen", osm, "çıkan", sonuc)
+from engine.transliterator import transliterate_text
+for latin, osm in CUMLE.items():
+    sonuc = transliterate_text(latin, use_ollama_refine=False)
     if sonuc == osm:
         print("GECTI", latin, sonuc)
     else:

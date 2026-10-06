@@ -268,4 +268,49 @@ def lookup_with_suffix(word: str):
     hit = _get(current)
     if hit:
         return hit, list(reversed(peeled))
+    return _derin_kok(w)
+
+
+# İsim ekleri (iyelik, çoğul, hâl, ilgi, -ki): üst üste bindiklerinde kökü bulmak için (âyetlerimizi -> âyet + ler+imiz+i)
+_ISIM_EKLERI = {e for e in LOOKUP_SUFFIXES if not e.startswith(("c", "ç"))} | {
+    "imiz", "ımız", "umuz", "ümüz", "iniz", "ınız", "unuz", "ünüz", "miz", "mız", "muz", "müz", "niz", "nız", "nuz",
+    "nüz", "ki", "nde", "nda", "ne", "na", "ni", "nı", "nu", "nü", "deki", "daki", "teki", "taki", "ndeki", "ndaki"}
+_DERIN_KOKEN = {"ar", "fa", "ar-fa", "fa-ar"}
+
+
+def _derin_kok(w: str):
+    """Greedy ayırma bulamazsa: en uzun Arapça/Farsça sözlük kökünü, kalanı en çok beş isim ekine (iyelik, çoğul, hâl,
+    -ki) bölünebilecek şekilde arar (âyetlerimizi -> âyet + leri+miz+i). Üç ve daha fazla ekte kök en az 4 harf."""
+    from . import rules  # döngüsel içe aktarma olmasın diye burada
+
+    def bol(x, n):
+        """x'in bütün geçerli ek bölümleri (ek sırası kurallara uyan)."""
+        if not x:
+            yield []
+            return
+        if n == 0:
+            return
+        for i in range(min(len(x), 5), 0, -1):
+            e = x[:i]
+            if e in _ISIM_EKLERI:
+                for kalan in bol(x[i:], n - 1):
+                    yield [e] + kalan
+
+    if rules._fiil_ayir(w):          # Türkçe fiil çekimi (yaratan, saydınız, dediniz): kural motoru yazar
+        return None, []
+    for L in range(len(w) - 1, 2, -1):
+        kok = w[:L]
+        hit = _get_soft(kok)
+        if not hit or hit[1] not in _DERIN_KOKEN:   # yalnız Arapça/Farsça kökler (Türkçe kelimeler kural motorunda)
+            continue
+        ekler = next((e for e in bol(w[L:], 5) if rules.ek_sirasi_gecerli(e)), None)
+        if ekler is None or not _ek_ses_uygun(kok, ekler[0]):
+            continue
+        if kok[-1] in "aeıioöuüâîû" and ekler[0][0] in "tç":   # ünlüden sonra sert ek olmaz (yara+tır değil)
+            continue
+        if len(ekler) >= 3 and len(kok) < 4:
+            continue
+        if len(ekler) <= 2 and len(kok) < 3:
+            continue
+        return hit, ekler
     return None, []

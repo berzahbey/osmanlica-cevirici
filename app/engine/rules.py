@@ -275,7 +275,9 @@ def transliterate_word(word: str, treat_last_as_final: bool = True, devam: str =
         prev_is_vowel = i > 0 and word[i - 1] in TUM_UNLULER
 
         if ch in TUM_UNLULER:
-            if is_first:
+            if i == 0 and ch in ("a", "â"):
+                letter = "آ"  # kelime başındaki a medli elifle: آلمق، آچیق، آنلام (Türkçe kelimelerin imlâsı)
+            elif is_first:
                 letter = _vowel_letter(ch, "initial")
             elif is_last:
                 letter = _vowel_letter(ch, "final")
@@ -379,6 +381,10 @@ for _forms, _yazim in [
     ("lığa luğa", "لغه"), ("liğe lüğe", "لگه"),
     ("cı ci cu cü", "جی"), ("çı çi çu çü", "چی"), ("sız siz suz süz", "سز"),
     ("sızlık suzluk", "سزلق"), ("sizlik süzlük", "سزلك"), ("sızlığı", "سزلغی"), ("sizliği", "سزلگی"),
+    # imlâ turu 2: iyelik çokluk ekleri, -ki, n'li hâl ekleri (matbaa yazımı: قلبمز، قلبڭز، شكلندكی)
+    ("imiz ımız umuz ümüz miz mız muz müz", "مز"), ("iniz ınız unuz ünüz niz nız nuz nüz", "ڭز"),
+    ("ki", "كی"), ("deki daki teki taki", "دكی"), ("ndeki ndaki", "ندكی"),
+    ("nde nda", "نده"), ("ne na", "نه"), ("ni nı nu nü", "نی"),
 ]:
     OTTOMAN_SUFFIX.update({f: _yazim for f in _forms.split()})
 
@@ -404,6 +410,9 @@ for _forms, _bas, _bit in [
     ("la le yla yle", 3, {3}),
     ("cı ci cu cü çı çi çu çü sız siz suz süz sızlık sizlik suzluk süzlük", 0.5, {0.5}),
     ("sızlığı sizliği", 0.5, {2}),
+    ("imiz ımız umuz ümüz miz mız muz müz iniz ınız unuz ünüz niz nız nuz nüz", 2, {2}),
+    ("nde nda ne na ni nı nu nü", 3, {3}),
+    ("ki", 3.5, {3.5}), ("deki daki teki taki ndeki ndaki", 3, {3.5}),
 ]:
     for _f in _forms.split():
         _SIRA[_f] = (_bas, _bit)
@@ -415,7 +424,8 @@ def ek_sirasi_gecerli(sufs) -> bool:
         bas, bit = _SIRA.get(s, (None, None))
         if bas is None:
             return False
-        uygun = sorted(b for b in bit if b > son and (b == bas or bas > son))
+        # iyelik-hâl çift anlamlı ekler (i, ın): iyelikten sonra hâl eki sayılır (âyet+ler+imiz+i)
+        uygun = sorted(b for b in bit if b > son and (b == bas or bas > son or (len(bit) > 1 and bas == son)))
         if not uygun:
             return False
         son = uygun[0]
@@ -449,17 +459,28 @@ def _ekleri_bol(tails):
     for t in (tails or []):
         if not t:
             continue
-        if t in OTTOMAN_SUFFIX:
+        if t in OTTOMAN_SUFFIX or t in SUFFIX_NO_VOWEL:
             out.append(t)
             continue
-        for i in range(len(t) - 1, 0, -1):
-            a, b = t[:i], t[i:]
-            if a in OTTOMAN_SUFFIX and b in OTTOMAN_SUFFIX and ek_sirasi_gecerli([a, b]):
-                out += [a, b]
-                break
-        else:
-            out.append(t)
+        bolum = _ek_bolumu(t, 3)
+        out += bolum if bolum else [t]
     return out
+
+
+def _ek_bolumu(t, n):
+    """t'yi en çok n bilinen eke böler (lerdir -> ler + dir, sine -> si + ne); bulunamazsa None."""
+    bilinen = lambda x: x in OTTOMAN_SUFFIX or x in SUFFIX_NO_VOWEL
+    if bilinen(t):
+        return [t]
+    if n <= 1:
+        return None
+    for i in range(len(t) - 1, 0, -1):
+        a = t[:i]
+        if bilinen(a):
+            kalan = _ek_bolumu(t[i:], n - 1)
+            if kalan and ek_sirasi_gecerli([a] + kalan):
+                return [a] + kalan
+    return None
 
 
 def ekleri_yaz(root: str, sufs, tails, harmony: str, guvenilir: bool = True) -> str:
@@ -640,6 +661,20 @@ def _fiil_ayir(word):
     return None
 
 
+def _tarihi_kok(kok: str) -> str:
+    """Osmanlıca imlâda bazı fiil kökleri eski söylenişiyle yazılır: etmek ایتمك, vermek ویرمك, demek دیمك, yemek ییمك
+    (ettiği -> ایتدیگی, edilmiştir -> ایدیلمشدر, verdiği -> ویردیگی, demiştir -> دیمشدر, dediğimiz -> دیدیگمز)."""
+    if kok == "et" or kok in ("ed", "edil", "edin"):
+        return "i" + kok[1:]
+    if kok in ("ver", "veril"):
+        return "vir" + kok[3:]
+    if kok in ("de", "denil"):
+        return "di" + kok[2:]
+    if kok == "ye":
+        return "yi"
+    return kok
+
+
 def transliterate_word_with_suffix(word: str) -> str:
     """Kelimeyi mumkunse kok+ek olarak ayirir. Kok normal (pozisyon
     farkinda) kurallarla, ek ise kendi kurallariyla cevrilir."""
@@ -655,7 +690,8 @@ def transliterate_word_with_suffix(word: str) -> str:
     fiil = _fiil_ayir(word)
     if fiil:
         kok, yazim, kok_sonu = fiil
-        return transliterate_word(kok, treat_last_as_final=kok_sonu, devam=word[len(kok):]) + yazim
+        devam = word[len(kok):]
+        return transliterate_word(_tarihi_kok(kok), treat_last_as_final=kok_sonu, devam=devam) + yazim
 
     harmony = _harmony_class(word)
 
