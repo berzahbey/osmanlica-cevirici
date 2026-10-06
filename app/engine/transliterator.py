@@ -91,6 +91,44 @@ def draft_transliterate_sentence(sentence: str) -> str:
     return WORD_RE.sub(lambda m: _ek_duzelt(repl(m)), sentence)
 
 
+# Arapça harf-i tarif (Türkçe yazımda kesmeli/tireli): Kitâbü't-Tevhîd -> كتاب التوحید, Ebü'l-Hasan -> ابو الحسن,
+# bi't-tab -> بالطبع; el-Bakara -> البقره, et-Tevbe -> التوبه, en-Nesefî -> النسفی (güneş harflerinde ses benzeşmesi)
+_HARF = "A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû"
+_TARIF_IZAFET_RE = re.compile(r"(?<![" + _HARF + r"'’])((?:[" + _HARF + r"]+['’])*[" + _HARF + r"]+?)([üuıi])['’]([lstşdrnzc])[-–]([" + _HARF + r"]+(?:['’][" + _HARF + r"]+)*)")
+_HARF_I_TARIF_RE = re.compile(r"(?<![" + _HARF + r"'’\-–])([Ee]l|[Aa]l|[Üü]l|[Uu]l|[İi]l|[EeAa][tsşdrnzc])[-–]([" + _HARF + r"]+(?:['’][" + _HARF + r"]+)*)")
+
+
+def _arapca_kelime(w):
+    o = draft_transliterate_sentence(w)
+    return "ا" + o[1:] if o.startswith("آ") else o   # harf-i tarifli kelimede medd yok: el-A'râf -> الاعراف
+
+
+def _izafet_tarif(m):
+    kok, harf, sonraki = m.group(1), m.group(3).lower(), m.group(4)
+    if not (harf == "l" or harf == turkish_lower(sonraki[:1])):
+        return m.group(0)
+    k = turkish_lower(kok)
+    bas = {"eb": "ابو", "ebu": "ابو", "ebü": "ابو", "ibn": "ابن", "b": "ب", "f": "فی", "l": "ل"}.get(k)
+    if bas is None:
+        bas = draft_transliterate_sentence(kok)
+    ayrac = "" if k in ("b", "l") else " "
+    return bas + ayrac + "ال" + _arapca_kelime(sonraki)
+
+
+def _harf_i_tarif(m):
+    on, kelime = turkish_lower(m.group(1)), m.group(2)
+    if len(kelime) < 3:            # Âl-i İmrân, Al-i Osman: izafet, harf-i tarif değil
+        return m.group(0)
+    if not (on in ("el", "al", "ül", "ul", "il") or on[1] == turkish_lower(kelime[:1])):
+        return m.group(0)
+    return "ال" + _arapca_kelime(kelime)
+
+
+def _arapca_tarifler(metin: str) -> str:
+    metin = _TARIF_IZAFET_RE.sub(_izafet_tarif, metin)
+    return _HARF_I_TARIF_RE.sub(_harf_i_tarif, metin)
+
+
 class _Eslesme:
     """repl() için WORD_RE eşleşmesi gibi davranan küçük sarmalayıcı."""
     def __init__(self, metin):
@@ -300,10 +338,12 @@ def transliterate_text(
     progress_callback=None,
 ) -> str:
     turkish_text = _merge_orphan_numbers(turkish_text)
+    turkish_text = re.sub(r"(?<=[^\W\d_])[‘`´](?=[^\W\d_])", "’", turkish_text)  # kelime içindeki ‘ ayın/hemze işareti: En‘âm
     turkish_text, _saklanan = _yabancilari_sakla(turkish_text)
     turkish_text = _kisaltmalar(turkish_text)
     turkish_text = _quran_phrases(turkish_text)
     turkish_text = _roma_rakam(turkish_text)
+    turkish_text = _arapca_tarifler(turkish_text)      # Kitâbü't-Tevhîd, el-Bakara (tire silinmeden önce)
     turkish_text = _drop_izafet(turkish_text)
     turkish_text = _remove_hyphens(turkish_text)
     """Türkçe metni (zaten Türkçe olduğu varsayılır) Osmanlıcaya çevirir.

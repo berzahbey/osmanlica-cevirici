@@ -51,6 +51,17 @@ CUMLE = {
     "Hz. Muhammed (s.a.v)'in sözü": "حضرت محمّد (صلّی الله علیه وسلّم)ڭ سوزی",
     "İsa (a.s) ve Ali (r.a.) geldi.": "عیسی (علیه السلام) و علی (رضی الله عنه) گلدی.",
     "Adem'e secde edin.": "آدمه سجده ایدیڭ.",
+    # imlâ turu 4: Arapça harf-i tarif ve tamlamalar
+    "Kitâbü’t-Tevhîd": "كتاب التوحید",
+    "Ebü’l-Hasan el-Eş’arî": "ابو الحسن الاشعری",
+    "Ebû Mansûr el-Mâtürîdî": "ابو منصور الماتریدی",
+    "Ehli’s-sünne": "اهل السنّه",
+    "el-Bakara": "البقره",
+    "et-Tevbe": "التوبه",
+    "el-En‘âm": "الانعام",
+    "Âl-i İmrân": "آل عمران",
+    "Te’vîlâtü’l-Kur’ân": "تأویلات القرآن",
+    "Muhyiddin İbnü’l-Arabî": "محیی الدین ابن العربی",
 }
 
 kalan = 0
