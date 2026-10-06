@@ -68,6 +68,10 @@ def draft_transliterate_sentence(sentence: str) -> str:
             return rules.transliterate_word_with_suffix(base) + rules.ekleri_yaz(b, [], tails_l, harmony)
 
         hit, sufs = dictionary.lookup_with_suffix(word)
+        if not hit or sufs:
+            bilesik = _bilesik_fiil(word)
+            if bilesik:
+                return bilesik
         if hit:
             if not sufs:
                 return hit[0]
@@ -124,9 +128,53 @@ def _harf_i_tarif(m):
     return "ال" + _arapca_kelime(kelime)
 
 
+def _ul_tamlama(m):
+    """Vâcib-ül Vücud -> واجب الوجود, Mesneviyy-ül Arabî -> المثنوی العربی (tireli -ül + boşluk + Arapça kelime)."""
+    k1, on, k2 = m.group(1), turkish_lower(m.group(2)), m.group(3)
+    if len(k2) < 3 or not (on[1] == "l" or on[1] == turkish_lower(k2[:1])):
+        return m.group(0)
+    return draft_transliterate_sentence(k1) + " ال" + _arapca_kelime(k2)
+
+
+_UL_TAMLAMA_RE = re.compile(r"(?<![" + _HARF + r"'’])([" + _HARF + r"]+(?:['’][" + _HARF + r"]+)*)[-–]([üuıiÜUIİ][lstşdrnzc])\s+([" + _HARF + r"]+(?:['’][" + _HARF + r"]+)*)")
+_EYYUHE_RE = re.compile(r"(?<![" + _HARF + r"])[Ee]yy[üu]h[ea]['’]?l[-–]([" + _HARF + r"]+)")
+_MAKRON = str.maketrans({"ā": "â", "ī": "î", "ū": "û", "Ā": "Â", "Ī": "Î", "Ū": "Û"})
+
+
 def _arapca_tarifler(metin: str) -> str:
+    metin = _EYYUHE_RE.sub(lambda m: "ایّها ال" + _arapca_kelime(m.group(1)), metin)   # Eyyühe'l-aziz -> ایّها العزیز
+    metin = _UL_TAMLAMA_RE.sub(_ul_tamlama, metin)
     metin = _TARIF_IZAFET_RE.sub(_izafet_tarif, metin)
     return _HARF_I_TARIF_RE.sub(_harf_i_tarif, metin)
+
+
+def _bilesik_fiil(word: str):
+    """Arapça/Farsça isim + etmek/edilmek bitişik yazılmışsa ayrı yazar (Osmanlıca imlâsı):
+    halkeden -> خلق ایدن, zanneder -> ظن ایدر, hissedilir -> حس ایدیلیر, fehmetmek -> فهم ایتمك."""
+    w = turkish_lower(word)
+    for k in range(len(w) - 3, 2, -1):
+        kuyruk = w[k:]
+        if not kuyruk.startswith(("et", "ed")) or not re.match(r"^(et[mst]|ed[eiı])", kuyruk):
+            continue
+        if kuyruk.startswith(("edeb", "edep", "edib", "edip")):
+            continue
+        # -et ile biten isim + hâl eki/ek-fiil (âhiret+te, rahmet+ten, rahmet+tir, mâhiyet+e+dir) fiil değildir
+        if re.match(r"^(ette|ete|eti|etin|etle|eten|etten|ettir|ettirler|ettı|edir|edirler)$", kuyruk) or \
+                re.match(r"^(ette|etten|etle)", kuyruk):
+            continue
+        kok = w[:k]
+        if kuyruk.startswith("ede") and dictionary.lookup_exact(kok + "e"):
+            continue                       # halke+den (حلقه) gibi: isim + ayrılma eki olabilir
+        if kok[-1] in "aeıioöuüâîû" or (kok.endswith("y") and kok[-2:-1] in "iî"):
+            continue                       # İlahiye+den gibi isim çekimi; ünlüyle biten kök birleşik fiil olmaz
+        adaylar = [kok]
+        if len(kok) >= 3 and kok[-1] == kok[-2]:
+            adaylar.append(kok[:-1])       # hiss+etmek -> his, zann+etmek -> zan, redd -> red
+        for a in adaylar:
+            h = dictionary.lookup_exact(a)
+            if h and h[1] in ("ar", "fa", "ar-fa", "fa-ar") and len(a) >= 2:
+                return h[0] + " " + rules.transliterate_word_with_suffix(kuyruk)
+    return None
 
 
 class _Eslesme:
@@ -210,7 +258,7 @@ def _quran_phrases(text: str) -> str:
 
 
 # İzafet: ünsüzle biten kelimeden sonraki -ı/-i Osmanlıcada yazılmaz (Kur'ân-ı Kerîm -> قرآن كریم)
-_IZAFET_RE = re.compile(r"(?<=[^\W\d_])-(?:y)?[ıiuü](?=[\s\-–]|$)", re.M)
+_IZAFET_RE = re.compile(r"(?<=[^\W\d_])-(?:[yY])?[ıiuüIİUÜ](?=[\s\-–]|$)", re.M)
 
 
 _ROMA = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
@@ -339,6 +387,7 @@ def transliterate_text(
 ) -> str:
     turkish_text = _merge_orphan_numbers(turkish_text)
     turkish_text = re.sub(r"(?<=[^\W\d_])[‘`´](?=[^\W\d_])", "’", turkish_text)  # kelime içindeki ‘ ayın/hemze işareti: En‘âm
+    turkish_text = turkish_text.translate(_MAKRON)                                  # kādir -> kâdir (uzun ünlü işareti)
     turkish_text, _saklanan = _yabancilari_sakla(turkish_text)
     turkish_text = _kisaltmalar(turkish_text)
     turkish_text = _quran_phrases(turkish_text)

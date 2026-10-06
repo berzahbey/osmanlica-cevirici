@@ -62,6 +62,19 @@ CUMLE = {
     "Âl-i İmrân": "آل عمران",
     "Te’vîlâtü’l-Kur’ân": "تأویلات القرآن",
     "Muhyiddin İbnü’l-Arabî": "محیی الدین ابن العربی",
+    # imlâ turu 5 (Mesnevî-i Nûriye)
+    "İ’lem eyyühel-aziz!": "اعلم ایّها العزیز!",
+    "Vâcib-ül Vücud": "واجب الوجود",
+    "MESNEVÎ-İ NURİYE": "مثنوی نوریه",
+    "zikredilen": "ذكر ایدیلن",
+    "hissedilir": "حسّ ایدیلیر",
+    "zannettiğin": "ظنّ ایتدیگڭ",
+    "âhirette": "آخرتده",
+    "rahmettir": "رحمتدر",
+    "etmez": "ایتمز",
+    "kādir": "قادر",
+    "in’am": "انعام",
+    "maahâza": "مع هذا",
 }
 
 kalan = 0

@@ -30,6 +30,7 @@ EXCEPTIONS sozlugu kullanilir - kural motoruna dusmeden dogrudan sonuc
 dondurulur. Bu liste zaman icinde, karsilasildikca genisletilmelidir;
 simdilik bilinen birkac ornekle baslar (TAM/KESIN degildir).
 """
+import re
 from .alphabet import (
     ELIF, VAV, YE, HE, MEDD_ELIF, turkish_lower,
     KALIN_KEF, KALIN_GEF, INCE_KEF, INCE_GEF,
@@ -687,6 +688,11 @@ def transliterate_word_with_suffix(word: str) -> str:
     if word in EXCEPTIONS:
         return EXCEPTIONS[word]
 
+    _f = _fiil_ayir(word)
+    if re.match(r"^(et[mst]|ed[eiı])", word) and len(word) >= 4 \
+            and (word.startswith("edebil") or not word.startswith(("edeb", "edep", "edib", "edip", "etki", "etra"))) \
+            and (not _f or _f[0] not in ("et", "ed", "edil", "edin")):
+        return transliterate_word_with_suffix("i" + word[1:])   # etmez -> ایتمز, edemez -> ایدمز, etse -> ایتسه
     fiil = _fiil_ayir(word)
     if fiil:
         kok, yazim, kok_sonu = fiil

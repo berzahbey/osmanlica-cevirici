@@ -89,6 +89,8 @@ def _load_extra_from_tsv() -> dict:
             for row in reader:
                 if len(row) >= 3 and not row[0].startswith("#") and row[1].strip():
                     latin, osmanli, origin = row[0].strip(), row[1].strip(), row[2].strip()
+                    if osmanli[:1] in "إأ":
+                        osmanli = "ا" + osmanli[1:]   # Osmanlıcada kelime başında hemze yazılmaz (إنعام -> انعام)
                     extra[turkish_lower(latin)] = (osmanli, origin)
     return extra
 
