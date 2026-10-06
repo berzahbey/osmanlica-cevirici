@@ -4,6 +4,7 @@ Ana orkestrasyon: girdi metnini alır, gerekiyorsa Türkçeye çevirir,
 sonra cümleleri gruplar halinde Osmanlıcaya (Arap harfli) çevirip Ollama ile inceltir.
 """
 import re
+import unicodedata
 import logging
 from langdetect import detect, DetectorFactory
 
@@ -132,6 +133,32 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
                             ("dinle", "دینل", "دیڭله"), ("benze", "بنز", "بڭز")):
         if l.startswith(lat) and osm.startswith(eski) and not re.match(r"anlam(?!a)", l):   # anlam, anlamı (isim) değişmez
             osm = yeni + osm[len(eski):]
+    # geniş zaman -ir/-ır, kök r ile bitiyorsa (ver-ir, çevir-ir, bildir-ir): ویرر، چویرر، بیلدیرر (Risale)
+    if (re.search(r"[iı]r[ıi]r(ler|lar)?$", l) or re.match(r"^ver[ıi]r(ler)?$", l)) and re.search(r"ریر(لر)?$", osm):
+        osm = re.sub(r"ریر(لر)?$", r"رر\1", osm)
+    # Arapça -iyye/-iye sıfatları tek ye: الهیه، ایمانیه، معنویه
+    m_iy = re.search(r"([a-zçğıöşüâîû]{4,})iy?ye", l)
+    if m_iy and "ییه" in osm:
+        taban = dictionary.lookup_exact(m_iy.group(1) + "i")
+        if not (taban and taban[1] == "tr"):              # şimdi+ye, bilgi+ye: Türkçe yönelme eki, dokunma
+            osm = osm.replace("ییه", "یه")
+    # ayrılma/bulunma eki -tan/-ten, -ta/-te matbaada دن/ده: اوزاقدن، میكروپدن
+    if re.search(r"[pçtksşhf]t[ae]n$", l) and re.search(r"(تان|تن)$", osm) and len(l) > 4:   # yaratan, tutan değil
+        osm = re.sub(r"(تان|تن)$", "دن", osm)
+    # ettirgen -dir/-tir: یتیشدیرمك، چالیشدیرییور، ایتدیرن
+    if re.search(r"(ş|t)t[ıiuü]r", l):
+        osm = osm.replace("شتیر", "شدیر").replace("تتیر", "تدیر").replace("شتور", "شدیر").replace("تتور", "تدیر")
+    # -daki/-deki/-taki/-teki: دهكی (Risale: اصلندهكی، عالمدهكی)
+    if re.search(r"[dt][ae]ki$", l):
+        osm = re.sub(r"(داكی|دكی|تاكی|تكی)$", "دهكی", osm)
+    # ölüm, ölmek: ئولوم (Risale)
+    if l.startswith("öl") and osm.startswith("اول"):
+        osm = "ئو" + osm[2:]
+    # parça-: پارچه‌لانمق
+    if l.startswith("parça") and osm.startswith("پارچا"):
+        osm = "پارچه" + osm[5:]
+    if l.startswith("ederek"):
+        osm = osm.replace("ایده\u200cرك", "ایدرك", 1)        # Risale: ایدرك
     # -makla/-mekle matbaada مقله/مكله: اولمقله
     if l.endswith(("makla", "mekle")) and osm.endswith(("ماقله", "مكله")):
         osm = osm[:-5] + "مقله" if osm.endswith("ماقله") else osm
@@ -438,6 +465,7 @@ def transliterate_text(
     use_ollama_refine: bool = True,
     progress_callback=None,
 ) -> str:
+    turkish_text = unicodedata.normalize("NFC", turkish_text)   # ayrık şapka (u + ̂) -> û
     turkish_text = _merge_orphan_numbers(turkish_text)
     turkish_text = re.sub(r"(?<=[^\W\d_])[‘`´](?=[^\W\d_])", "’", turkish_text)  # kelime içindeki ‘ ayın/hemze işareti: En‘âm
     turkish_text = turkish_text.translate(_MAKRON)                                  # kādir -> kâdir (uzun ünlü işareti)

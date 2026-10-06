@@ -33,7 +33,7 @@ BEKLENEN = {
     # sık kelimeler ve özel adlar
     "nitekim": "نته‌كیم", "buna": "بوڭا", "birşey": "بر شی", "Ali": "علی", "Hasan": "حسن", "Mısır": "مصر",
     # derin ek ayırma (Arapça kök + iyelik/hâl ekleri)
-    "âyetlerimizi": "آیتلرمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلندكی",
+    "âyetlerimizi": "آیتلرمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلندهكی",
     # imlâ turu 3: OpenITI sıklık listesiyle gözden geçirilen kelimeler
     "tevilat": "تأویلات", "istidadı": "استعدادی", "münezzehtir": "منزّهدر", "rububiyet": "ربوبیت", "muvahhid": "موحّد",
     "mübiyn": "مبین", "risalet": "رسالت", "bizzat": "بالذّات",
@@ -86,6 +86,10 @@ CUMLE = {
     "istersen": "ایسترسهڭ", "nefsim": "نفسم", "anlamak": "آڭلامق", "anlıyor": "آڭلایور", "benzer": "بڭزر",
     "etmemek": "ایتمهمك", "vermeyip": "ویرمهیوب", "olmakla": "اولمقله", "yolu": "یولی", "matemhane": "ماتمخانه",
     "Allâh": "الله", "der": "دیر", "dört": "درت", "dokuz": "طقوز", "kalsın": "قالسین", "oluyor": "اولیور", "durumda": "طورومده", "kuru": "قورو",
+    # imlâ turu 9 (Şuâlar Osmanlıca nüshası)
+    "verir": "ویرر", "çevirir": "چویرر", "gösterir": "گوستریر", "getirir": "گتیرر", "gelir": "گلیر", "ederek": "ایدرك", "İlahiye": "الهیه", "uzaktan": "اوزاقدن",
+    "yetiştirmek": "یتیشدیرمك", "ölüm": "ئولوم", "olacağını": "اولاجغنی", "şifa": "شفا", "mahiyeti": "ماهیتی",
+    "manasıyla": "معناسیله", "meyvesi": "میوهسی", "karanlık": "قراڭلق", "içindeki": "ایچندهكی",
     "küçük": "كوچك", "karşı": "قارشو", "yeni": "یڭی", "üçüncü": "اوچنجی", "içinde": "ایچنده", "işte": "ایشته",
 }
 

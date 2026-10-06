@@ -385,7 +385,8 @@ for _forms, _yazim in [
     # imlâ turu 2: iyelik çokluk ekleri, -ki, n'li hâl ekleri (matbaa yazımı: قلبمز، قلبڭز، شكلندكی)
     ("imiz ımız umuz ümüz miz mız muz müz", "مز"), ("iniz ınız unuz ünüz niz nız nuz nüz", "ڭز"),
     ("im ım um üm", "م"),   # 1. tekil iyelik/ek-fiil: نفسم، نفسمه (Risale)
-    ("ki", "كی"), ("deki daki teki taki", "دكی"), ("ndeki ndaki", "ندكی"),
+    ("ki", "كی"), ("deki daki teki taki", "دهكی"), ("ndeki ndaki", "ندهكی"),   # Risale: اصلندهكی
+    ("tan ten", "دن"), ("ta te", "ده"),
     ("nde nda", "نده"), ("ne na", "نه"), ("ni nı nu nü", "نی"),
 ]:
     OTTOMAN_SUFFIX.update({f: _yazim for f in _forms.split()})
@@ -566,7 +567,7 @@ def _fiil_ekleri():
     add("yıp yip yup yüp", "یوب", sart="unlu")
     # -arak/-erek
     # kalında elif, incede he (Risale matbaa nüshası: اولارق، ایده‌رك)
-    add("erek arak", "ه" + _ZW + "رك", "ارق", sart="unsuz")
+    add("erek arak", "ه" + _ZW + "رك", "ارق", sart="unsuz")   # kalında elif (اولارق); ederek ایدرك ayrıca
     add("yerek yarak", "یه" + _ZW + "رك", "یارق", sart="unlu")
     # gelecek zaman
     for y, sart in (("", "unsuz"), ("y", "unlu")):
@@ -641,10 +642,11 @@ def _fiil_ekleri():
     # ortaç -acağı/-eceği (anlaşılacağını -> آڭلاشیله‌جغنی)
     for y, sart in (("", "unsuz"), ("y", "unlu")):
         b = ("یه" if y else "ه") + _ZW + "ج"
+        bk = ("یا" if y else "ا") + "ج"   # kalında elif (اولاجغنی)
         for son, yaz in (("", "ی"), ("nı", "نی"), ("na", "نه"), ("nda", "نده"), ("ndan", "ندن"),
                          ("mız", "مز"), ("nız", "ڭز"), ("m", "م")):
             son_i = son.replace("ı", "i").replace("a", "e")
-            add(f"{y}acağı{son}", b + "غ" + yaz, sart=sart)
+            add(f"{y}acağı{son}", bk + "غ" + yaz, sart=sart)
             add(f"{y}eceği{son_i}", b + "گ" + yaz, sart=sart)
     # olumsuz emir (çoğul)
     add("meyin mayın", "میڭ")

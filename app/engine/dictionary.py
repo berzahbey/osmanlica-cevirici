@@ -91,6 +91,14 @@ def _load_extra_from_tsv() -> dict:
                     latin, osmanli, origin = row[0].strip(), row[1].strip(), row[2].strip()
                     if osmanli[:1] in "إأ":
                         osmanli = "ا" + osmanli[1:]   # Osmanlıcada kelime başında hemze yazılmaz (إنعام -> انعام)
+                    if osmanli.endswith("اء") and " " not in osmanli:
+                        osmanli = osmanli[:-1]        # sondaki hemze yazılmaz: شفاء -> شفا، كبریاء -> كبریا (Risale)
+                    if osmanli.endswith("ة"):
+                        _son = latin.rstrip("'")[-1:].lower()
+                        if _son in ("t", "d"):
+                            osmanli = osmanli[:-1] + "ت"                 # ماهیة -> ماهیت
+                        elif _son in ("e", "a", "â"):
+                            osmanli = osmanli[:-1] + "ه"                 # -e ile biten: ه
                     extra[turkish_lower(latin)] = (osmanli, origin)
     return extra
 
