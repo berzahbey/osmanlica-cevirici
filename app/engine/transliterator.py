@@ -93,7 +93,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
         return kok + isaret + tam[len(kok):]
 
     sentence = _TIRNAK_EK_RE.sub(tirnak_eki, sentence)
-    return WORD_RE.sub(lambda m: _matbaa_ekleri(m.group(0), _ek_duzelt(repl(m))), sentence)
+    return WORD_RE.sub(lambda m: _lerin_eki(m.group(0), _matbaa_ekleri(m.group(0), _ek_duzelt(repl(m)))), sentence)
 
 
 # "-in/-ün" ile biten Arapça kökler: din+den دیندن (iyelik eki sanılıp yesi silinmesin)
@@ -547,6 +547,67 @@ def _kisaltmalar(metin: str) -> str:
     return _PARANTEZ_EK_RE.sub(lambda m: m.group(1) + _PARANTEZ_EKI[m.group(2)], metin)
 
 
+# İmlâ turu 12: dua ibareleri açık yazılır (sellellahu aleyhi ve sellem, vellahu âlem, Yarabbi)
+_DUA_IBARE = [
+    (re.compile(r"(?<![^\W\d_])s[ae]ll[ae]ll[aâ]hu\s+aleyhi\s+(?:ve\s*)?sellem(?:['’]([a-zçğıöşü]{1,4}))?(?![^\W\d_])", re.I),
+     "صلّی الله علیه وسلّم"),
+    (re.compile(r"(?<![^\W\d_])vell[aâ]hu\s+(?:[aâ]lem|a['’]lem)(?![^\W\d_])", re.I), "والله اعلم"),
+    (re.compile(r"(?<![^\W\d_])y[aâ]\s?rabb[iî](?![^\W\d_])", re.I), "یا ربّی"),
+    (re.compile(r"(?<![^\W\d_])Irak(?:['’]([a-zçğıöşü]{1,4}))?(?![^\W\d_])"), "عراق"),   # büyük harfli Irak ülkedir (ırak = uzak)
+]
+_HARF = "A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû"
+_SAYI_KELIME = {"bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on", "yirmi", "otuz", "kırk", "elli",
+                "altmış", "yetmiş", "seksen", "doksan", "yüz", "birkaç", "kaç", "nice", "binlerce"}
+
+
+def _dua_ibareleri(metin: str) -> str:
+    for rx, ar in _DUA_IBARE:
+        metin = rx.sub(lambda m: ar + (_PARANTEZ_EKI.get(m.group(1).lower(), "") if m.lastindex and m.group(1) else ""), metin)
+    return metin
+
+
+# ı ile başlayan Türkçe kelimeler (Islak, Işık, Irmak): büyük I'ları gerçek I'dır
+_I_TURKCE = ("ılı", "ırak", "ırk", "ırmak", "ısı", "ısır", "ıslak", "ıslâk", "ıslan", "ıslat", "ısmarla", "ıssız", "ışı", "ızgara", "ıhlamur", "ıvır")
+
+
+def _buyuk_i(metin: str) -> str:
+    """OCR'ın noktasını düşürdüğü büyük İ: "Ibrahim", "Islâm" sözlükte "ı" ile bulunamaz, "İ" ile bulunursa İ okunur."""
+    def f(m):
+        w = m.group(0)
+        if dictionary.lookup_with_suffix(w)[0] or turkish_lower(w).startswith(_I_TURKCE):
+            return w
+        alt = "İ" + w[1:]
+        return alt if dictionary.lookup_with_suffix(alt)[0] else w
+    return re.sub(r"(?<![" + _HARF + r"'’])I[a-zçğıöşüâîû]+", f, metin)
+
+
+def _et_bin(metin: str) -> str:
+    """Bağlama göre: Arapça/Farsça isimden sonra "et" emir (dikkat et ایت; et = ات yalnız tek başına), sayıdan sonra
+    "bin" bin sayısı (kırk bin بیڭ; Ali bin Ebu Talib بن)."""
+    def f(m):
+        onceki, ara, kelime = m.group(1), m.group(2), turkish_lower(m.group(3))
+        o = turkish_lower(onceki)
+        if kelime == "bin" and (o in _SAYI_KELIME or o.isdigit()):
+            return onceki + ara + "بیڭ"
+        if kelime == "et":
+            hit = dictionary.lookup_exact(o)
+            if hit and str(hit[1]).startswith(("ar", "fa", "soz")):
+                return onceki + ara + "ایت"
+        return m.group(0)
+    metin = re.sub(r"([" + _HARF + r"]+|\d+)(\s+)(et|bin)(?![" + _HARF + r"'’])", f, metin)
+    # cümle/söz sonundaki "başlar" fiildir (باشلار); "başlar" (başın çoğulu) ekle gelir: باشلری، باشلره
+    return re.sub(r"(?<![" + _HARF + r"'’])[Bb]aşlar(?=\s*[.,!?;:…»]|\s*$)", "باشلار", metin)
+
+
+def _lerin_eki(latin: str, osm: str) -> str:
+    """Kural motorunun çoğul + ilgi eki yazımı: valilerin والیلرین -> والیلرڭ, tatlıların طاتلیلارین -> طاتلیلرڭ."""
+    if re.search(r"l[ae]r[ıi]n$", turkish_lower(latin)):
+        for son in ("لارین", "لرین"):
+            if osm.endswith(son):
+                return osm[:-len(son)] + "لرڭ"
+    return osm
+
+
 def transliterate_text(
     turkish_text: str,
     use_ollama_refine: bool = True,
@@ -558,6 +619,9 @@ def transliterate_text(
     turkish_text = turkish_text.translate(_MAKRON)                                  # kādir -> kâdir (uzun ünlü işareti)
     turkish_text, _saklanan = _yabancilari_sakla(turkish_text)
     turkish_text = _kisaltmalar(turkish_text)
+    turkish_text = _dua_ibareleri(turkish_text)   # imlâ turu 12
+    turkish_text = _buyuk_i(turkish_text)
+    turkish_text = _et_bin(turkish_text)
     turkish_text = _quran_phrases(turkish_text)
     turkish_text = _roma_rakam(turkish_text)
     turkish_text = _arapca_tarifler(turkish_text)      # Kitâbü't-Tevhîd, el-Bakara (tire silinmeden önce)
