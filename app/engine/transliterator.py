@@ -425,7 +425,7 @@ def _quran_phrases(text: str) -> str:
 
 
 # İzafet: ünsüzle biten kelimeden sonraki -ı/-i Osmanlıcada yazılmaz (Kur'ân-ı Kerîm -> قرآن كریم)
-_IZAFET_RE = re.compile(r"(?<=[^\W\d_])-(?:[yY])?[ıiuüIİUÜ](?=[\s\-–]|$)", re.M)
+_IZAFET_RE = re.compile(r"(?:(?<=[^\W\d_])|(?<=[‘’]))-(?:[yY])?[ıiuüIİUÜ](?=[\s\-–]|$)", re.M)
 
 
 _ROMA = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
@@ -728,4 +728,6 @@ def transliterate_text(turkish_text, *args, **kwargs):
     out = _transliterate_text_ilk(turkish_text, *args, **kwargs)
     out = out.replace("\ue012", "بن").replace("\ue010", "ی")
     out = re.sub("\u0647\ue011", "\u0647\u0654", out)
-    return out.replace("\ue011", "")
+    out = out.replace("\ue011", "")
+    out = re.sub("[\u2018\u2019'`\u02bf\u02be]", "", out)   # ayın/hemze işareti Osmanlıcaya harf olarak geçmez
+    return out.replace("\u06af", "\u0643")                  # g sesi Hayrat gibi kef (ك) ile; ڭ kalır

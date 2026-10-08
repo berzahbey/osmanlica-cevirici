@@ -15,6 +15,7 @@ from .alphabet import turkish_lower
 DATA_FILE = Path(__file__).parent.parent / "data" / "ottoman_dict.tsv"
 # Türkçe kelime düzeltmeleri: sözlükten sonra okunur (sözlük kaydı Türkçe kelimeyle çakışınca Türkçe kazanır)
 DUZELTME_FILE = Path(__file__).parent.parent / "data" / "duzeltmeler.tsv"
+HAYRAT_FILE = Path(__file__).parent.parent / "data" / "hayrat.tsv"  # Risale-i Nur (Hayrat) eksik kelimeler
 
 SEED_DICTIONARY = {
     "kitap": ("كتاب", "ar"), "kalem": ("قلم", "ar"), "insan": ("انسان", "ar"),
@@ -81,7 +82,7 @@ LOOKUP_SUFFIXES = SUFFIXES + [x for x in EXTRA_LOOKUP_SUFFIXES if x not in SUFFI
 
 def _load_extra_from_tsv() -> dict:
     extra = {}
-    for dosya in (DATA_FILE, DUZELTME_FILE):
+    for dosya in (DATA_FILE, DUZELTME_FILE, HAYRAT_FILE):  # Hayrat en son: tek ölçü
         if not dosya.exists():
             continue
         with open(dosya, "r", encoding="utf-8") as f:
