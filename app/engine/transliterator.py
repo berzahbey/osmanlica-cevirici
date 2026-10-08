@@ -456,7 +456,9 @@ def _roma_rakam(text: str) -> str:
 def _drop_izafet(text: str) -> str:
     # İzafet silinir ama yerine görünmez işaret kalır: "-yı/-yi" -> \ue010 (sonra ی), öteki -> \ue011
     # (sonra ه ile biten kelimede hemze, ünsüzden sonra silinir). Bkz. transliterate_text sarmalayıcısı.
-    return _IZAFET_RE.sub(lambda m: "\ue010" if m.group(0)[1:2] in "yY" else "\ue011", text)
+    # h ile biten kelimede ه ünsüzdür, hemze almaz: fıkh-ı ekber فقه اكبر، vech-i irtibât وجه ارتباطی (Hayrat) -> \ue0f1
+    return _IZAFET_RE.sub(lambda m: "\ue010" if m.group(0)[1:2] in "yY" else
+                          ("\ue0f1" if m.string[m.start() - 1:m.start()] in "hH" else "\ue011"), text)
 
 
 # ---------------- Latin harfli yabancı dil dizileri (Zahir'in kararı: aslı olduğu gibi kalır) ----------------
@@ -746,7 +748,7 @@ def transliterate_text(turkish_text, *args, **kwargs):
     out = _transliterate_text_ilk(turkish_text, *args, **kwargs)
     out = out.replace("\ue012", "بن").replace("\ue010", "ی")
     out = re.sub("\u0647\ue011", "\u0647\u0654", out)
-    out = out.replace("\ue011", "")
+    out = out.replace("\ue011", "").replace("\ue0f1", "")
     out = re.sub("[\u2018\u2019'`\u02bf\u02be]", "", out)   # ayın/hemze işareti Osmanlıcaya harf olarak geçmez
     return out.replace("\u06af", "\u0643")                  # g sesi Hayrat gibi kef (ك) ile; ڭ kalır
 
