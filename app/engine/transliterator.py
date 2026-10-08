@@ -68,7 +68,8 @@ def draft_transliterate_sentence(sentence: str) -> str:
                     if hit2:
                         kok2 = aday[: len(aday) - len("".join(sufs2))] if sufs2 else aday
                         return hit2[0] + rules.ekleri_yaz(kok2, sufs2, [], h2, rules.ek_guvenilir(kok2, sufs2))
-                return rules.transliterate_word_with_suffix(tam.replace("'", "\u2018"))
+                if re.search("[âîûāīū]", tam):   # şapkasız kelimede kesme işareti ek ayıracıdır (Çeşmesi'nde, Urfa'daki)
+                    return rules.transliterate_word_with_suffix(tam.replace("'", "\u2018"))
             harmony = rules._harmony_class(turkish_lower(word).replace("'", ""))
             hit, sufs = dictionary.lookup_with_suffix(base)
             b = turkish_lower(base).replace("'", "")
@@ -748,3 +749,108 @@ def transliterate_text(turkish_text, *args, **kwargs):
     out = out.replace("\ue011", "")
     out = re.sub("[\u2018\u2019'`\u02bf\u02be]", "", out)   # ayın/hemze işareti Osmanlıcaya harf olarak geçmez
     return out.replace("\u06af", "\u0643")                  # g sesi Hayrat gibi kef (ك) ile; ڭ kalır
+
+
+
+# ---- Hayrat çok kelimeli ifadeleri ve birleşik yazımlar ----
+import os as _os
+from pathlib import Path
+
+_IFADE_DOSYA = _os.environ.get("HAYRAT_IFADE") or str(Path(__file__).parent.parent / "data" / "hayrat_ifade.tsv")
+_KESME = "'\u2019\u2018\u02bc\u02bb"
+_SAPKA_TR = str.maketrans({"â": "a", "î": "i", "û": "u", "ā": "a", "ī": "i", "ū": "u", "ō": "o"})
+
+
+def _ifade_anahtar(s):
+    s = s.replace("I", "ı").replace("İ", "i").lower()
+    for c in _KESME:
+        s = s.replace(c, "'")
+    return re.sub(r"\s+", " ", s.replace("\u2010", "-")).strip()
+
+
+def _trie_regex(anahtarlar):
+    kok = {}
+    for a in anahtarlar:
+        d = kok
+        for c in a:
+            d = d.setdefault(c, {})
+        d[""] = True
+
+    def kar(c):
+        if c == "'":
+            return "[" + _KESME + "]"
+        if c == " ":
+            return r"\s+"
+        if c == "-":
+            return "[-\u2010]"
+        return re.escape(c)
+
+    def yaz(d):
+        son = "" in d
+        dallar = [kar(c) + yaz(d[c]) for c in sorted(k for k in d if k)]
+        if not dallar:
+            return ""
+        govde = dallar[0] if len(dallar) == 1 else "(?:" + "|".join(dallar) + ")"
+        return "(?:" + govde + ")?" if son else govde
+    return yaz(kok)
+
+
+def _ifade_yukle():
+    ifade = {}
+    try:
+        for satir in open(_IFADE_DOSYA, encoding="utf-8"):
+            p = satir.rstrip("\n").split("\t")
+            if len(p) >= 2 and p[0] and p[1]:
+                ifade[_ifade_anahtar(p[0])] = p[1]
+    except OSError:
+        return {}, None
+    if not ifade:
+        return {}, None
+    desen = r"(?<![^\W\d_])(" + _trie_regex(ifade) + r")(?:[" + _KESME + r"]([^\W\d_]+))?(?![^\W\d_])"
+    return ifade, re.compile(desen)
+
+
+_IFADE, _IFADE_RE = _ifade_yukle()
+_BERI_RE = re.compile(r"(?<=دن|تن) (?:برو|بری)(?=$|[\s،.؛:!؟»)\]])")
+_SORU_RE = re.compile(r" (می(?:دیر|در|سڭ|سڭز|سین|یز|ییز|یم|یدی|یدیر|كه)?)(?=$|[\s،.؛:!؟?»)\]])")
+_transliterate_text_ifadesiz = transliterate_text
+
+
+def _bitisik(out):
+    out = _BERI_RE.sub("بری", out)          # seneden beri -> سنهدنبری (Hayrat)
+    return _SORU_RE.sub(r"\1", out)           # var mıdır -> وارمیدر، olmaz mı -> اولمازمی
+
+
+def _ifade_ek(latin, ek):
+    son = re.split(r"[\s\-\u2010" + _KESME + r"]+", latin.strip())[-1]
+    s = turkish_lower(son.translate(_SAPKA_TR))
+    return rules.ekleri_yaz(s, [], [turkish_lower(ek)], rules._harmony_class(s))
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not _IFADE_RE or not turkish_text:
+        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs))
+    kucuk = turkish_text.replace("I", "ı").replace("İ", "i").lower()
+    if len(kucuk) != len(turkish_text):
+        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs))
+    parcalar, son = [], 0
+    for m in _IFADE_RE.finditer(kucuk):
+        yazim = _IFADE.get(_ifade_anahtar(m.group(1))) or _IFADE.get(_ifade_anahtar(m.group(1)).translate(_SAPKA_TR))
+        if not yazim:
+            continue
+        parcalar.append(("metin", turkish_text[son:m.start()]))
+        if m.group(2):
+            yazim += _ifade_ek(turkish_text[m.start(1):m.end(1)], turkish_text[m.start(2):m.end(2)])
+        parcalar.append(("ifade", yazim))
+        son = m.end()
+    if not parcalar:
+        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs))
+    parcalar.append(("metin", turkish_text[son:]))
+    out = []
+    for tur, p in parcalar:
+        if tur == "ifade" or not p.strip():
+            out.append(p)
+        else:
+            bas, sonb = p[: len(p) - len(p.lstrip())], p[len(p.rstrip()):]
+            out.append(bas + _transliterate_text_ifadesiz(p.strip(), *args, **kwargs) + sonb)
+    return _bitisik("".join(out))

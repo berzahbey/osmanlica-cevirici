@@ -6,7 +6,7 @@ import collections, os, re, sys, time, unicodedata
 
 ESIK_YENI, ESIK_DEGIS, ORAN = 2, 3, 0.7
 CIFT_ANLAMLI = {"et", "alem", "adet", "kalıp"}
-HAREKE_S = re.compile("[\u064B-\u0650\u0652-\u065F\u0670\u06D6-\u06ED\u0640\u200c\u200d\u200e\u200f]")
+HAREKE_S = re.compile("[\u064B-\u0650\u0652\u0653\u0655-\u065F\u0670\u06D6-\u06ED\u0640\u200c\u200d\u200e\u200f]")
 HAREKE_K = re.compile("[\u064B-\u0653\u0655-\u065F\u0670\u06D6-\u06ED\u0640\u200c\u200d\u200f\u200e]")
 ARAP_OZEL = re.compile("[عحطظصضثذقغ]")
 SAPKA = str.maketrans({"â": "a", "î": "i", "û": "u", "ā": "a", "ī": "i", "ū": "u", "ō": "o"})
@@ -19,8 +19,9 @@ def harf(o):
     return o.replace("\u06A9", "\u0643").replace("\u06AF", "\u0643").replace("\u06C1", "\u0647")
 
 
-def sozluk_yazim(o):
-    return re.sub(r"[\s،؛؟.,;:!?«»\"()\[\]]", "", HAREKE_S.sub("", harf(o)))
+def sozluk_yazim(o):   # içteki boşluk korunur (بدیع الزمان)
+    o = re.sub(r"[،؛؟.,;:!?«»\"()\[\]]", "", HAREKE_S.sub("", harf(o)))
+    return re.sub(r"\s+", " ", o).strip()
 
 
 def kiyas(o):
@@ -46,6 +47,34 @@ def hemzesiz(k):
     return k.replace("'", "") if len(p) == 2 and p[0] and p[1] and p[1] not in EK_AYRAC else None
 
 
+def ifade_anahtar(s):
+    s = s.replace("I", "ı").replace("İ", "i").lower()
+    for c in "\u2019\u2018\u02bc\u02bb`":
+        s = s.replace(c, "'")
+    return re.sub(r"\s+", " ", s.replace("\u2010", "-")).strip()
+
+
+def ifade_uret(satirlar, cikti):
+    """Çok kelimeli Hayrat ifadeleri (en az 3 kez, %70 aynı yazım): Aleyhissalâtü Vesselâm -> علیه الصلاة والسلام"""
+    say = collections.defaultdict(collections.Counter)
+    for l, o, n in satirlar:
+        if not (" " in l.strip() or "-" in l) or re.search(r"[\d\u0600-\u06FF]", l) or not re.search(r"[A-Za-zÇĞİÖŞÜçğıöşüâîû]", l):
+            continue
+        o2 = sozluk_yazim(o)
+        if o2 and not re.search(r"[^\u0600-\u06FF ]", o2):
+            say[ifade_anahtar(l)][o2] += n
+    yaz = {}
+    for k, c in say.items():
+        top = sum(c.values()); o, n = c.most_common(1)[0]
+        if top >= 3 and n / top >= 0.7:
+            for a in (k, k.translate(SAPKA)):
+                yaz.setdefault(a, o)
+    with open(cikti, "w", encoding="utf-8") as f:
+        for k in sorted(yaz):
+            f.write(f"{k}\t{yaz[k]}\n")
+    return len(yaz)
+
+
 def oku(yol):
     for s in open(yol, encoding="utf-8"):
         p = s.rstrip("\n").split("\t")
@@ -65,7 +94,7 @@ for l, o, n in oku("/data/hayrat_egitim_kelime.tsv"):
     if not l or " " in l or "-" in l or re.search(r"[\d\u0600-\u06FF]", l) or not LATIN.search(l):
         continue
     o2 = sozluk_yazim(o)
-    if o2 and not re.search(r"[^\u0600-\u06FF]", o2):
+    if o2 and not re.search(r"[^\u0600-\u06FF ]", o2):
         sayim[kucuk(l)][o2] += n
 egitim = {}
 for k, c in sayim.items():
@@ -84,6 +113,8 @@ with open("/tmp/hayrat_egitim.tsv", "w", encoding="utf-8") as f:
     for k in sorted(egitim):
         f.write(f"{k}\t{egitim[k][0]}\t{egitim[k][1]}\n")
 os.environ["HAYRAT_DOSYA"] = "/tmp/hayrat_egitim.tsv"
+ifade_sayi = ifade_uret(oku("/data/hayrat_egitim_kelime.tsv"), "/tmp/hayrat_ifade_egitim.tsv")
+os.environ["HAYRAT_IFADE"] = "/tmp/hayrat_ifade_egitim.tsv"
 
 # ---- 2) çevirici (eğitim sözlüğüyle) ----
 sys.path.insert(0, "/app")
@@ -124,7 +155,7 @@ for i, (l, c) in enumerate(sorted(yazim.items(), key=lambda x: -sum(x[1].values(
         print(f"  {i}/{len(yazim)}  {time.time() - t0:.0f} sn", flush=True)
 
 with open("/data/hayrat_sinav.txt", "w", encoding="utf-8") as f:
-    f.write(f"HAYRAT SINAVI — eğitim sözlüğü {len(egitim)} kayıt; sınav: {len(yazim)} kelime grubu\n")
+    f.write(f"HAYRAT SINAVI — eğitim sözlüğü {len(egitim)} kayıt, {ifade_sayi} ifade; sınav: {len(yazim)} kelime grubu\n")
     for tur in ("GENEL", "KURAL MOTORU", "sözlükte var", "çok kelimeli"):
         d, t = sonuc[tur]
         f.write(f"  {tur:14s} %{100 * d / max(1, t):6.2f}   ({t} kez)\n")
