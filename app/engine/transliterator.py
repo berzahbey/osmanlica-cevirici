@@ -59,13 +59,27 @@ def draft_transliterate_sentence(sentence: str) -> str:
                     # Şeddeli kök + ek: Hakk'a -> Hakk + a (حقّه); sözlükteki "hakka" (حقا, "gerçekten") başka kelime
                     base, tails = joined.replace("'", ""), parts[k:]
                     break
+            if base == parts[0] and len(parts) == 2 and not _ek_mi(turkish_lower(parts[1])):
+                # ayın/hemze işareti (ma’nâ, te’mîn): ek ayıracı değil, kelimenin parçası
+                tam = turkish_lower(word.replace("\u2019", "'"))
+                h2 = rules._harmony_class(tam.replace("'", ""))
+                for aday in (tam.replace("'", "\u2018"), tam):
+                    hit2, sufs2 = dictionary.lookup_with_suffix(aday)
+                    if hit2:
+                        kok2 = aday[: len(aday) - len("".join(sufs2))] if sufs2 else aday
+                        return hit2[0] + rules.ekleri_yaz(kok2, sufs2, [], h2, rules.ek_guvenilir(kok2, sufs2))
+                return rules.transliterate_word_with_suffix(tam.replace("'", "\u2018"))
             harmony = rules._harmony_class(turkish_lower(word).replace("'", ""))
             hit, sufs = dictionary.lookup_with_suffix(base)
             b = turkish_lower(base).replace("'", "")
             tails_l = [turkish_lower(t) for t in tails if t]
             if hit:
                 root = b[: len(b) - len("".join(sufs))] if sufs else b
-                return hit[0] + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs))
+                kok_yazi = hit[0]
+                if not sufs and tails_l and tails_l[0][:1] == "n" and kok_yazi.endswith("\u0633\u06cc") \
+                        and b.endswith(("si", "sı", "su", "sü")):
+                    kok_yazi = kok_yazi[:-1]   # Gazetesi'nin -> غزتهسنڭ (Hayrat)
+                return kok_yazi + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs))
             return rules.transliterate_word_with_suffix(base) + rules.ekleri_yaz(b, [], tails_l, harmony)
 
         hit, sufs = dictionary.lookup_with_suffix(word)
@@ -724,6 +738,9 @@ _BIN_ISIM_RE = re.compile(r"([A-ZÇĞİÖŞÜÂÎÛ][^\s]*\s)bin(?=\s[A-ZÇĞİ�
 def transliterate_text(turkish_text, *args, **kwargs):
     """İzafet: ه ile biten kelimede hemze (رسالهٔ نور, قوّهٔ معنویه), "-yı/-yi"de ی (دنیای فانی), ünsüzden sonra yazılmaz.
     İki özel ismin arasındaki "bin" بن (Ali bin Ebî Tâlib); öteki "bin" sözlükten (sayı: بیڭ)."""
+    turkish_text = turkish_text.replace("\u02bb", "\u2018")   # ʻ ayın işareti = ‘
+    turkish_text = re.sub(r"(?<=[^\W\d_]{3})[üu]?lill[âa]h", " lillâh", turkish_text)   # elhamdülillâh -> الحمد لله
+    turkish_text = re.sub(r"(?<=[^\W\d_]{3})[üu]ll[âa]h", " Allâh", turkish_text)       # âdâtullâh -> عادات الله
     turkish_text = _BIN_ISIM_RE.sub("\\1\ue012", turkish_text)
     out = _transliterate_text_ilk(turkish_text, *args, **kwargs)
     out = out.replace("\ue012", "بن").replace("\ue010", "ی")

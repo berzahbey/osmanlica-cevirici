@@ -246,6 +246,53 @@ def _historicize_et_ver(word: str) -> str:
     return word
 
 
+
+# ---- Arapça kelime kuralı (sözlükte olmayan, şapkalı ya da ayın/hemze işaretli gövdeler) ----
+_ARAP_ISARET = re.compile("[âîûāīū\u2018\u2019\u02bf']")
+_UZUN_UNLU = {"â": "ا", "ā": "ا", "î": "ی", "ī": "ی", "û": "و", "ū": "و"}
+_KISA_UNLU = set("aeıioöuü")
+
+
+def _arapca_kok(word: str) -> str:
+    """ma‘lûmiyet -> معلومیت, teâvün -> تعاون, mu‘cize -> معجزه: uzun ünlüler harfle, kısa ünlüler yazılmaz,
+    ayın ع, hemze أ/ؤ/ئ, sondaki kısa ünlü ه/ی/و, ikiz ünsüz tek harf."""
+    w, out, n = word, [], len(word)
+    arka = bool(re.search("[aıouâûāū]", w))
+    for i, ch in enumerate(w):
+        once = w[i - 1] if i else ""
+        sonra = w[i + 1] if i + 1 < n else ""
+        son = i == n - 1
+        if ch in "\u2018\u02bf":
+            out.append("ع")
+        elif ch in "\u2019'":
+            out.append("ؤ" if once in "uü" else ("أ" if once in "ae" and sonra and sonra not in _KISA_UNLU else "ئ"))
+        elif ch in _UZUN_UNLU:
+            if i == 0:
+                out.append("آ" if ch in "âā" else ("ای" if ch in "îī" else "او"))
+            else:
+                if once in _KISA_UNLU:
+                    out.append("ع")          # iki ünlü yan yana: araya ayın (teâvün تعاون، müddeâ مدعا)
+                out.append(_UZUN_UNLU[ch])
+        elif ch in _KISA_UNLU:
+            if i == 0:
+                out.append("ا")
+            elif son:
+                out.append("ه" if ch in "ae" else ("ی" if ch in "ıi" else "و"))
+        elif ch == once:
+            continue                         # ikiz ünsüz (şedde) tek harf
+        elif ch == "k":
+            out.append("ق" if arka else "ك")
+        elif ch in ("g", "ğ"):
+            out.append("غ")
+        elif ch == "h":
+            out.append("ح")
+        elif ch in CONSONANT_MAP_TURKISH and CONSONANT_MAP_TURKISH[ch]:
+            out.append(CONSONANT_MAP_TURKISH[ch])
+        elif ch.isalpha():
+            out.append(ch)
+    return "".join(out)
+
+
 def transliterate_word(word: str, treat_last_as_final: bool = True, devam: str = "") -> str:
     """Tek bir Turkce kelimeyi (Latin harfli, kucuk harfli) Osmanlica
     yazimina cevirir. Once EXCEPTIONS sozlugune bakar."""
@@ -257,6 +304,8 @@ def transliterate_word(word: str, treat_last_as_final: bool = True, devam: str =
 
     if word in EXCEPTIONS:
         return EXCEPTIONS[word]
+    if _ARAP_ISARET.search(word):
+        return _arapca_kok(word)
 
     harmony = _harmony_class(word)
     n = len(word)
@@ -380,7 +429,7 @@ for _forms, _yazim in [
     ("lık luk", "لق"), ("lik lük", "لك"), ("lı li", "لی"), ("lu lü", "لو"),
     ("lığı luğu", "لغی"), ("liği lüğü", "لگی"), ("lığını luğunu", "لغنی"), ("liğini lüğünü", "لگنی"),
     ("lığa luğa", "لغه"), ("liğe lüğe", "لگه"),
-    ("cı ci cu cü", "جی"), ("çı çi çu çü", "چی"), ("sız siz suz süz", "سز"),
+    ("cı ci cu cü", "جی"), ("çı çi çu çü", "جی"), ("sız siz suz süz", "سز"),
     ("sızlık suzluk", "سزلق"), ("sizlik süzlük", "سزلك"), ("sızlığı", "سزلغی"), ("sizliği", "سزلگی"),
     # imlâ turu 2: iyelik çokluk ekleri, -ki, n'li hâl ekleri (matbaa yazımı: قلبمز، قلبڭز، شكلندكی)
     ("imiz ımız umuz ümüz miz mız muz müz", "مز"), ("iniz ınız unuz ünüz niz nız nuz nüz", "ڭز"),
@@ -765,7 +814,11 @@ def transliterate_word_with_suffix(word: str) -> str:
 
     if best_suf:
         stem = word[: -len(best_suf)]
-        return transliterate_word(stem, treat_last_as_final=False, devam=best_suf) + _transliterate_suffix(
+        # a/e ile biten isim ek alınca sondaki ه korunur: duruşma+nın طوروشمهنڭ، ülke+sinde اولكهسنده (Hayrat)
+        son_unlu = stem[-1:] in ("a", "e") and len(stem) >= 3
+        if len(stem) >= 4 and stem[-2:] in ("ma", "me") and stem[-3] not in "aeıioöuü" and best_suf[:1] == "s":
+            stem, son_unlu = stem[:-1], False     # -mAsI: kurulması قورولمسی، getirilmesi كتیریلمسی (Hayrat)
+        return transliterate_word(stem, treat_last_as_final=son_unlu, devam=best_suf) + _transliterate_suffix(
             best_suf, harmony, known_root=False, prev=stem)
 
     return transliterate_word(word)
@@ -781,3 +834,40 @@ def transliterate_text_fallback(text: str) -> str:
         else:
             result.append(tok)
     return "".join(result)
+
+
+
+# ---- Hayrat (Risale-i Nur orijinal nüshası): iyelik + (n) + hâl eki dizileri ----
+# "in" ilgi eki sanılıp ڭ yazılmasın: vahdetine وحدتنه، cevabının جوابنڭ، Gazetesi'nin غزتهسنڭ، cinâyetlerini جنایتلرینی
+def _iyelik_hayrat():
+    d = {}
+    def ekle(bicimler, yazim):
+        for b in bicimler.split():
+            d[b] = yazim
+    ekle("ine ına une üne", "نه")
+    ekle("inde ında unda ünde", "نده")
+    ekle("inden ından undan ünden", "ندن")
+    ekle("indeki ındaki undaki ündeki", "نده\u200cكی")
+    ekle("ini ını unu ünü", "نی")
+    ekle("inin ının unun ünün", "نڭ")
+    ekle("sine sına suna süne", "سنه")
+    ekle("sinde sında sunda sünde", "سنده")
+    ekle("sinden sından sundan sünden", "سندن")
+    ekle("sini sını sunu sünü", "سنی")
+    ekle("sinin sının sunun sünün", "سنڭ")
+    ekle("lerine larına", "لرینه")
+    ekle("lerini larını", "لرینی")
+    ekle("lerinin larının", "لرینڭ")
+    ekle("lerinde larında", "لرنده")
+    ekle("lerinden larından", "لرندن")
+    ekle("leriniz larınız", "لریڭز")
+    ekle("lerinizi larınızı", "لریڭزی")
+    ekle("lerinizin larınızın", "لریڭزڭ")
+    ekle("iniz ınız unuz ünüz", "ڭز")
+    ekle("inizi ınızı unuzu ünüzü", "ڭزی")
+    ekle("inizin ınızın unuzun ünüzün", "ڭزڭ")
+    return d
+
+
+IYELIK_HAL_HAYRAT = _iyelik_hayrat()
+_IYELIK_HAL.update(IYELIK_HAL_HAYRAT)

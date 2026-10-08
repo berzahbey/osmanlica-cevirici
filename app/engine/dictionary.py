@@ -15,7 +15,7 @@ from .alphabet import turkish_lower
 DATA_FILE = Path(__file__).parent.parent / "data" / "ottoman_dict.tsv"
 # Türkçe kelime düzeltmeleri: sözlükten sonra okunur (sözlük kaydı Türkçe kelimeyle çakışınca Türkçe kazanır)
 DUZELTME_FILE = Path(__file__).parent.parent / "data" / "duzeltmeler.tsv"
-HAYRAT_FILE = Path(__file__).parent.parent / "data" / "hayrat.tsv"  # Risale-i Nur (Hayrat) eksik kelimeler
+HAYRAT_FILE = Path(__import__("os").environ.get("HAYRAT_DOSYA") or Path(__file__).parent.parent / "data" / "hayrat.tsv")  # Risale-i Nur (Hayrat) eksik kelimeler
 
 SEED_DICTIONARY = {
     "kitap": ("كتاب", "ar"), "kalem": ("قلم", "ar"), "insan": ("انسان", "ar"),
@@ -241,6 +241,17 @@ def lookup(word: str):
     return hit
 
 
+def _ilgi_koku_mu(kok, h, ekler):
+    """İlgi hâlindeki biçim (vahdetin -> وحدتڭ) kök sayılmaz: ilgi ekinden sonra hâl eki gelmez (yalnız -ki)."""
+    if not (h and ekler and len(kok) > 3):
+        return False
+    if h[0].endswith("\u06ad") and kok.endswith(("in", "ın", "un", "ün")) and not ekler[0].startswith("ki"):
+        return True
+    # iyelik hâlindeki biçim (cevabı -> جوابی) + n'li ek: cevab + ının -> جوابنڭ (Hayrat); kısa kök sözlükte olmalı
+    return h[0].endswith("\u06cc") and kok[-1:] in "ıiuü" and kok[-2:-1] not in "aeıioöuü" \
+        and ekler[0][:1] == "n" and bool(_get_soft(kok[:-1]))
+
+
 def lookup_with_suffix(word: str):
     """(hit, ekler_listesi) dondurur. hit tam eslesme ise ekler_listesi
     bos listedir. Birden fazla ek ust uste binmisse (orn. yildiz+lar+a)
@@ -255,14 +266,14 @@ def lookup_with_suffix(word: str):
     current = w
     for _ in range(3):  # en fazla 3 ek ust uste (guvenlik siniri)
         hit = _get(current)
-        if hit:
+        if hit and not _ilgi_koku_mu(current, hit, list(reversed(peeled))):
             return hit, list(reversed(peeled))
         # Tek bir ek ayrılınca sözlükte bulunan kökler varsa, kökü EN UZUN olanı seç
         # (ahirete -> ahiret + e; "ahire + te" değil).
         direct = [(suf, _get_soft(current[: -len(suf)])) for suf in LOOKUP_SUFFIXES
                   if current.endswith(suf) and len(current) - len(suf) >= 2
                   and _ek_ses_uygun(current[: -len(suf)], suf)]
-        direct = [(suf, h) for suf, h in direct if h]
+        direct = [(suf, h) for suf, h in direct if h and not _ilgi_koku_mu(current[: -len(suf)], h, [suf])]
         if direct:
             suf, h = min(direct, key=lambda x: len(x[0]))
             return h, list(reversed(peeled + [suf]))
@@ -277,7 +288,7 @@ def lookup_with_suffix(word: str):
         current = current[: -len(best_suf)]
 
     hit = _get(current)
-    if hit:
+    if hit and not _ilgi_koku_mu(current, hit, list(reversed(peeled))):
         return hit, list(reversed(peeled))
     return _derin_kok(w)
 
