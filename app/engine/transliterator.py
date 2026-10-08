@@ -439,7 +439,9 @@ def _roma_rakam(text: str) -> str:
 
 
 def _drop_izafet(text: str) -> str:
-    return _IZAFET_RE.sub("", text)
+    # İzafet silinir ama yerine görünmez işaret kalır: "-yı/-yi" -> \ue010 (sonra ی), öteki -> \ue011
+    # (sonra ه ile biten kelimede hemze, ünsüzden sonra silinir). Bkz. transliterate_text sarmalayıcısı.
+    return _IZAFET_RE.sub(lambda m: "\ue010" if m.group(0)[1:2] in "yY" else "\ue011", text)
 
 
 # ---------------- Latin harfli yabancı dil dizileri (Zahir'in kararı: aslı olduğu gibi kalır) ----------------
@@ -711,3 +713,19 @@ def full_pipeline(
         "turkish_text": turkish_text,
         "ottoman_text": ottoman_text,
     }
+
+
+
+# ---- İmlâ: izafet işaretleri ve isimlerdeki "bin" (transliterate_text sarmalayıcısı) ----
+_transliterate_text_ilk = transliterate_text
+_BIN_ISIM_RE = re.compile(r"([A-ZÇĞİÖŞÜÂÎÛ][^\s]*\s)bin(?=\s[A-ZÇĞİÖŞÜÂÎÛ])")
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    """İzafet: ه ile biten kelimede hemze (رسالهٔ نور, قوّهٔ معنویه), "-yı/-yi"de ی (دنیای فانی), ünsüzden sonra yazılmaz.
+    İki özel ismin arasındaki "bin" بن (Ali bin Ebî Tâlib); öteki "bin" sözlükten (sayı: بیڭ)."""
+    turkish_text = _BIN_ISIM_RE.sub("\\1\ue012", turkish_text)
+    out = _transliterate_text_ilk(turkish_text, *args, **kwargs)
+    out = out.replace("\ue012", "بن").replace("\ue010", "ی")
+    out = re.sub("\u0647\ue011", "\u0647\u0654", out)
+    return out.replace("\ue011", "")
