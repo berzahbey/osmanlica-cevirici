@@ -606,8 +606,22 @@ def _drop_izafet(text: str) -> str:
     # İzafet silinir ama yerine görünmez işaret kalır: "-yı/-yi" -> \ue010 (sonra ی), öteki -> \ue011
     # (sonra ه ile biten kelimede hemze, ünsüzden sonra silinir). Bkz. transliterate_text sarmalayıcısı.
     # h ile biten kelimede ه ünsüzdür, hemze almaz: fıkh-ı ekber فقه اكبر، vech-i irtibât وجه ارتباطی (Hayrat) -> \ue0f1
-    return _IZAFET_RE.sub(lambda m: "\ue010" if m.group(0)[1:2] in "yY" else
-                          ("\ue0f1" if m.string[m.start() - 1:m.start()] in "hH" else "\ue011"), text)
+    # Ünlüyle biten kelimede "-i" (Hayrat): î/i -> \ue013 (sonra ی -> ئ: müddeî-i مدّعئ، maânî-i معانئ),
+    # â/a -> \ue014 (sonra ا -> ای: istikrâ-i استقرای، ulemâ-i علمای); ه ile bitiyorsa ikisi de hemze (nokta-i نقطهٔ).
+    def _isaret(m):
+        if m.group(0)[1:2] in "yY":
+            return "\ue010"
+        once = m.string[m.start() - 1:m.start()]
+        if once in "hH":
+            return "\ue0f1"
+        if once in "îiÎİ":
+            return "\ue013"
+        if once in "âaÂA":
+            if re.search(r"(?<![^\W\d_])(?:[mM]|[vV]er)\u00e2$", m.string[max(0, m.start() - 4):m.start()]):
+                return "\ue015"          # mâ-i ماء، verâ-i وراء (Hayrat)
+            return "\ue014"
+        return "\ue011"
+    return _IZAFET_RE.sub(_isaret, text)
 
 
 # ---------------- Latin harfli yabancı dil dizileri (Zahir'in kararı: aslı olduğu gibi kalır) ----------------
@@ -822,6 +836,7 @@ def transliterate_text(
             result.append("\n" if "\n" in separators[i] else " ")
     sonuc = _ottoman_punctuation("".join(result))
     sonuc = re.sub(r"(?<=[\u0621-\u06D3]) كه(?=[\s،.!؟:؛\"”]|$)", "كه", sonuc)   # ki öncesine bitişik: ناصلكه، واردركه
+    sonuc = _rakamlar(sonuc)                      # 1911 -> ١٩١١ (Latin harfli yabancı metindeki rakam kalır)
     return _yabancilari_geri_koy(sonuc, _saklanan)
 
 
@@ -883,8 +898,11 @@ def transliterate_text(turkish_text, *args, **kwargs):
     turkish_text = _BIN_ISIM_RE.sub("\\1\ue012", turkish_text)
     out = _transliterate_text_ilk(turkish_text, *args, **kwargs)
     out = out.replace("\ue012", "بن").replace("\ue010", "ی")
-    out = re.sub("\u0647\ue011", "\u0647\u0654", out)
-    out = out.replace("\ue011", "").replace("\ue0f1", "")
+    out = re.sub("\u06cc(\u0651?)\ue013", "\u0626\\1", out)          # müddeî-i مدّعئ، maânî-i معانئ (Hayrat)
+    out = re.sub("\u0627\ue014", "\u0627\u06cc", out)                # istikrâ-i استقرای، ulemâ-i علمای (Hayrat)
+    out = re.sub("\u0627\ue015", "\u0627\u0621", out)
+    out = re.sub("\u0647[\ue011\ue013\ue014]", "\u0647\u0654", out)
+    out = re.sub("[\ue011\ue013\ue014\ue015\ue0f1]", "", out)
     out = re.sub("[\u2018\u2019'`\u02bf\u02be]", "", out)   # ayın/hemze işareti Osmanlıcaya harf olarak geçmez
     out = re.sub("[\u0610-\u061a]", "", out)   # Hayrat'ın isim üstü dua işaretleri (اونڭؐ، ابراهیمؑ) bağlama göre; dualar açık yazılır
     return out.replace("\u06af", "\u0643")                  # g sesi Hayrat gibi kef (ك) ile; ڭ kalır
@@ -961,6 +979,9 @@ def _bitisik(out):
     return _SORU_RE.sub(r"\1", out)           # var mıdır -> وارمیدر، olmaz mı -> اولمازمی
 
 
+_IFADE_IZAFET_RE = re.compile(r"-([yY])?[ıiuüIİUÜ](?=[\s\-\u2013]|$)")
+
+
 def _ifade_ek(latin, ek):
     son = re.split(r"[\s\-\u2010" + _KESME + r"]+", latin.strip())[-1]
     s = turkish_lower(son.translate(_SAPKA_TR))
@@ -983,8 +1004,17 @@ def transliterate_text(turkish_text, *args, **kwargs):
         parcalar.append(("metin", turkish_text[son:m.start()]))
         if m.group(2):
             yazim += _ifade_ek(turkish_text[m.start(1):m.end(1)], turkish_text[m.start(2):m.end(2)])
-        parcalar.append(("ifade", yazim))
         son = m.end()
+        iz = _IFADE_IZAFET_RE.match(turkish_text, son)
+        if iz:                           # ifadeden sonraki izafet (yed-i beyzâ-yı ید بیضای)
+            if yazim.endswith("\u0627"):
+                yazim += "\u06cc"
+            elif yazim.endswith("\u06cc") and not iz.group(1):
+                yazim = yazim[:-1] + "\u0626"
+            elif yazim.endswith("\u0647") and turkish_text[son - 1:son] not in "hH":
+                yazim += "\u0654"
+            son = iz.end()
+        parcalar.append(("ifade", yazim))
     if not parcalar:
         return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs))
     parcalar.append(("metin", turkish_text[son:]))
@@ -1295,3 +1325,88 @@ def transliterate_text(turkish_text, *args, **kwargs):
     for i, yazim in enumerate(saklanan):
         out = out.replace("\ue035" + chr(0xe600 + i), yazim)
     return out
+
+
+# ---- Hemzeyle biten kelime (mebde’ مبدأ، menşe’ منشأ، sû’ سوء): sözlükteki kesmeli kayıt doğrudan ----
+# Metindeki ’ sözlükte ' ile yazılı; eskiden kelime sonundaki ’ atılıp kelime hemzesiz aranıyordu (mebde’ -> مبده).
+# Kapanış tırnağıyla karışmasın diye yalnız sözlükte hemzeli kaydı olan kelime; arkasındaki izafet (-i) yazılmaz (Hayrat).
+_HEMZE_RE = re.compile(r"(?<![^\W\d_])(?<![\-\u2010\u2018\u2019'])([^\W\d_]{2,}[\u2019'])(-[ıiuüIİUÜ])?(?![^\W\d_])")
+
+
+def _ifade_kapsar(metin, bas, son):
+    """[bas, son) aralığı bir Hayrat ifadesinin içinde mi (ifade katmanı daha doğru yazar: sû’-i isti‘mâle, kānûn-u medenîye)."""
+    if not _IFADE_RE:
+        return False
+    kucuk = metin.replace("I", "ı").replace("İ", "i").lower()
+    if len(kucuk) != len(metin):
+        return False
+    for m in _IFADE_RE.finditer(kucuk, max(0, bas - 120)):
+        if m.start(1) >= son:
+            break
+        if m.end(1) > bas and " " in m.group(1).strip():
+            return True
+    return False
+_HEMZE_HARF = set("\u0621\u0623\u0624\u0626")
+_transliterate_text_hemzesiz = transliterate_text
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not turkish_text or not re.search(r"[^\W\d_][\u2019'](?![^\W\d_])", turkish_text):
+        return _transliterate_text_hemzesiz(turkish_text, *args, **kwargs)
+    saklanan = []
+
+    def sakla(m):
+        w = turkish_lower(m.group(1)).replace("\u2019", "'")
+        if _ifade_kapsar(turkish_text, m.start(), m.end()):
+            return m.group(0)
+        h = dictionary.lookup_exact(w)
+        if not h or not (_HEMZE_HARF & set(h[0])) or " " in h[0].strip() or len(saklanan) > 6000:
+            return m.group(0)
+        saklanan.append(h[0].replace("\u06af", "\u0643"))
+        return "\ue036" + chr(0xe700 + len(saklanan) - 1)
+    metin = _HEMZE_RE.sub(sakla, turkish_text)
+    if not saklanan:
+        return _transliterate_text_hemzesiz(turkish_text, *args, **kwargs)
+    out = _transliterate_text_hemzesiz(metin, *args, **kwargs)
+    for i, yazim in enumerate(saklanan):
+        out = out.replace("\ue036" + chr(0xe700 + i), yazim)
+    return out
+
+
+# ---- î ile biten kelimeye gelen -ye/-yi/-yim/-yiz ayrı yazılır (Hayrat: hakîkîye حقیقی یه، İlâhîyi الهی یی; 486/506 ve 523/525) ----
+# Arapça dişil sıfat -iye (Arabiye عربیه) şapkasızdır, buna girmez. -yle bitişik kalır (Rabbânîyle ربّانیله).
+_I_YE_RE = re.compile(r"(?<![^\W\d_])(?<![\u2018\u2019'\-\u2010])([^\W\d_]+[^\W\d_][\u00ee\u00ce])(y(?:e|i|im|iz))(?![^\W\d_])")
+_I_YE_EK = {"ye": "\u06cc\u0647", "yi": "\u06cc\u06cc", "yim": "\u06cc\u0645", "yiz": "\u06cc\u0632"}
+_transliterate_text_iyesiz = transliterate_text
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not turkish_text or not re.search("[\u00ee\u00ce]y", turkish_text):
+        return _transliterate_text_iyesiz(turkish_text, *args, **kwargs)
+    ekler = []
+
+    def ayir(m):
+        if len(ekler) > 6000 or _ifade_kapsar(turkish_text, m.start(), m.end()):
+            return m.group(0)
+        ekler.append(_I_YE_EK[m.group(2).lower()])
+        return m.group(1) + " \ue037" + chr(0xe800 + len(ekler) - 1)
+    metin = _I_YE_RE.sub(ayir, turkish_text)
+    out = _transliterate_text_iyesiz(metin, *args, **kwargs)
+    for i, ek in enumerate(ekler):
+        out = out.replace("\ue037" + chr(0xe800 + i), ek)
+    return out
+
+
+# ---- Rakamlar Osmanlıca (Hayrat ve Zahir'in kararı, 9 Ekim): 1911 -> ١٩١١. Latin harfe bitişik rakam (COVID-19) kalır ----
+_RAKAM_RE = re.compile(r"(?<![A-Za-z\ue000])[0-9]+(?![A-Za-z])")
+
+
+def _rakamlar(out: str) -> str:
+    if not out:
+        return out
+
+    def cevir(m):
+        if re.search("\ue001[\\s,.;:()\\-\u2013]*$", out[max(0, m.start() - 12):m.start()]):
+            return m.group(0)            # yabancı dizinin hemen arkasındaki rakam (Paris 1959) kalır
+        return "".join(chr(0x0660 + int(c)) for c in m.group(0))
+    return _RAKAM_RE.sub(cevir, out)

@@ -66,7 +66,7 @@ CUMLE = {
     # imlâ turu 5 (Mesnevî-i Nûriye)
     "İ’lem eyyühel-aziz!": "اعلم ایّها العزیز!",
     "Vâcib-ül Vücud": "واجب الوجود",
-    "MESNEVÎ-İ NURİYE": "مثنوی نوریه",
+    "MESNEVÎ-İ NURİYE": "مثنوئ نوریه",   # Hayrat: مثنوئ نوریه (î-i -> ئ, 9 Ekim)
     "zikredilen": "ذكر ایدیلن",
     "hissedilir": "حسّ ایدیلیر",
     "zannettiğin": "ظن ایتدیكڭ",
