@@ -1114,3 +1114,78 @@ def _hitap_cevir(turkish_text, *args, **kwargs):
     for i, yazim in enumerate(saklanan):
         out = out.replace("\ue032" + chr(0xe300 + i), yazim)
     return out
+
+
+# ---- Arapça dişil sıfat izafetten sonra (Hayrat: nübüvvet-i mutlaka مطلقه، ulûm-u âdiye عادیه) ----
+_DISIL_SON = re.compile(r"(.+?)(iyye|iye|e|a)((?:n[ıi]n|y[ıi]|y[ae]|d[ae]|d[ae]n|t[ae]n|l[ae]r[ıi]?(?:n[ıi])?|l[ae]r[ıi]n[ae]|"
+                        r"l[ae]r[ıi]n[ıi]n|l[ae]rd[ae]n?|s[ıi](?:n[ıi])?(?:n[ae])?|s[ıi]n[ıi]n|ki|d[ıi]r)?)")
+_DISIL_RE = re.compile(r"(?<=-[ıiuüIİUÜ] )([^\W\d_]+)(-[ıiIİ])?(?![^\W\d_’'‘\-])")
+_transliterate_text_disilsiz = transliterate_text
+
+
+def _disil_sifat(y: str):
+    yl = turkish_lower(y)
+    m = _DISIL_SON.fullmatch(yl)
+    if not m:
+        return None
+    kok, son, ek = m.groups()
+    nisbe = son in ("iye", "iyye")
+    if len(kok) < (2 if nisbe else 3) or re.search(r"[âîû]", son + ek[:1]) or yl.endswith(("â", "î", "û")):
+        return None
+    govde = kok + son
+    def _sozluk(k):                      # iki kelimeye bölünmüş eski kayıt (arabiye عربی یه) yok sayılır, Hayrat'taki sayılır
+        h = dictionary._get(k)
+        return h if h and (" " not in h[0].strip() or k in dictionary.HAYRAT_ANAHTAR) else None
+    tam = _sozluk(yl)
+    if tam and not (tam[0].endswith("\u0627") and len(kok) >= 6 and not ek):
+        return None                      # kelimenin kendisi sözlükte (camide, fenası); istisna: mutlaka مطلقا
+    hit, ekler = dictionary.lookup_with_suffix(yl)
+    if hit and " " in hit[0].strip() and yl not in dictionary.HAYRAT_ANAHTAR:
+        hit = None
+    if hit:
+        kok_uz = len(yl) - sum(len(x) for x in ekler)
+        if kok_uz > len(govde) or (kok_uz == len(govde) and not (hit[0].endswith("\u0627") and len(kok) >= 6)):
+            return None                  # doğru bölme başka: insan+ın, beyân+ın, Akdes+ini, vâhime+nin
+    hg = _sozluk(govde)
+    if hg and not hg[0].endswith("\u0627"):
+        return None                      # kendisi kelime (müsâade, akîde)
+    hb = dictionary.DICTIONARY.get(kok + "î" if nisbe else kok) or (dictionary.DICTIONARY.get(kok + "i") if nisbe else None)
+    if hit and (len(yl) - sum(len(x) for x in ekler) == len(kok) or (nisbe and len(yl) - sum(len(x) for x in ekler) == len(kok) + 1)) \
+            and " " not in hit[0].strip():
+        hb = hit                         # sözlüğün bulduğu kök aynıysa onun yazımı (mahsûs+e: محسوس)
+    if not hb or " " in hb[0]:
+        return None                      # şapkasız eşleme yok (vâhim ≠ vahîm)
+    b = hb[0]
+    if nisbe and not b.endswith("\u06cc"):
+        return None
+    if not nisbe and b.endswith(("\u0627", "\u06cc", "\u0648", "\u0647", "\u06ad")):
+        return None
+    yazi = b + "\u0647"
+    if ek:
+        e = rules.ekleri_yaz(govde, [ek], [], rules._harmony_class(yl))
+        yazi += "\u200c" + e.lstrip("\u200c")
+    return yazi
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not turkish_text or "-" not in turkish_text:
+        return _transliterate_text_disilsiz(turkish_text, *args, **kwargs)
+    saklanan = []
+
+    def sakla(m):
+        izafet = m.group(2)
+        onceki = re.search(r"(\S+-[ıiuüIİUÜ]) $", turkish_text[:m.start()])
+        if onceki and _IFADE.get(_ifade_anahtar(onceki.group(1).lstrip("(\u201c\u2018" + chr(34) + chr(39)) + " " + m.group(0))):
+            return m.group(0)            # Hayrat ifadesi (adem-i sırfa عدم صرفه): ifade katmanına bırak
+        yazi = _disil_sifat(m.group(1))
+        if not yazi or (izafet and not yazi.endswith("\u0647")) or len(saklanan) > 6000:
+            return m.group(0)
+        if izafet:
+            yazi += "\u0654"            # izafet: ه ile biten kelimede hemze (عمیقهٔ)
+        saklanan.append(yazi)
+        return "\ue034" + chr(0xe500 + len(saklanan) - 1)
+    metin = _DISIL_RE.sub(sakla, turkish_text)
+    out = _transliterate_text_disilsiz(metin, *args, **kwargs)
+    for i, yazi in enumerate(saklanan):
+        out = out.replace("\ue034" + chr(0xe500 + i), yazi)
+    return out
