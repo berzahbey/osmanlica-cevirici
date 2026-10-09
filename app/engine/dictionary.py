@@ -79,6 +79,7 @@ SUFFIXES = [
 EXTRA_LOOKUP_SUFFIXES = ("la le yla yle lık lik luk lük lı li lu lü lığı liği luğu lüğü "
                          "lığını liğini luğunu lüğünü lığa liğe luğa lüğe cı ci cu cü çı çi çu çü sız siz suz süz sızlık sizlik suzluk süzlük sızlığı sizliği").split()
 LOOKUP_SUFFIXES = SUFFIXES + [x for x in EXTRA_LOOKUP_SUFFIXES if x not in SUFFIXES]
+LOOKUP_SUFFIXES += [x for x in ("sel", "sal") if x not in LOOKUP_SUFFIXES]   # tarihsel تاریخسل
 
 def _load_extra_from_tsv() -> dict:
     extra = {}

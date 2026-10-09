@@ -819,6 +819,7 @@ _transliterate_text_ifadesiz = transliterate_text
 
 
 def _bitisik(out):
+    out = out.replace("\u201c", '"').replace("\u201d", '"').replace("\u201e", '"')   # Hayrat düz tırnak
     out = _BERI_RE.sub("بری", out)          # seneden beri -> سنهدنبری (Hayrat)
     return _SORU_RE.sub(r"\1", out)           # var mıdır -> وارمیدر، olmaz mı -> اولمازمی
 

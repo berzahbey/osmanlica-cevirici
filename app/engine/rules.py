@@ -304,6 +304,9 @@ def transliterate_word(word: str, treat_last_as_final: bool = True, devam: str =
 
     if word in EXCEPTIONS:
         return EXCEPTIONS[word]
+    _fs = _farsca_son(word)
+    if _fs:
+        return _fs
     if _ARAP_ISARET.search(word):
         return _arapca_kok(word)
 
@@ -748,6 +751,54 @@ def _tarihi_kok(kok: str) -> str:
     return kok
 
 
+
+# ---- Kökü bilinmeyen kelimede yaygın son ekler ve -lık (Risale dışı kitaplar; Hayrat imlâsı) ----
+_KURAL_SABIT_EK = {"sı": "سی", "si": "سی", "su": "سی", "sü": "سی",
+                   "ın": "ڭ", "in": "ڭ", "un": "ڭ", "ün": "ڭ", "nın": "نڭ", "nin": "نڭ", "nun": "نڭ", "nün": "نڭ",
+                   "ı": "ی", "i": "ی", "u": "ی", "ü": "ی"}
+_FARSCA_SON = (("zâde", "زاده"), ("zade", "زاده"), ("hâne", "خانه"), ("nâme", "نامه"), ("istân", "ستان"))
+
+
+def _farsca_son(word):
+    for son, yazi in _FARSCA_SON:          # paşazâde پاشازاده: kök kendi yazımıyla + Farsça ek
+        if word.endswith(son) and len(word) - len(son) >= 3:
+            from . import dictionary as _D
+            h = _D._get(word[: -len(son)])
+            return (h[0] if h else transliterate_word(word[: -len(son)])) + yazi
+    return None
+
+
+def _ek_uyumlu(stem, suf):
+    """Ekin ünlüsü kökün son ünlüsüyle uyumlu mu (Martin, Darwin gibi adlar ilgi eki sayılmasın)."""
+    son = [c for c in stem if c in "aeıioöuüâîû"]
+    eku = [c for c in suf if c in "ıiuü"]
+    if not son or not eku:
+        return False
+    return (son[-1] in "aıouâû") == (eku[0] in "ıu")
+
+
+def _sabit_son_ek(stem, suf):
+    yazi = _KURAL_SABIT_EK.get(suf)
+    if yazi is None or len(stem) < 3 or not _ek_uyumlu(stem, suf):
+        return None
+    sonu_unlu = stem[-1] in "aeıioöuüâîû"
+    if suf in ("ın", "in", "un", "ün", "ı", "i", "u", "ü") and sonu_unlu:
+        return None          # ünlüden sonra -nın/-sı gelir; bu biçim başka bir şeydir
+    if suf in ("nın", "nin", "nun", "nün", "sı", "si", "su", "sü") and not sonu_unlu and suf[0] != "s":
+        return None
+    return yazi
+
+
+def _govde_yaz(stem, son_unlu, devam):
+    """-lık/-lik/-luk/-lük (ve -lığ/-liğ) ünlüsüz: özel+lik اوزللك، gerçek+lik كرچكلك."""
+    m = re.search(r"l([ıiuü])([kğ])$", stem)
+    if m and len(stem) > 5:
+        arka = m.group(1) in "ıu"
+        ek = ("لق" if arka else "لك") if m.group(2) == "k" else ("لغ" if arka else "لك")
+        return transliterate_word(stem[:-3], treat_last_as_final=False, devam=stem[-3:] + devam) + ek
+    return transliterate_word(stem, treat_last_as_final=son_unlu, devam=devam)
+
+
 def transliterate_word_with_suffix(word: str) -> str:
     """Kelimeyi mumkunse kok+ek olarak ayirir. Kok normal (pozisyon
     farkinda) kurallarla, ek ise kendi kurallariyla cevrilir."""
@@ -759,6 +810,9 @@ def transliterate_word_with_suffix(word: str) -> str:
 
     if word in EXCEPTIONS:
         return EXCEPTIONS[word]
+    _fs = _farsca_son(word)
+    if _fs:
+        return _fs
 
     _f = _fiil_ayir(word)
     if _f and len(_f[0]) >= 4 and _f[0][-2:] in ("me", "ma") and _f[0][-3] not in "aeıioöuü":
@@ -802,7 +856,7 @@ def transliterate_word_with_suffix(word: str) -> str:
         if remaining in EXCEPTIONS:
             result = EXCEPTIONS[remaining]
             for suf in reversed(suffixes_found):
-                result += _transliterate_suffix(suf, harmony)
+                result += {"lık": "لق", "luk": "لق", "lik": "لك", "lük": "لك"}.get(suf) or _transliterate_suffix(suf, harmony)
             return result
 
     # EXCEPTIONS'a ulasilamadi - guvenli, eski (tek ek) davranisa don
@@ -818,10 +872,13 @@ def transliterate_word_with_suffix(word: str) -> str:
         son_unlu = stem[-1:] in ("a", "e") and len(stem) >= 3
         if len(stem) >= 4 and stem[-2:] in ("ma", "me") and stem[-3] not in "aeıioöuü" and best_suf[:1] == "s":
             stem, son_unlu = stem[:-1], False     # -mAsI: kurulması قورولمسی، getirilmesi كتیریلمسی (Hayrat)
-        return transliterate_word(stem, treat_last_as_final=son_unlu, devam=best_suf) + _transliterate_suffix(
+        sabit = _sabit_son_ek(stem, best_suf)
+        if sabit is not None:
+            return _govde_yaz(stem, son_unlu, best_suf) + sabit
+        return _govde_yaz(stem, son_unlu, best_suf) + _transliterate_suffix(
             best_suf, harmony, known_root=False, prev=stem)
 
-    return transliterate_word(word)
+    return _govde_yaz(word, True, "")
 
 
 def transliterate_text_fallback(text: str) -> str:
