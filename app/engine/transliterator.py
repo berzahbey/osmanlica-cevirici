@@ -112,6 +112,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
         wl = turkish_lower(w)
         if wl in dictionary.HAYRAT_ANAHTAR:
             return repl(m)            # Hayrat'taki tam kelime: ek kuralları dokunmaz (tek ölçü)
+        tz = _tenvin_zarf(wl)
+        if tz:
+            return tz                 # Arapça -en zarfı: hakîkaten حقیقتًا، zâhiren ظاهرًا (Hayrat)
         ca = _ca_eki(wl)
         if ca:
             return ca                 # -ca/-ce eki: Osmanlıca عثمانلیجه، devletçe دولتجه (Hayrat)
@@ -181,6 +184,42 @@ def _ca_eki(wl: str):
             yazi += "\u200c" + ek.lstrip("\u200c")   # bitişmeyen he + ara boşluk: عثمانلیجه‌دن
         return yazi
     return None
+
+
+# ---- Arapça -en zarfları (tenvin; Hayrat: -ten 1.217 kez تًا، he ile biten kökte 230 kez ةً) ----
+def _tenvin_zarf(wl: str):
+    """Sözlükte olmayan kelime = sözlükteki Arapça kök + en: kök + ًا (zâhiren ظاهرًا، hakîkaten حقیقتًا);
+    kök + ten ve kök he ile bitiyorsa ةً (maddeten مادّةً). Türkçe ek ya da fiilse None."""
+    if len(wl) < 6 or dictionary.lookup_exact(wl) or rules._fiil_ayir(wl):
+        return None
+    m = re.fullmatch(r"(.{3,}?)en", wl)
+    if not m:
+        return None
+    kok = m.group(1)
+    if wl.endswith(("ken", "sen", "rden")) or dictionary._get(wl[:-1]):
+        return None                       # derken, dersen, nerden; desise+n, talebe+n
+    for ek in ("den", "dan", "ten", "tan", "nden", "ndan"):
+        if wl.endswith(ek) and len(wl) - len(ek) >= 2 and (dictionary._get(wl[:-len(ek)])
+                                                            or dictionary.lookup_with_suffix(wl[:-len(ek)])[0]):
+            return None                   # ayrılma eki: birden, şeyden, seneden
+    if re.search(r"(?:[ıiuü][lnr]|el|er|ar|ür|ir|ıl|il|ul|ül|t[ıiuü]r|d[ıiuü]r)$", kok) and not dictionary._get(kok + "e"):
+        if dictionary.lookup_with_suffix(kok + "mek")[0] or dictionary.lookup_with_suffix(kok + "mak")[0] \
+                or rules._fiil_ayir(kok + "mek") or rules._fiil_ayir(kok + "mak"):
+            return None                   # Türkçe fiil sıfatı: yükselen, ekilen, içiren
+    if dictionary._get(kok[:-1] + "mek") or dictionary._get(kok[:-1] + "mak") or dictionary._get(kok + "mek") \
+            or dictionary._get(kok + "mak"):
+        return None                       # Türkçe fiil: öğreten, işleten
+    if kok.endswith("t") and len(kok) >= 4:
+        h = dictionary._get(kok[:-1])     # madde + ten -> مادّةً
+        if h and h[0].endswith("\u0647"):
+            return h[0][:-1] + "\u0629\u064b"
+    h = dictionary._get(kok)
+    if not h or kok[-1] in "aeıioöuüâîû":
+        return None
+    y = h[0]
+    if " " in y or not re.search("[\u0621-\u064a]$", y) or y.endswith(("\u06cc", "\u0648", "\u0627", "\u0647")):
+        return None
+    return y + "\u064b\u0627"
 
 
 # ---- Hayrat'tan öğrenilen ek sonu kuralları (tools/hayrat_ek_ogren.py; sözlükte olmayan kelimeler) ----
@@ -984,4 +1023,94 @@ def transliterate_text(turkish_text, *args, **kwargs):
     out = _transliterate_text_ayinsiz(metin, *args, **kwargs)
     for i, yazim in enumerate(saklanan):
         out = out.replace("\ue030" + chr(0xe100 + i), yazim)
+    return out
+
+
+# ---- Senin/onun (2./3. tekil iyelik): "senin" + en çok 6 kelime -> 2. kişi (kalbini قلبڭی، başına باشڭه) ----
+# Araya virgül/nokta, başka bir sahip (onun, kendi, ilgi ekli kelime) ya da aynı kalıpta başka kelime girerse uygulanmaz.
+_HITAP_KALIP = re.compile(r"^(.*[bcçdfgğhjklmnprsştvyz])([ıiuü])n(ı|i|u|ü|a|e|da|de|ta|te|dan|den|tan|ten|ın|in|un|ün|daki|deki|dır|dir)$")
+_HITAP_EDAT = {"için", "gibi", "kadar", "ile", "göre", "karşı", "dolayı", "rağmen", "üzere", "nazaran", "ancak", "değil"}
+_HITAP_SAHIP = {"onun", "bunun", "şunun", "kendi", "onların", "bunların", "benim", "bizim"}
+_HITAP_TOK = re.compile(r"[^\W\d_]+(?:[’'‘][^\W\d_]+)*")
+_HITAP_SON = re.compile("\u0646(\u200c?(?:\u06cc|\u0647|\u06d5|\u062f\u0647\u200c?\u0643\u06cc|\u062f\u0647|\u062f\u0646|\u06ad|\u062f\u0631))$")
+_transliterate_text_hitapsiz = transliterate_text
+
+
+def _hitap_ilgi(w: str) -> bool:
+    return bool(re.search(r"(?:[’'][ıiuü]?n|[ıiuü]n|n[ıiuü]n)$", w)) and w not in ("senin", "benin", "için", "bin", "din", "ben")
+
+
+def _hitap_yaz(kelime, *args, **kwargs):
+    o = _transliterate_text_hitapsiz(kelime, *args, **kwargs)
+    if " " in o.strip() or not _HITAP_SON.search(o):
+        return None
+    return _HITAP_SON.sub(lambda m: "\u06ad" + m.group(1), o)
+
+
+# Hayrat Latin'indeki düz dua kısaltmaları (ham metinde, öteki katmanlardan önce): Muhammed’in asm, İmâm-ı Gazâlî’nin ra, Mûsâ as
+_DUZ_DUA_RE = re.compile(r"(?<![^\W\d_(])(?:(asm)|(\S+)(\s+)(ra|as))(?![^\W\d_)])")
+_DUZ_DUA = {"asm": "علیه الصلاة والسلام", "ra": "رضی الله عنه", "as": "علیه السلام"}
+
+
+def _duz_dua(metin: str):
+    saklanan = []
+
+    def sakla(m):
+        if m.group(1):
+            k, on = "asm", ""
+        else:
+            onceki, k = m.group(2), m.group(4)
+            ad = onceki.lstrip("(\u201c\u2018" + chr(34) + chr(39))
+            if not ad or not ad[0].isupper():
+                return m.group(0)                 # yalnız büyük harfli isimden sonra: Ali ra, Mûsâ as
+            if k == "as" and m.start() > 0 and not re.search(r"[^\W\d_’'] $", metin[max(0, m.start() - 2):m.start()]):
+                return m.group(0)                 # as: cümle başındaki büyük harften sonra değil ("Şunu as")
+            on = onceki + m.group(3)
+        saklanan.append(_DUZ_DUA[k])
+        return on + "\ue033" + chr(0xe400 + len(saklanan) - 1)
+    return _DUZ_DUA_RE.sub(sakla, metin), saklanan
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not turkish_text:
+        return _transliterate_text_hitapsiz(turkish_text, *args, **kwargs)
+    metin, dualar = _duz_dua(turkish_text)
+    out = _hitap_cevir(metin, *args, **kwargs)
+    for i, yazim in enumerate(dualar):
+        out = out.replace("\ue033" + chr(0xe400 + i), yazim)
+    return re.sub("[\u0610-\u061a]", "", out)   # Hayrat'ın isim üstü dua işaretleri (ؐ ؑ ؓ) hiçbir katmanda kalmasın
+
+
+def _hitap_cevir(turkish_text, *args, **kwargs):
+    if not re.search(r"(?<![^\W\d_])[Ss]enin(?![^\W\d_])", turkish_text):
+        return _transliterate_text_hitapsiz(turkish_text, *args, **kwargs)
+    yerler = []
+    for c in re.finditer(r"[^.!?;:,\n]+", turkish_text):
+        toks = list(_HITAP_TOK.finditer(c.group(0)))
+        for i, m in enumerate(toks):
+            if not _HITAP_KALIP.match(turkish_lower(m.group(0))):
+                continue
+            for j in range(i - 1, max(-1, i - 7), -1):
+                p = turkish_lower(toks[j].group(0))
+                if p == "senin":
+                    if j + 1 < i and turkish_lower(toks[j + 1].group(0)) in _HITAP_EDAT:
+                        break             # "senin için ilkinden": senin edata bağlı, sahibi değil
+                    yerler.append((c.start() + m.start(), c.start() + m.end()))
+                    break
+                if p in _HITAP_SAHIP or _hitap_ilgi(p) or _HITAP_KALIP.match(p):
+                    break
+    if not yerler:
+        return _transliterate_text_hitapsiz(turkish_text, *args, **kwargs)
+    saklanan, parca, son = [], [], 0
+    for a, b in yerler:
+        yazim = _hitap_yaz(turkish_text[a:b], *args, **kwargs)
+        if not yazim:
+            continue
+        parca.append(turkish_text[son:a] + "\ue032" + chr(0xe300 + len(saklanan)))
+        saklanan.append(yazim)
+        son = b
+    metin = "".join(parca) + turkish_text[son:]
+    out = _transliterate_text_hitapsiz(metin, *args, **kwargs)
+    for i, yazim in enumerate(saklanan):
+        out = out.replace("\ue032" + chr(0xe300 + i), yazim)
     return out
