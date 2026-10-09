@@ -653,6 +653,9 @@ def _yabancilari_geri_koy(metin: str, saklanan) -> str:
 # Dua kısaltmaları açık yazılır: (s.a.v) -> (صلّی الله علیه وسلّم), (a.s) -> (علیه السلام), (r.a) -> (رضی الله عنه)
 _KISALTMA = [
     (re.compile(r"(?<![\w.])s\.\s?a\.\s?v\.?(?![\w])", re.I), "صلّی الله علیه وسلّم"),
+    (re.compile(r"(?<=\()\s*a\.?\s?s\.?\s?m\.?\s*(?=\))", re.I), "علیه الصلاة والسلام"),   # (asm), (a.s.m.)
+    (re.compile(r"(?<=\()\s*as\s*(?=\))", re.I), "علیه السلام"),                          # (as)
+    (re.compile(r"(?<=\()\s*ra\s*(?=\))", re.I), "رضی الله عنه"),                          # (ra)
     (re.compile(r"(?<=\()\s*a\.\s?s\.?\s*(?=\))", re.I), "علیه السلام"),
     (re.compile(r"(?<![\w.])r\.\s?a\.?(?![\w])", re.I), "رضی الله عنه"),
 ]
@@ -824,12 +827,20 @@ _transliterate_text_ilk = transliterate_text
 _BIN_ISIM_RE = re.compile(r"([A-ZÇĞİÖŞÜÂÎÛ][^\s]*\s)bin(?=\s[A-ZÇĞİÖŞÜÂÎÛ])")
 
 
+def _lillah(m):
+    """Sözlükte bütün hâliyle olan kelime bölünmez (Elhamdülillâh الحمد لله); öteki: elhamdü lillâh, âdâtullâh -> عادات الله."""
+    w = m.group(0)
+    if dictionary.lookup_exact(turkish_lower(w)):
+        return w
+    w = re.sub(r"(?<=[^\W\d_]{3})[üu]?lill[âa]h", " lillâh", w)
+    return re.sub(r"(?<=[^\W\d_]{3})[üu]ll[âa]h", " Allâh", w)
+
+
 def transliterate_text(turkish_text, *args, **kwargs):
     """İzafet: ه ile biten kelimede hemze (رسالهٔ نور, قوّهٔ معنویه), "-yı/-yi"de ی (دنیای فانی), ünsüzden sonra yazılmaz.
     İki özel ismin arasındaki "bin" بن (Ali bin Ebî Tâlib); öteki "bin" sözlükten (sayı: بیڭ)."""
     turkish_text = turkish_text.replace("\u02bb", "\u2018")   # ʻ ayın işareti = ‘
-    turkish_text = re.sub(r"(?<=[^\W\d_]{3})[üu]?lill[âa]h", " lillâh", turkish_text)   # elhamdülillâh -> الحمد لله
-    turkish_text = re.sub(r"(?<=[^\W\d_]{3})[üu]ll[âa]h", " Allâh", turkish_text)       # âdâtullâh -> عادات الله
+    turkish_text = re.sub(r"[^\W\d_]*ll[âa]h[^\W\d_]*", _lillah, turkish_text)   # elhamdülillâh, âdâtullâh
     turkish_text = _BIN_ISIM_RE.sub("\\1\ue012", turkish_text)
     out = _transliterate_text_ilk(turkish_text, *args, **kwargs)
     out = out.replace("\ue012", "بن").replace("\ue010", "ی")
@@ -928,6 +939,8 @@ def transliterate_text(turkish_text, *args, **kwargs):
         yazim = _IFADE.get(_ifade_anahtar(m.group(1))) or _IFADE.get(_ifade_anahtar(m.group(1)).translate(_SAPKA_TR))
         if not yazim:
             continue
+        if m.group(2) and not _ek_mi(turkish_lower(m.group(2))):
+            continue          # kesmeden sonrası ek değil (Bu da‘vâ: "bu da" + "vâ" değil, ayınlı kelime)
         parcalar.append(("metin", turkish_text[son:m.start()]))
         if m.group(2):
             yazim += _ifade_ek(turkish_text[m.start(1):m.end(1)], turkish_text[m.start(2):m.end(2)])
@@ -944,3 +957,31 @@ def transliterate_text(turkish_text, *args, **kwargs):
             bas, sonb = p[: len(p) - len(p.lstrip())], p[len(p.rstrip()):]
             out.append(bas + _transliterate_text_ifadesiz(p.strip(), *args, **kwargs) + sonb)
     return _bitisik("".join(out))
+
+
+# ---- Ayınlı (‘) ve uzatma çizgili (ā ī ū) kelimeler: sözlükteki anahtar doğrudan (Hayrat: da‘vâ دعوا، tab‘ طبع، iskāt اسقاط) ----
+_AYIN_HARF = "A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛûĀāĪīŪū\u2018\u02bb"
+_AYIN_OZEL = set("\u2018\u02bbĀāĪīŪū")
+_AYIN_KELIME_RE = re.compile("(?<![-\u2010'\u2019" + _AYIN_HARF + "])[" + _AYIN_HARF + "]+(?![-\u2010'\u2019" + _AYIN_HARF + "])")
+_transliterate_text_ayinsiz = transliterate_text
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not turkish_text or not (_AYIN_OZEL & set(turkish_text)):
+        return _transliterate_text_ayinsiz(turkish_text, *args, **kwargs)
+    saklanan = []
+
+    def sakla(m):
+        w = m.group(0)
+        if not (_AYIN_OZEL & set(w)) or len(saklanan) > 6000:
+            return w
+        h = dictionary.lookup_exact(turkish_lower(w.replace("\u02bb", "\u2018")))
+        if not h:
+            return w
+        saklanan.append(h[0].replace("\u06af", "\u0643"))
+        return "\ue030" + chr(0xe100 + len(saklanan) - 1)
+    metin = _AYIN_KELIME_RE.sub(sakla, turkish_text)
+    out = _transliterate_text_ayinsiz(metin, *args, **kwargs)
+    for i, yazim in enumerate(saklanan):
+        out = out.replace("\ue030" + chr(0xe100 + i), yazim)
+    return out

@@ -95,6 +95,8 @@ def _load_extra_from_tsv() -> dict:
             for row in reader:
                 if len(row) >= 3 and not row[0].startswith("#") and row[1].strip():
                     latin, osmanli, origin = row[0].strip(), row[1].strip(), row[2].strip()
+                    if not any("\u0621" <= c <= "\u064a" or "\u066e" <= c <= "\u06d3" or "\u06fa" <= c <= "\u06ff" for c in osmanli):
+                        continue                      # harfsiz kayıt (Hayrat: as -> ؑ، asm -> ؐ): yalnız işaret, kelime değil
                     if osmanli[:1] in "إأ":
                         osmanli = "ا" + osmanli[1:]   # Osmanlıcada kelime başında hemze yazılmaz (إنعام -> انعام)
                     if osmanli.endswith("اء") and " " not in osmanli:
