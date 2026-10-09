@@ -112,6 +112,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
         wl = turkish_lower(w)
         if wl in dictionary.HAYRAT_ANAHTAR:
             return repl(m)            # Hayrat'taki tam kelime: ek kuralları dokunmaz (tek ölçü)
+        ca = _ca_eki(wl)
+        if ca:
+            return ca                 # -ca/-ce eki: Osmanlıca عثمانلیجه، devletçe دولتجه (Hayrat)
         o = _lerin_eki(w, _matbaa_ekleri(w, _ek_duzelt(repl(m))))
         if "'" in w or "\u2019" in w or len(wl) < 4 or dictionary.lookup_exact(wl):
             return o
@@ -138,6 +141,46 @@ def draft_transliterate_sentence(sentence: str) -> str:
         return o
 
     return WORD_RE.sub(kelime, sentence)
+
+
+# ---- -ca/-ce/-ça/-çe eki (Hayrat: ek her zaman جه; devletçe دولتجه، ahlâkça اخلاقجه، Osmanlıca عثمانلیجه) ----
+_CA_SONRASI = sorted(["", "sı", "si", "ya", "ye", "dan", "den", "da", "de", "nın", "nin", "yı", "yi", "sına", "sine",
+                      "sını", "sini", "sının", "sinin", "sında", "sinde", "sından", "sinden", "dır", "dir"],
+                     key=len, reverse=True)
+_CA_SERT = "çfhkpsşt"
+
+
+def _ca_eki(wl: str):
+    """Sözlükte olmayan kelime = sözlükteki kök + -ca/-ce (+ ek). Kökün kendi yazımı + جه (+ ara boşluk + ek).
+    Kelimenin kendisi sözlükteyse (bahçe, derece, tarihçe) ya da fiil -dıkça/-ınca ise None (eski yol)."""
+    if len(wl) < 5 or dictionary.lookup_exact(wl):
+        return None
+    for r in _CA_SONRASI:
+        if r and not wl.endswith(r):
+            continue
+        govde = wl[:len(wl) - len(r)] if r else wl
+        m = re.fullmatch(r"(.{3,})([cç])([ae])", govde)
+        if not m:
+            continue
+        kok = m.group(1)
+        if dictionary._get(govde) or re.search(r"[dt][ıiuü]k$", kok):
+            continue
+        if (m.group(2) == "ç") != (kok[-1] in _CA_SERT):
+            continue                      # ses uyumu: hakça, devletçe; Osmanlıca, sabırca
+        h = dictionary._get_soft(kok)
+        if not h:
+            continue
+        kok_yazi = h[0]
+        if re.search(r"[ıiuü]n$", kok):
+            if not kok_yazi.endswith("\u06ad"):
+                continue                  # fiil -ınca (yazınca) kural motorunda
+            kok_yazi = kok_yazi[:-1] + "\u0646"   # iyelik + n + ce: ilmince علمنجه، hükmünce حكمنجه
+        yazi = kok_yazi + ("\u200c" if kok_yazi.endswith("\u0647") else "") + "\u062c\u0647"   # ailece عائله‌جه
+        if r:
+            ek = rules.ekleri_yaz(govde, [r], [], rules._harmony_class(wl))
+            yazi += "\u200c" + ek.lstrip("\u200c")   # bitişmeyen he + ara boşluk: عثمانلیجه‌دن
+        return yazi
+    return None
 
 
 # ---- Hayrat'tan öğrenilen ek sonu kuralları (tools/hayrat_ek_ogren.py; sözlükte olmayan kelimeler) ----
