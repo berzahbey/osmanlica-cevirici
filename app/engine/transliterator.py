@@ -1189,3 +1189,109 @@ def transliterate_text(turkish_text, *args, **kwargs):
     for i, yazi in enumerate(saklanan):
         out = out.replace("\ue034" + chr(0xe500 + i), yazi)
     return out
+
+
+# ---- Bağlam sözlüğü (Hayrat'tan öğrenilen; tools/hayrat_baglam_ogren.py): et ایت/ات، basar بصر/باصار ----
+import math as _math
+_BAGLAM = {}            # kelime -> {norm: [ham, toplam, {özellik: sayı}]}
+_BAGLAM_ESIK = 2.0
+_BAGLAM_NOKTA = ".,;:!?\"'()[]«»“”‘’-—…"
+
+
+def _baglam_norm(o):
+    o = unicodedata.normalize("NFC", o).replace("\u06d5", "\u0647").replace("\u06c0", "\u0647").replace("\u06af", "\u0643") \
+        .replace("\u06a9", "\u0643").replace("\u064a", "\u06cc").replace("\u0649", "\u06cc").replace("\u0623", "\u0627")
+    o = re.sub("[\u0610-\u061a\u064b-\u065f\u0670\u0640\u0654\u200c\u200d]", "", o)
+    return re.sub("[\u060c\u061b\u061f\u06d4]", "", o)
+
+
+def _baglam_yazim(oh):
+    """Hayrat'ın ham yazımı -> çevirici biçimi: hareke yok (şedde, tenvin kalır), bitişmeyen he = ه (+ ara boşluk)."""
+    oh = re.sub("[\u064e\u064f\u0650\u0652\u0670\u0610-\u061a]", "", oh)
+    oh = re.sub("\u06d5(?=.)", "\u0647\u200c", oh)
+    return oh.replace("\u06d5", "\u0647").replace("\u06af", "\u0643")
+
+
+def _baglam_yukle():
+    global _BAGLAM_ESIK
+    yol = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "data", "hayrat_baglam.tsv")
+    if _os.environ.get("OSM_BAGLAM", "1") == "0" or not _os.path.exists(yol):
+        return
+    for satir in open(yol, encoding="utf-8"):
+        p = satir.rstrip("\n").split("\t")
+        if p[0] == "#esik" and len(p) > 1:
+            _BAGLAM_ESIK = float(p[1])
+            continue
+        if satir.startswith("#") or len(p) < 4:
+            continue
+        w, oh, oz, n = p[0], p[1], p[2], int(p[3])
+        k = _BAGLAM.setdefault(w, {}).setdefault(_baglam_norm(oh), [oh, 0, {}])
+        if oz == "*":
+            k[0], k[1] = oh, n
+        else:
+            k[2][oz] = n
+
+
+_baglam_yukle()
+_transliterate_text_baglamsiz = transliterate_text
+
+
+def _baglam_sec(w, ozs):
+    """Naive Bayes (öğrenme aracıyla aynı); kanıt eşiği geçmezse None (sözlükteki yazım kalır)."""
+    yazimlar = _BAGLAM[w]
+    toplam = sum(v[1] for v in yazimlar.values())
+    h = dictionary.lookup_exact(w)
+    v = _baglam_norm(h[0]) if h and _baglam_norm(h[0]) in yazimlar else max(yazimlar, key=lambda o: yazimlar[o][1])
+    skor = {}
+    for o, (oh, n, fs) in yazimlar.items():
+        if n <= 0:
+            continue
+        s = _math.log(n / toplam)
+        enc = 0
+        for f in ozs:
+            c = fs.get(f, 0)
+            if not f.endswith(":#"):
+                enc = max(enc, c)        # kanıt yalnız gerçek komşu kelimeden (paragraf başı/sonu sayılmaz)
+            s += _math.log((c + 0.1) / (n + 5.0))
+        skor[o] = (s, enc)
+    if v not in skor:
+        return None
+    en = max(skor, key=lambda o: skor[o][0])
+    if en != v and skor[en][0] - skor[v][0] >= _BAGLAM_ESIK and skor[en][1] >= 2:
+        return _baglam_yazim(yazimlar[en][0])
+    return None
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not _BAGLAM or not turkish_text:
+        return _transliterate_text_baglamsiz(turkish_text, *args, **kwargs)
+    saklanan, parca, son = [], [], 0
+    for par in re.finditer(r"[^\n]+", turkish_text):
+        toks = []
+        for m in re.finditer(r"\S+", par.group(0)):
+            ham = m.group(0)
+            k = turkish_lower(ham).strip(_BAGLAM_NOKTA)
+            if not k:
+                continue
+            bas = par.start() + m.start() + (len(ham) - len(ham.lstrip(_BAGLAM_NOKTA)))
+            toks.append((k, bas, bas + len(ham.strip(_BAGLAM_NOKTA))))
+        for i, (k, a, b) in enumerate(toks):
+            if k not in _BAGLAM:
+                continue
+            ozs = []
+            for d, ad in ((-1, "L1"), (1, "R1"), (-2, "L2"), (2, "R2")):
+                j = i + d
+                ozs.append(f"{ad}:{toks[j][0]}" if 0 <= j < len(toks) else f"{ad}:#")
+            yazim = _baglam_sec(k, ozs)
+            if not yazim or a < son:
+                continue
+            parca.append(turkish_text[son:a] + "\ue035" + chr(0xe600 + len(saklanan)))
+            saklanan.append(yazim)
+            son = b
+    if not saklanan:
+        return _transliterate_text_baglamsiz(turkish_text, *args, **kwargs)
+    metin = "".join(parca) + turkish_text[son:]
+    out = _transliterate_text_baglamsiz(metin, *args, **kwargs)
+    for i, yazim in enumerate(saklanan):
+        out = out.replace("\ue035" + chr(0xe600 + i), yazim)
+    return out
