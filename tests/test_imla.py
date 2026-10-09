@@ -116,7 +116,7 @@ for latin, osm in BEKLENEN.items():
         print("KALDI", latin, "beklenen", osm, "çıkan", sonuc)
 from engine.transliterator import transliterate_text
 for latin, osm in CUMLE.items():
-    sonuc = transliterate_text(latin, use_ollama_refine=False)
+    sonuc = transliterate_text(latin)
     if sonuc == osm:
         print("GECTI", latin, sonuc)
     else:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Ana orkestrasyon: girdi metnini alır, gerekiyorsa Türkçeye çevirir,
-sonra cümleleri gruplar halinde Osmanlıcaya (Arap harfli) çevirip Ollama ile inceltir.
+sonra Osmanlıcaya (Arap harfli) çevirir: sözlük + kural motoru (yapay zekâ yok, çıktı her çalıştırmada aynı).
 """
 import re
 import unicodedata
@@ -11,7 +11,6 @@ from langdetect import detect, DetectorFactory
 from . import dictionary
 from . import rules
 from .alphabet import turkish_lower
-from . import ollama_client
 
 DetectorFactory.seed = 0
 logger = logging.getLogger("osmanlica")
@@ -391,8 +390,6 @@ def _ek_duzelt(w: str) -> str:
     return w[:-4] + "یله" if w.endswith("ییله") else w
 
 
-BATCH_SIZE = int(__import__("os").environ.get("OLLAMA_BATCH_SIZE", "12"))
-
 
 def _merge_orphan_numbers(text: str) -> str:
     """Sadece 'N.' veya 'N)' iceren satirlari, hemen sonraki satirla
@@ -629,7 +626,6 @@ def _lerin_eki(latin: str, osm: str) -> str:
 
 def transliterate_text(
     turkish_text: str,
-    use_ollama_refine: bool = True,
     progress_callback=None,
 ) -> str:
     turkish_text = unicodedata.normalize("NFC", turkish_text)   # ayrık şapka (u + ̂) -> û
@@ -646,16 +642,10 @@ def transliterate_text(
     turkish_text = _arapca_tarifler(turkish_text)      # Kitâbü't-Tevhîd, el-Bakara (tire silinmeden önce)
     turkish_text = _drop_izafet(turkish_text)
     turkish_text = _remove_hyphens(turkish_text)
-    """Türkçe metni (zaten Türkçe olduğu varsayılır) Osmanlıcaya çevirir.
-    Ollama'ya cümle cümle değil, BATCH_SIZE'lık gruplar halinde TEK istekte
-    gönderir - bu, istek sayısını (ve dolayısıyla süreyi) ciddi oranda azaltır."""
+    """Türkçe metni (zaten Türkçe olduğu varsayılır) Osmanlıcaya çevirir (sözlük + kural motoru)."""
     parts = SENTENCE_SPLIT_RE.split(turkish_text)
     sentences = parts[0::2]
     separators = parts[1::2]
-    ollama_up = use_ollama_refine and ollama_client.is_available()
-    if use_ollama_refine and not ollama_up:
-        logger.warning("Ollama'ya ulaşılamadı, sadece kural motoru taslağı kullanılacak.")
-
     total = len(sentences)
     out_sentences = [""] * total
     done = 0
@@ -667,19 +657,8 @@ def transliterate_text(
         if not s.strip():
             out_sentences[i] = s
 
-    if ollama_up and non_empty_idx:
-        for batch_start in range(0, len(non_empty_idx), BATCH_SIZE):
-            batch_idx = non_empty_idx[batch_start:batch_start + BATCH_SIZE]
-            pairs = [(sentences[i], out_sentences[i]) for i in batch_idx]
-            refined = ollama_client.refine_ottoman_batch(pairs)
-            for i, r in zip(batch_idx, refined):
-                out_sentences[i] = r
-            done += len(batch_idx)
-            if progress_callback:
-                progress_callback(done, total)
-    else:
-        if progress_callback:
-            progress_callback(total, total)
+    if progress_callback:
+        progress_callback(total, total)
 
     result = []
     for i, s in enumerate(out_sentences):
@@ -700,30 +679,24 @@ def _ottoman_punctuation(text: str) -> str:
 
 def full_pipeline(
     raw_text: str,
-    use_ollama_refine: bool = True,
     progress_callback=None,
     assume_turkish: bool = False,
 ) -> dict:
-    """Tam hat: dil tespiti -> (gerekirse) Türkçeye çeviri -> Osmanlıca çeviri."""
+    """Tam hat: dil denetimi -> Osmanlıca çeviri. Yalnız Türkçe metin alınır (çeviri yok)."""
     # assume_turkish: metin zaten Türkçe (ör. Dedplay Stüdyo); dil tespiti atlanır,
     # kısa/yabancı isimli metinler yanlışlıkla "başka dil" sanılıp çevrilmez.
     lang = "tr" if assume_turkish else detect_language(raw_text)
-    ollama_up = ollama_client.is_available() if lang != "tr" else False
-
     if lang != "tr":
-        if ollama_up:
-            turkish_text = ollama_client.translate_to_turkish(raw_text, source_lang_hint=lang)
+        # Dil tahmini kısa/isimli Türkçe metinde yanılabilir: kısa metin ya da Türkçeye özgü harfli metin Türkçe sayılır.
+        if len(raw_text.strip()) < 200 or re.search("[çğıöşüÇĞİÖŞÜ]", raw_text):
+            lang = "tr"
         else:
             raise RuntimeError(
-                f"Girdi Türkçe değil (tespit edilen dil: {lang}) ve Ollama'ya "
-                f"ulaşılamadığı için önce Türkçeye çevrilemedi."
+                f"Girdi Türkçe değil (tespit edilen dil: {lang}). Osmanlıca çevirici yalnız Türkçe metin alır."
             )
-    else:
-        turkish_text = raw_text
+    turkish_text = raw_text
 
-    ottoman_text = transliterate_text(
-        turkish_text, use_ollama_refine=use_ollama_refine, progress_callback=progress_callback
-    )
+    ottoman_text = transliterate_text(turkish_text, progress_callback=progress_callback)
 
     return {
         "detected_lang": lang,

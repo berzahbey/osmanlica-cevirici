@@ -141,7 +141,7 @@ for i, (l, c) in enumerate(sorted(yazim.items(), key=lambda x: -sum(x[1].values(
         k = kucuk(l)
         tur = "sözlükte var" if (k in D.DICTIONARY or sapkasiz(k) in D.DICTIONARY) else "KURAL MOTORU"
     try:
-        bizim = kiyas(tt(l, use_ollama_refine=False))
+        bizim = kiyas(tt(l))
     except Exception as e:
         bizim = f"HATA:{type(e).__name__}"
     sonuc[tur][1] += adet

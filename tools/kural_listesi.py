@@ -48,5 +48,5 @@ with open("/data/kural_listesi.txt", "w", encoding="utf-8") as f:
             f"{len(kural)} farklı, {sum(n for n, _ in kural)} kez (%{100 * sum(n for n, _ in kural) / max(1, toplam):.1f})\n\n")
     for n, w in kural[:600]:
         kitaplar = ", ".join(a[:22] for a, _ in kitap_say[w].most_common(2))
-        f.write(f"{n:>5}  {w:24s} {tt(w, use_ollama_refine=False):24s} {kitaplar}\n")
+        f.write(f"{n:>5}  {w:24s} {tt(w):24s} {kitaplar}\n")
 print(open("/data/kural_listesi.txt", encoding="utf-8").readline())

@@ -52,7 +52,7 @@ ARABIC_ONLY_LETTERS = {
 # Türkçe Latin harften Osmanlıca'ya SADE ünsüz eşlemesi
 # (Bu eşleme, sözlükte bulunamayan SAF TÜRKÇE kelimeler için kural motorunda kullanılır.
 #  Arapça/Farsça kökenli kelimeler İÇİN KULLANILMAZ - onlar dictionary.py'den gelir
-#  ya da Ollama'nın önerdiği orijinal imla ile yazılır.)
+#  ya da Hayrat verisinden gelir.)
 CONSONANT_MAP_TURKISH = {
     "b": "ب", "c": "ج", "ç": CHEH, "d": "د", "f": "ف",
     "g": None,  # bağlama göre INCE_GEF / KALIN_GEF - rules.py'de çözülür

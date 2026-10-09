@@ -29,15 +29,12 @@
   <div class="box" id="tabText">
     <textarea id="textInput" placeholder="Çevrilecek metni buraya yaz..."></textarea>
     <br><br>
-    <label><input type="checkbox" id="ollamaCheckText" checked> Ollama ile imla düzeltmesi yap (yavaş ama daha kaliteli)</label>
-    <br><br>
     <button onclick="submitText()">Çevir</button>
   </div>
 
   <div class="box" id="tabFile" style="display:none">
     <input type="file" id="fileInput" accept=".pdf,.epub,.txt,.jpg,.jpeg,.png">
     <br>
-    <label><input type="checkbox" id="ollamaCheckFile" checked> Ollama ile imla düzeltmesi yap (yavaş ama daha kaliteli)</label>
     <br><br>
     <button onclick="submitFile()">Yükle ve Çevir</button>
   </div>
@@ -55,11 +52,9 @@ function showTab(tab) {
 
 async function submitText() {
   const text = document.getElementById('textInput').value;
-  const useOllama = document.getElementById('ollamaCheckText').checked;
   if (!text.trim()) return alert('Metin boş olamaz.');
   const fd = new FormData();
   fd.append('text', text);
-  fd.append('use_ollama', useOllama);
   const res = await fetch('/api/upload-text', { method: 'POST', body: fd });
   const data = await res.json();
   pollStatus(data.job_id);
@@ -67,11 +62,9 @@ async function submitText() {
 
 async function submitFile() {
   const fileEl = document.getElementById('fileInput');
-  const useOllama = document.getElementById('ollamaCheckFile').checked;
   if (!fileEl.files.length) return alert('Bir dosya seç.');
   const fd = new FormData();
   fd.append('file', fileEl.files[0]);
-  fd.append('use_ollama', useOllama);
   const res = await fetch('/api/upload', { method: 'POST', body: fd });
   const data = await res.json();
   pollStatus(data.job_id);

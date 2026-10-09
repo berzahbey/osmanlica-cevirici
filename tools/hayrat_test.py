@@ -47,7 +47,7 @@ for i, (l, c) in enumerate(secili):
     hay, n = c.most_common(1)[0]
     adet = sum(c.values())
     try:
-        bizim = norm(tt(l, use_ollama_refine=False))
+        bizim = norm(tt(l))
     except Exception as e:
         bizim = f"HATA:{type(e).__name__}"
     if bizim == hay or bizim in c:      # Hayrat'ın kendi yazımlarından biriyse doğru sayılır

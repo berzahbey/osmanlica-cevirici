@@ -8,7 +8,7 @@ from engine.transliterator import transliterate_text
 
 
 def cevir(s):
-    return transliterate_text(s, use_ollama_refine=False)
+    return transliterate_text(s)
 
 
 ORNEK = [
