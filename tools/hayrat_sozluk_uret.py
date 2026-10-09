@@ -10,7 +10,7 @@ CIKTI = "/app/data/hayrat.tsv"
 KAYNAKLAR = {"sözlük": "/app/data/ottoman_dict.tsv", "düzeltme": "/app/data/duzeltmeler.tsv"}
 ESIK_YENI, ESIK_DEGIS, ORAN = 2, 3, 0.7
 CIFT_ANLAMLI = {"et", "alem", "adet", "kalıp"}
-HAREKE = re.compile("[\u064B-\u0650\u0652\u0653\u0655-\u065F\u0670\u06D6-\u06ED\u0640\u200c\u200d\u200e\u200f]")
+HAREKE = re.compile("[\u064B-\u0650\u0652\u0653\u0655-\u065F\u0670\u06D6-\u06ED\u0640\u200d\u200e\u200f]")   # ara boşluk (\u200c) korunur
 ARAP_OZEL = re.compile("[عحطظصضثذقغ]")
 SAPKA = str.maketrans({"â": "a", "î": "i", "û": "u", "ā": "a", "ī": "i", "ū": "u", "ō": "o"})
 EK_AYRAC = set("ın in un ün nın nin nun nün a e ya ye ı i u ü yı yi yu yü da de ta te dan den tan ten la le yla yle "
@@ -19,14 +19,15 @@ EK_AYRAC = set("ın in un ün nın nin nun nün a e ya ye ı i u ü yı yi yu y�
 
 def osm(o):
     o = unicodedata.normalize("NFC", o)
-    o = o.replace("\u06C0", "\u0647\u0654").replace("\u06D5", "\u0647").replace("\u064A", "\u06CC").replace("\u0649", "\u06CC")
+    o = o.replace("\u06C0", "\u0647\u0654").replace("\u064A", "\u06CC").replace("\u0649", "\u06CC")
+    o = re.sub("\u06D5(?=[\u0621-\u06FF])", "\u0647\u200c", o).replace("\u06D5", "\u0647")   # kelime içi ە: bitişmeyen he (ه + ara boşluk)
     o = o.replace("\u06A9", "\u0643").replace("\u06AF", "\u0643")
     o = re.sub(r"[،؛؟.,;:!?«»\"()\[\]]", "", HAREKE.sub("", o))
     return re.sub(r"\s+", " ", o).strip()   # içteki boşluk korunur (بدیع الزمان)
 
 
 def kiyas(o):
-    return osm(o).replace("\u0651", "")
+    return osm(o).replace("\u0651", "").replace("\u200c", "")
 
 
 def kucuk(w):

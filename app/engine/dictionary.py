@@ -16,6 +16,7 @@ DATA_FILE = Path(__file__).parent.parent / "data" / "ottoman_dict.tsv"
 # Türkçe kelime düzeltmeleri: sözlükten sonra okunur (sözlük kaydı Türkçe kelimeyle çakışınca Türkçe kazanır)
 DUZELTME_FILE = Path(__file__).parent.parent / "data" / "duzeltmeler.tsv"
 HAYRAT_FILE = Path(__import__("os").environ.get("HAYRAT_DOSYA") or Path(__file__).parent.parent / "data" / "hayrat.tsv")  # Risale-i Nur (Hayrat) eksik kelimeler
+HAYRAT_AZ_FILE = Path(__file__).parent.parent / "data" / "hayrat_az.tsv"  # Hayrat'ta az geçen, meallerde gereken kelimeler
 
 SEED_DICTIONARY = {
     "kitap": ("كتاب", "ar"), "kalem": ("قلم", "ar"), "insan": ("انسان", "ar"),
@@ -81,9 +82,12 @@ EXTRA_LOOKUP_SUFFIXES = ("la le yla yle lık lik luk lük lı li lu lü lığı 
 LOOKUP_SUFFIXES = SUFFIXES + [x for x in EXTRA_LOOKUP_SUFFIXES if x not in SUFFIXES]
 LOOKUP_SUFFIXES += [x for x in ("sel", "sal") if x not in LOOKUP_SUFFIXES]   # tarihsel تاریخسل
 
+HAYRAT_ANAHTAR = set()   # Hayrat'tan gelen tam kelimeler: sonradan ek kurallarıyla değiştirilmez (tek ölçü)
+
+
 def _load_extra_from_tsv() -> dict:
     extra = {}
-    for dosya in (DATA_FILE, DUZELTME_FILE, HAYRAT_FILE):  # Hayrat en son: tek ölçü
+    for dosya in (DATA_FILE, DUZELTME_FILE, HAYRAT_FILE, HAYRAT_AZ_FILE):  # Hayrat en son: tek ölçü
         if not dosya.exists():
             continue
         with open(dosya, "r", encoding="utf-8") as f:
@@ -102,6 +106,8 @@ def _load_extra_from_tsv() -> dict:
                         elif _son in ("e", "a", "â"):
                             osmanli = osmanli[:-1] + "ه"                 # -e ile biten: ه
                     extra[turkish_lower(latin)] = (osmanli, origin)
+                    if dosya in (HAYRAT_FILE, HAYRAT_AZ_FILE):
+                        HAYRAT_ANAHTAR.add(turkish_lower(latin))
     return extra
 
 
@@ -119,7 +125,8 @@ DICTIONARY = {k: (v[0].replace("\u064a", "\u06cc").replace("\u06a9", "\u0643"), 
 # ---------------- Şedde (ّ) ----------------
 # Arapça/Farsça kökenli kelimelerde ikizleşen harfin üzerine şedde konur: muallim -> معلّم, cennet -> جنّت.
 # İkizleşme Latin yazımdaki çift harften anlaşılır. Harfin karşılığı belirsizse şedde konmaz.
-# Türkçe kelimelerde şedde kullanılmaz. Kapatmak için: OSM_SEDDE=0
+# Türkçe kelimelerde şedde kullanılmaz. Hayrat'tan gelen kelimeye otomatik şedde konmaz (şeddesi Hayrat'taki gibi:
+# rahmettir رحمتدر). Kapatmak için: OSM_SEDDE=0
 import os as _os
 _SEDDE = "\u0651"
 _HARF_KARSILIK = {"b": "ب", "c": "ج", "ç": "چ", "d": "دض", "f": "ف", "g": "غگ", "h": "حهخ", "j": "ژ",
@@ -156,7 +163,7 @@ def _sedde_koy(latin: str, osm: str) -> str:
 
 
 if _os.environ.get("OSM_SEDDE", "1") != "0":
-    DICTIONARY = {k: ((_sedde_koy(k, v[0]), v[1]) if (v[1] in _SEDDE_KOKEN and k not in _TURKCE_CIFT
+    DICTIONARY = {k: ((_sedde_koy(k, v[0]), v[1]) if (v[1] in _SEDDE_KOKEN and k not in _TURKCE_CIFT and k not in HAYRAT_ANAHTAR
                                                       and any(k[i] == k[i + 1] and k[i] in _HARF_KARSILIK
                                                               for i in range(len(k) - 1))) else v)
                   for k, v in DICTIONARY.items()}

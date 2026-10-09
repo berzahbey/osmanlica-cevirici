@@ -107,7 +107,70 @@ def draft_transliterate_sentence(sentence: str) -> str:
         return kok + isaret + tam[len(kok):]
 
     sentence = _TIRNAK_EK_RE.sub(tirnak_eki, sentence)
-    return WORD_RE.sub(lambda m: _lerin_eki(m.group(0), _matbaa_ekleri(m.group(0), _ek_duzelt(repl(m)))), sentence)
+    def kelime(m):
+        w = m.group(0)
+        wl = turkish_lower(w)
+        if wl in dictionary.HAYRAT_ANAHTAR:
+            return repl(m)            # Hayrat'taki tam kelime: ek kuralları dokunmaz (tek ölçü)
+        o = _lerin_eki(w, _matbaa_ekleri(w, _ek_duzelt(repl(m))))
+        if "'" in w or "\u2019" in w or len(wl) < 4 or dictionary.lookup_exact(wl):
+            return o
+        kok = wl[:-3]
+        if re.search(r"[aeıioöuü]n[ıiuü]z$", wl) and dictionary.lookup_exact(kok) and not re.search(r"[ğsy][ıiuü]$", kok) and \
+                not (re.search(r"[dt][ıiuü]$", kok) and (dictionary.lookup_exact(kok[:-2] + "mak") or dictionary.lookup_exact(kok[:-2] + "mek"))):
+            return _ek_duzelt(repl(_Eslesme(kok))) + "ڭز"   # ünlüyle biten isim + -nız: ordunuz اوردوڭز (oldunuz değil)
+        if _EK_KURALLARI:
+            yeni = _hayrat_ek_kurali(wl, o)   # sözlükte olmayan kelime: Hayrat'tan öğrenilen ek sonu
+            kh, ks = dictionary.lookup_with_suffix(wl)
+            kok_yazi = (kh[0] if kh and ks and str(kh[1]).startswith(("ar", "fa")) else "").replace("\u0651", "")
+            if kok_yazi and len(kok_yazi) > len(wl) - len("".join(ks)) - 2:
+                kok_yazi = ""                  # ünlüleri yazılan (Türkçe) kök: bacak باجاق -> bacağa باجاغه
+            if not (kok_yazi and o.replace("\u0651", "").startswith(kok_yazi) and not yeni.replace("\u0651", "").startswith(kok_yazi)):
+                o = yeni                       # Arapça/Farsça kökün harfleri değişmez: şafağın شفقڭ
+        if re.search(r"[dt][ıu]ğ[ıu]nda$", wl):
+            o = re.sub("[دت][قغ]نده$", "دیغنده", o)          # -dığında (Hayrat: vardığında واردیغنده، baktığında باقدیغنده)
+        if re.search(r"m[iü]yor", wl):
+            o = re.sub("مه\u200c?ه?یور", "مییور", o)          # -miyor/-müyor (Hayrat: görünmüyor كورونمییور)
+        m = re.search(r"[^aeıioöuü]([ae])s[ıi]n$", wl)
+        if m and (dictionary.lookup_exact(wl[:-4] + "mak") or dictionary.lookup_exact(wl[:-4] + "mek")):
+            o = re.sub("(?:ا|ه\u200c?)?(?:سین|سڭ)$", "اسڭ" if m.group(1) == "a" else "ه\u200cسڭ", o)
+            # istek 2. tekil (Hayrat): kalında اسڭ (olasın اولاسڭ، davranasın طاوراناسڭ)، incede ه‌سڭ (gizleyesin كیزله‌یه‌سڭ)
+        return o
+
+    return WORD_RE.sub(kelime, sentence)
+
+
+# ---- Hayrat'tan öğrenilen ek sonu kuralları (tools/hayrat_ek_ogren.py; sözlükte olmayan kelimeler) ----
+def _ek_kurallarini_yukle():
+    import os
+    from pathlib import Path
+    if os.environ.get("OSM_EK_KURAL", "1") == "0":
+        return {}
+    dosya = Path(os.environ.get("HAYRAT_EK_KURAL") or Path(__file__).parent.parent / "data" / "hayrat_ek_kurallari.tsv")
+    kural = {}
+    if dosya.exists():
+        for satir in open(dosya, encoding="utf-8"):
+            if satir.startswith("#"):
+                continue
+            p = satir.rstrip("\n").split("\t")
+            if len(p) >= 3:
+                kural.setdefault(p[0], []).append((p[1], p[2]))
+    for v in kural.values():
+        v.sort(key=lambda x: -len(x[0]))
+    return kural
+
+
+_EK_KURALLARI = _ek_kurallarini_yukle()
+
+
+def _hayrat_ek_kurali(w: str, o: str) -> str:
+    """En uzun Latin son ek, sonra en uzun çevirici sonu; ara boşluk (ZWNJ) eşleşmede sayılmaz."""
+    for L in range(min(8, len(w) - 2), 1, -1):
+        for t1, t2 in _EK_KURALLARI.get(w[-L:], ()):
+            for k in range(len(t1), len(t1) + 4):
+                if k <= len(o) and o[-k:].replace("\u200c", "") == t1:
+                    return o[:-k] + t2
+    return o
 
 
 # "-in/-ün" ile biten Arapça kökler: din+den دیندن (iyelik eki sanılıp yesi silinmesin)
@@ -273,6 +336,13 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     if len(l) >= 6 and not _kok_n and not re.match(r"^(bu|şu|o)n(da|dan|daki|un|lar)", l) and \
             re.search(r"([ıiuü]n(da|de|dan|den|daki|deki)|s[ıiuü]n[ıiuüae]|s[ıiuü]n[ıiuü]n)(d[ıiuü]r|t[ıiuü]r)?$", l):
         osm = re.sub(r"(?:ین|ون)(ده|دن|دهكی|دكی|ی|ه|ڭ)(در)?$", r"ن\1\2", osm)
+    # 3. tekil emir: fiil kökü + -sın/-sin سین، -sun/-sün سون (Hayrat: etsin ایتسین، olsun اولسون، geçirsin كچیرسین);
+    # geniş zaman 2. tekil (bilirsin بیلیرسڭ) dokunulmaz: kökü "bilir" diye bir fiil yok
+    m3 = re.search(r"s([ıiuü])n$", l)
+    if m3 and osm.endswith("سڭ") and len(l) >= 5:
+        kok3 = l[:-3]
+        if dictionary.lookup_exact(kok3 + "mek") or dictionary.lookup_exact(kok3 + "mak"):
+            osm = osm[:-2] + ("سون" if m3.group(1) in "uü" else "سین")
     return osm
 
 
@@ -723,6 +793,7 @@ def transliterate_text(turkish_text, *args, **kwargs):
     out = re.sub("\u0647\ue011", "\u0647\u0654", out)
     out = out.replace("\ue011", "").replace("\ue0f1", "")
     out = re.sub("[\u2018\u2019'`\u02bf\u02be]", "", out)   # ayın/hemze işareti Osmanlıcaya harf olarak geçmez
+    out = re.sub("[\u0610-\u061a]", "", out)   # Hayrat'ın isim üstü dua işaretleri (اونڭؐ، ابراهیمؑ) bağlama göre; dualar açık yazılır
     return out.replace("\u06af", "\u0643")                  # g sesi Hayrat gibi kef (ك) ile; ڭ kalır
 
 

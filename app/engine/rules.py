@@ -681,6 +681,12 @@ def _fiil_ekleri():
             add(f"{d}ik{son_i} {d}ük{son_i}", yi, sart=sart)
     # şart
     add("seydi saydı", "سه" + _ZW + "یدی")
+    # -sAydI kişi ekleriyle (Hayrat: düşünseydim دوشونسه‌یدم، olsaydık اولسه‌یدق، almasaydılar آلماسه‌یدیلر)
+    add("seydim saydım", "سه" + _ZW + "یدم")
+    add("seydik saydık", "سه" + _ZW + "یدك", "سه" + _ZW + "یدق")
+    add("seydin saydın", "سه" + _ZW + "یدڭ")
+    add("seydiniz saydınız", "سه" + _ZW + "یدیڭز")
+    add("seydiler saydılar", "سه" + _ZW + "یدیلر")
     add("se sa", "سه", sart="r")
     add("seniz sanız", "سه" + _ZW + "ڭز", sart="r")
     add("seler salar", "سه" + _ZW + "لر", sart="r")
