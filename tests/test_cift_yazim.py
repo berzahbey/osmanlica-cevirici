@@ -29,18 +29,29 @@ def eser(ad, paragraflar):
 pA = [[("tefekkür", "تفكر"), ("et", "ایت")]] * 10 + [[("et", "ات"), ("yedi", "یدی")]] * 4 \
      + [[("arz", "ارض"), ("ve", "و"), ("semâ", "سما")]] * 5 + [[("arz", "عرض"), ("etti", "ایتدی")]] * 4 \
      + [[("kendine", "كندینه")]] * 8 + [[("kendine", "كندیڭه")]] * 4 \
-     + [[("türlü", "تورلی")]] * 6 + [[("Saîd", "س * ع")]] * 5
-pB = [[("et", "ایط")]] + [[("türlü", "دورلی")]] * 5 + [[("esîr", "اسیر")]] * 6 + [[("esîr", "اثیر")]] * 3 + [[("Saîd", "سعید")]] * 6
+     + [[("türlü", "تورلی")]] * 6 + [[("Saîd", "س * ع")]] * 5 \
+     + [[("sınamak", "صینامق")]] * 5 + [[("denemek", "دنیمك")]] * 4 + [[("denemek", "دنهمك")]] * 3
+pB = [[("et", "ایط")]] + [[("türlü", "دورلی")]] * 5 + [[("sınamak", "صینهمق")]] * 4 + [[("denemek", "دنهمك")]] * 4 + [[("esîr", "اسیر")]] * 6 + [[("esîr", "اثیر")]] * 3 + [[("Saîd", "سعید")]] * 6
 eser("a-eseri", pA)
 eser("b-eseri", pB)
 
 sonuc = C.cozumle(*C.topla(dict(HB.eserler())))
 tur = {w: t for t, w, *_ in sonuc}
-beklenen = {"et": "yazim_cesidi", "arz": "anlam_farki", "kendine": "senin_onun", "türlü": "yazim_cesidi", "esîr": "anlam_farki"}
+beklenen = {"et": "anlam_farki", "arz": "anlam_farki", "kendine": "senin_onun", "türlü": "yazim_cesidi", "esîr": "anlam_farki"}
 hata = 0
 for w, t in beklenen.items():
     if tur.get(w) != t:
         print("HATA:", w, "beklenen", t, "çıkan", tur.get(w)); hata += 1
+# Türkçe kelimede yalnız ünlü farkı: eserden esere ayrılıyorsa yazım çeşidi, aynı eserde ikisi de varsa anlam farkı
+if tur.get("sınamak") != "yazim_cesidi":
+    print("HATA: sınamak (eserden esere ünlü farkı) yazım çeşidi olmalı:", tur.get("sınamak")); hata += 1
+if tur.get("denemek") != "anlam_farki":
+    print("HATA: denemek (aynı eserde iki yazım) anlam farkı olmalı:", tur.get("denemek")); hata += 1
+# onaylı listeler motorun kararından önce gelir
+if not C.ONAY_CESIT or not C.ONAY_ANLAM:
+    print("HATA: onaylı listeler yüklenmedi (app/data/yazim_cesitleri.tsv, anlam_farki_kelimeler.tsv)"); hata += 1
+if C.sinif("dolu", HB.norm("طولو"), HB.norm("طولی")) != "yazim_cesidi" or C.sinif("yer", HB.norm("یر"), HB.norm("ییر")) != "anlam_farki":
+    print("HATA: onaylı liste uygulanmadı (dolu çeşit, yer anlam)"); hata += 1
 if "saîd" in tur:
     print("HATA: dua işaretli yazım (س * ع) çift yazım sayıldı"); hata += 1
 # eser ayrışması: türlü eserden esere ayrılıyor (1.00, birlikte 0); arz aynı eserde birlikte (birlikte 1)

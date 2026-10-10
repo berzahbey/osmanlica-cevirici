@@ -1,0 +1,29 @@
+# Bağlam kuralları (elle, Hayrat örneklerinden; tools/cift_yazim.py anlam_farki listesi). Biçim: kelime<TAB>yazım<TAB>koşul
+# Koşul: L1/L2/R1/R2 (soldaki/sağdaki 1./2. kelime) ya da C (iki yandaki 2'şer kelimeden biri) : düzenli ifade
+# (tam eşleşme, küçük harf, noktalama atılmış). Birden çok koşul ' & ' ile (hepsi). Aynı kelimenin satırları sırayla
+# denenir; ilk tutan uygulanır. Hiçbir satır tutmazsa çevirici eskisi gibi yazar. @ETMEK: etmek/eylemek/olunmak çekimleri.
+arz	عرض	R1:@ETMEK
+arza	عرضه	R1:(ictis[âa]r|cesaret|c[üu]r.?et|m[üu]s[âa]ade)\w*
+kat	قطع	R1:@ETMEK
+bel	بلع	R1:@ETMEK
+kal	قلع	R1:@ETMEK
+kal	قلع	L1:ve & L2:hedm\w*
+kal	قلع	L1:def.?aten
+mesh	مسخ	R1:ol(mu[şs]|mı[şs]|du|ur|an|ma)\w*
+mesh	مسخ	L1:ma.?nev[iî]
+azm	عظم	C:(lahm\w*|mudga\w*|kemik\w*)
+esîr	اثیر	R1:madde\w*
+esir	اثیر	R1:madde\w*
+havâs	خواص	C:(av[âa]m|havass\S*|tabaka\w*)
+havas	خواص	C:(av[âa]m|havass\S*|tabaka\w*)
+havâssı	خواصّی	C:(av[âa]m\w*|mukarreb)
+sevr	سور	R1:mu.?[âa]hede\w*
+arş	آرش	R1:(emri\w*|demek|dedi\w*|der)
+arş	آرش	L1:kumandan\w*
+hisse	حسّه	R1:(m[âa]lik|iştir[âa]k)\w*
+halka	حلقه	R1:tut\w*
+halka	حلقه	R1:h[âa]linde
+karın	قارین	R1:(sancı\w*|ağrı\w*|boşluğ\w*)
+kara	قاره	C:(deniz\w*|bahr\w*|berr\w*|kıta\w*)
+altından	آلتوندن	C:(gümüş\w*|yapılmış|ma.?m[ûu]l|sikke\w*)
+gül	كول	C:ağla\w*

@@ -1410,3 +1410,82 @@ def _rakamlar(out: str) -> str:
             return m.group(0)            # yabancı dizinin hemen arkasındaki rakam (Paris 1959) kalır
         return "".join(chr(0x0660 + int(c)) for c in m.group(0))
     return _RAKAM_RE.sub(cevir, out)
+
+
+# ---- Bağlam kuralları (elle, app/data/baglam_kurallari.tsv): komşu kelimeye göre yazım (arz etti عرض، kat eden قطع) ----
+# En dış katman: kural tutan kelime yer tutucuyla saklanır, iç katmanlar onu görmez. Kural tutmazsa çıktı aynen eskisi.
+# OSM_BAGLAM_KURAL=0 kapatır.
+_BK = {}                 # kelime -> [(yazım, [(yer, derlenmiş ifade), ...], etmek), ...]
+_BK_ETMEK = (r"(et|ett\w*|etm\w*|ets\w*|eder\w*|eden\w*|edip|ediyor\w*|edil\w*|edece\w*|ederek|edeli\w*"
+             r"|edemez\w*|eyle\w*|olun\w*)")
+_BK_NOKTA = ".,;:!?\"()[]«»“”…"
+
+
+def _bk_yukle():
+    yol = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "data", "baglam_kurallari.tsv")
+    if _os.environ.get("OSM_BAGLAM_KURAL", "1") == "0" or not _os.path.exists(yol):
+        return
+    for satir in open(yol, encoding="utf-8"):
+        if satir.startswith("#") or not satir.strip():
+            continue
+        p = satir.rstrip("\n").split("\t")
+        if len(p) < 3:
+            continue
+        kosullar = []
+        etmek = "@ETMEK" in p[2]
+        for k in p[2].split(" & "):
+            yer, ifade = k.split(":", 1)
+            kosullar.append((yer.strip(), re.compile(ifade.strip().replace("@ETMEK", _BK_ETMEK))))
+        _BK.setdefault(turkish_lower(p[0]), []).append((p[1], kosullar, etmek))
+
+
+_bk_yukle()
+_transliterate_text_kuralsiz = transliterate_text
+
+
+def _bk_tutar(kosullar, komsu):
+    for yer, ifade in kosullar:
+        adaylar = [komsu[y] for y in ("L2", "L1", "R1", "R2")] if yer == "C" else [komsu.get(yer, "#")]
+        if not any(a != "#" and ifade.fullmatch(a) for a in adaylar):
+            return False
+    return True
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not _BK or not turkish_text:
+        return _transliterate_text_kuralsiz(turkish_text, *args, **kwargs)
+    saklanan, parca, son = [], [], 0
+    for par in re.finditer(r"[^\n]+", turkish_text):
+        toks = []
+        for m in re.finditer(r"\S+", par.group(0)):
+            ham = m.group(0)
+            ic = ham.strip(_BK_NOKTA)
+            if not ic:
+                continue
+            bas = par.start() + m.start() + (len(ham) - len(ham.lstrip(_BK_NOKTA)))
+            toks.append((turkish_lower(ic), bas, bas + len(ic)))
+        for i, (k, a, b) in enumerate(toks):
+            if k not in _BK or a < son or len(saklanan) > 1000:
+                continue
+            komsu = {}
+            for d, ad in ((-1, "L1"), (1, "R1"), (-2, "L2"), (2, "R2")):
+                j = i + d
+                komsu[ad] = toks[j][0] if 0 <= j < len(toks) else "#"
+            for yazim, kosullar, etmek in _BK[k]:
+                if _bk_tutar(kosullar, komsu):
+                    parca.append(turkish_text[son:a] + "\ue038" + chr(0xea00 + len(saklanan)))
+                    saklanan.append(yazim)
+                    son = b
+                    if etmek and komsu["R1"] == "et":
+                        # yer tutucu iç bağlam katmanının ipucunu (Arapça isim + et) sakladığı için yalın "et" de burada yazılır
+                        _, a2, b2 = toks[i + 1]
+                        parca.append(turkish_text[son:a2] + "\ue038" + chr(0xea00 + len(saklanan)))
+                        saklanan.append("\u0627\u06cc\u062a")      # ایت
+                        son = b2
+                    break
+    if not saklanan:
+        return _transliterate_text_kuralsiz(turkish_text, *args, **kwargs)
+    out = _transliterate_text_kuralsiz("".join(parca) + turkish_text[son:], *args, **kwargs)
+    for i, yazim in enumerate(saklanan):
+        out = out.replace("\ue038" + chr(0xea00 + i), yazim)
+    return out

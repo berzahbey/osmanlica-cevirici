@@ -28,6 +28,25 @@ GEVSEK = {"\u0637": "\u062a", "\u062f": "\u062a", "\u0635": "\u0633", "\u0642": 
 ENG = "\u06ad"                                                            # ڭ
 NUN = "\u0646"
 ISARET = set("*\u0608\u0610\u0611\u0612\u0613\u0614")                    # Hayrat'ın dua işaretleri
+VERI = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "app", "data")
+
+
+def onayli(ad):
+    """Zahir'in onayladığı liste (app/data/<ad>): kelime -> yazımlar. Motorun kendi kararından önce gelir."""
+    yol = os.path.join(VERI, ad)
+    if not os.path.exists(yol):
+        return {}
+    d = {}
+    for satir in open(yol, encoding="utf-8"):
+        if satir.startswith("#") or "\t" not in satir:
+            continue
+        w, y = satir.rstrip("\n").split("\t", 1)
+        d[w] = y.split()
+    return d
+
+
+ONAY_CESIT = onayli("yazim_cesitleri.tsv")
+ONAY_ANLAM = onayli("anlam_farki_kelimeler.tsv")
 
 
 def iskelet(o, harita):
@@ -47,8 +66,14 @@ def sinif(w, a, b):
     """İki yazımın farkının türü."""
     if a.replace(ENG, NUN) == b.replace(ENG, NUN):
         return "senin_onun"
+    if w in ONAY_ANLAM:
+        return "anlam_farki"
+    if w in ONAY_CESIT:
+        return "yazim_cesidi"
     if iskelet(a, SIKI) == iskelet(b, SIKI):
-        return "yazim_cesidi"                       # yalnız ünlü harf / hemze farkı
+        if koken(w) in ("ar", "fa", "ar-fa", "fa-ar"):
+            return "yazim_cesidi"                   # Arapça/Farsça kelimede yalnız ünlü harf / hemze farkı
+        return "belirsiz"                           # Türkçede ünlü harf anlamı değiştirebilir (ات/ایت، یر/ییر): eser ayrışmasına bakılır
     if iskelet(a, GEVSEK) == iskelet(b, GEVSEK):
         k = koken(w)
         if k not in ("ar", "fa", "ar-fa", "fa-ar"):
@@ -103,9 +128,12 @@ def cozumle(yaz, ham, ornek):
             continue
         cogun = yazimlar[0][0]
         turler = {sinif(w, cogun, o) for o, _ in yazimlar[1:]}
-        tur = "anlam_farki" if "anlam_farki" in turler else ("yazim_cesidi" if "yazim_cesidi" in turler else "senin_onun")
         ay, bir = ayrisma({e: collections.Counter({o: k for o, k in c.items() if o in dict(yazimlar)})
                            for e, c in de.items()})
+        if "belirsiz" in turler:
+            turler.discard("belirsiz")
+            turler.add("anlam_farki" if bir >= 1 else "yazim_cesidi")   # aynı eserde ikisi de varsa anlam farkı
+        tur = "anlam_farki" if "anlam_farki" in turler else ("yazim_cesidi" if "yazim_cesidi" in turler else "senin_onun")
         liste = [(o, ham[(w, o)].most_common(1)[0][0], k) for o, k in yazimlar]
         orn = {o: ornek[(w, o)] for o, _ in yazimlar}
         sonuc.append((tur, w, n, liste, ay, bir, orn))
@@ -118,12 +146,13 @@ def yaz_dosyalar(sonuc, eser_sayisi):
     dosya = {"yazim_cesidi": "yazim_cesitleri.tsv", "anlam_farki": "anlam_farki.tsv", "senin_onun": "senin_onun.tsv"}
     acik = {t: open(os.path.join(CIKTI, f), "w", encoding="utf-8") for t, f in dosya.items()}
     for t, f in acik.items():
-        f.write("# kelime\ttoplam\tyazımlar (yazım:adet)\teser ayrışması\tikisi birlikte geçen eser\torijin\n")
+        f.write("# kelime\ttoplam\tyazımlar (yazım:adet)\teser ayrışması\tikisi birlikte geçen eser\torijin\tonay (YENİ: Zahir'e sorulacak)\n")
         if t == "anlam_farki":
             f.write("#   (alt satırlar: yazım\teser\tbağlam)\n")
     for tur, w, n, liste, ay, bir, orn in sonuc:
         f = acik[tur]
-        f.write(f"{w}\t{n}\t{' '.join(f'{h}:{k}' for _, h, k in liste)}\t{ay:.2f}\t{bir}\t{koken(w)}\n")
+        onay = "onaylı" if (w in ONAY_CESIT or w in ONAY_ANLAM) else "YENİ"
+        f.write(f"{w}\t{n}\t{' '.join(f'{h}:{k}' for _, h, k in liste)}\t{ay:.2f}\t{bir}\t{koken(w)}\t{onay}\n")
         if tur == "anlam_farki":
             for o, h, _ in liste:
                 for ad, bag in orn[o]:
