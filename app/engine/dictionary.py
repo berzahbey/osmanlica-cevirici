@@ -84,6 +84,22 @@ LOOKUP_SUFFIXES += [x for x in ("sel", "sal") if x not in LOOKUP_SUFFIXES]   # t
 
 HAYRAT_ANAHTAR = set()   # Hayrat'tan gelen tam kelimeler: sonradan ek kurallarıyla değiştirilmez (tek ölçü)
 
+# Hayrat'ta kesme işaretinden sonra ayrı kalmış ek parçaları (Allah'ın -> "ın" ڭ, ...'tan -> "tan" دن) kelime sayılmaz:
+# anahtar bir ek ve yazımın ilk harfi kelimenin ilk sesine uymuyor (in -> ڭ, ün -> ڭ, tan -> دن). Yoksa inin -> ڭین, ünlü -> ڭلو.
+_BAS_HARF = {"b": "ب", "c": "ج", "ç": "چج", "d": "دطض", "f": "ف", "g": "كغگ", "h": "حهخ", "j": "ژ", "k": "كقغ", "l": "ل",
+             "m": "م", "n": "ن", "p": "پب", "r": "ر", "s": "سصث", "ş": "ش", "t": "تط", "v": "و", "y": "ی", "z": "زذضظ"}
+_EK_ANAHTAR = set(LOOKUP_SUFFIXES) | {"daki", "deki", "taki", "teki"}
+
+
+def _hayrat_ek_parcasi(latin: str, osm: str) -> bool:
+    if len(latin) < 2 or latin not in _EK_ANAHTAR or not osm:   # tek harf (i/ı -> ی) kalır: İbn-î Sinâ ابن ی سینا
+        return False
+    c = latin[0]
+    if c in "aeıioöuüâîû":
+        return osm[0] not in "اآأعئ"
+    return osm[0] not in _BAS_HARF.get(c, osm[0])
+
+
 
 def _load_extra_from_tsv() -> dict:
     extra = {}
@@ -107,6 +123,8 @@ def _load_extra_from_tsv() -> dict:
                             osmanli = osmanli[:-1] + "ت"                 # ماهیة -> ماهیت
                         elif _son in ("e", "a", "â"):
                             osmanli = osmanli[:-1] + "ه"                 # -e ile biten: ه
+                    if dosya in (HAYRAT_FILE, HAYRAT_AZ_FILE) and _hayrat_ek_parcasi(turkish_lower(latin), osmanli):
+                        continue                      # Hayrat'ta kesmeden sonra kalmış ek parçası (in -> ڭ): kelime değil
                     extra[turkish_lower(latin)] = (osmanli, origin)
                     if dosya in (HAYRAT_FILE, HAYRAT_AZ_FILE):
                         HAYRAT_ANAHTAR.add(turkish_lower(latin))

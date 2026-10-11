@@ -100,16 +100,29 @@ def draft_transliterate_sentence(sentence: str) -> str:
         kelime, isaret, ek = m.group(1), m.group(2), m.group(3)
         if not _ek_mi(turkish_lower(ek)):
             return m.group(0)
+        ayrik = _ayrik_ek(m.string, m.start(1), turkish_lower(kelime))
+        if ayrik:
+            return ayrik + isaret + rules.ekleri_yaz(turkish_lower(kelime), [], [turkish_lower(ek)],
+                                                     rules._harmony_class(turkish_lower(kelime + ek)))
         tam = _ek_duzelt(repl(_Eslesme(kelime + "'" + ek)))
         kok = _ek_duzelt(repl(_Eslesme(kelime)))
         if not tam.startswith(kok):
-            return m.group(0)
+            # şedde farkı (sözlükte "hak'tan" حقدن, "hak" حقّ): şeddesiz karşılaştırılır, ek kısmı tam yazımdan alınır
+            t2, k2 = tam.replace("\u0651", ""), kok.replace("\u0651", "")
+            if not t2.startswith(k2):
+                # ek, tırnaktan sonra ek olarak yazılır (eskiden ayrı kelime sayılıp Hayrat'ın ek parçası kayıtlarına düşüyordu)
+                kl, el = turkish_lower(kelime), turkish_lower(ek)
+                return kok + isaret + rules.ekleri_yaz(kl, [], [el], rules._harmony_class(kl + el))
+            return kok + isaret + t2[len(k2):]
         return kok + isaret + tam[len(kok):]
 
     sentence = _TIRNAK_EK_RE.sub(tirnak_eki, sentence)
     def kelime(m):
         w = m.group(0)
         wl = turkish_lower(w)
+        ayrik = _ayrik_ek(m.string, m.start(), wl) if hasattr(m, "string") else None
+        if ayrik:
+            return ayrik
         if wl in dictionary.HAYRAT_ANAHTAR:
             return repl(m)            # Hayrat'taki tam kelime: ek kuralları dokunmaz (tek ölçü)
         tz = _tenvin_zarf(wl)
@@ -521,6 +534,38 @@ class _Eslesme:
 
 # Kapanan tırnak/parantezden hemen sonra boşluksuz gelen Türkçe ek: “O”dur, “Hak”tan, (Rahman)'a değil
 _TIRNAK_EK_RE = re.compile(r"([A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû]+(?:['’][A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû]+)*)([”\"»\)\]]+)([a-zçğıöşüâîû]{1,9})(?![A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû'’])")
+
+
+_AYRIK_PAREN_ACIK = {"in", "ın", "un", "ün", "nin", "nın", "nun", "nün"}
+_AYRIK_PAREN_BOSLUK = _AYRIK_PAREN_ACIK | {"a", "e", "ı", "i", "u", "ü"}
+_AYRIK_KESME_BOSLUK = _AYRIK_PAREN_BOSLUK | {"ya", "ye", "yı", "yi", "dan", "den", "tan", "ten", "da", "de", "ta", "te",
+                                             "dır", "dir", "dur", "dür", "tır", "tir", "tur", "tür"}
+
+
+def _ayrik_ek(metin: str, bas: int, wl: str):
+    """Önceki kelimeden ayrı düşmüş ek: (sav)'ın, Allah'- tan, (filozoflar) ın, düşenler(in hâli). Ek olarak yazılır, yoksa None.
+    Bitişik (kelime'ek, kelime'-ek, kelime'- ek, kelime)ek): her ek dizisi. Boşluklu ya da açılan parantezli durumda yalnız küçük
+    harfle başlayan tek ek: kelime' ya / tan / dur, (filozoflar) ın, düşenler(in (kesmeden önce harf, rakam, nokta ya da parantez). Böylece (ya da, (Ya Muhammed, vara' ile, 'İleride,
+    (Nun 71/5), Bir şehre (mısran) inin dokunulmaz. -tan/-ten/-ta/-te matbaa yazımıyla د (Rasulullah (sav)'tan -> دن)."""
+    if wl == "ki" or not _ek_mi(wl):
+        return None
+    on = metin[max(0, bas - 4):bas]
+    kucuk = metin[bas:bas + 1].islower()
+    if re.search(r"[\w).]['\u2019]-?$|['\u2019]-\s$|\)$", on):
+        pass
+    elif kucuk and wl in _AYRIK_KESME_BOSLUK and re.search(r"[\w).]['\u2019]\s$", on):
+        pass
+    elif kucuk and wl in _AYRIK_PAREN_BOSLUK and re.search(r"\)\s$", on):
+        pass
+    elif kucuk and wl in _AYRIK_PAREN_ACIK and re.search(r"\($", on):
+        pass
+    else:
+        return None
+    if wl[:1] == "t":
+        wl = "d" + wl[1:]
+    onceki = re.findall(r"[A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû]+", metin[:bas])
+    kok = turkish_lower(onceki[-1]) if onceki else wl
+    return rules.ekleri_yaz(kok, [], [wl], rules._harmony_class(kok + wl))
 
 
 def _ek_mi(s: str) -> bool:
