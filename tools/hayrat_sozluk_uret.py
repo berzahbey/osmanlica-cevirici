@@ -4,6 +4,9 @@ Kurallar (hayrat_sinav.py ile aynı): mevcut kaydı geçmek için en az 3 kez ve
 Hayrat'ın kendi anahtarı her zaman; türetilmiş anahtarlar (şapkasız, hemzesiz) yalnız sözlükte yoksa.
 Çift anlamlı et/alem/adet/kalıp eski kayıtta kalır. Rapor: /data/hayrat_degisen.tsv"""
 import collections, re, unicodedata
+import sys
+sys.path.insert(0, "/app")
+from engine.koken import turkce_mi   # koken: ق ط ص غ Turkce kelimede de yazilir (kork قورق)
 
 GIRDI = "/data/hayrat_kelime.tsv"
 CIKTI = "/app/data/hayrat.tsv"
@@ -96,7 +99,7 @@ for k, c in sayim.items():
     o, n = c.most_common(1)[0]
     if n / top < ORAN:
         continue
-    koken = "ar" if ARAP_OZEL.search(o) else "tr"
+    koken = "ar" if ARAP_OZEL.search(o) and not turkce_mi(k, o) else "tr"
     h = hemzesiz(k)
     for anahtar, turetilmis in ((k, False), (sapkasiz(k), True), (h, True), (h and sapkasiz(h), True)):
         if not anahtar or anahtar in yeni or anahtar in CIFT_ANLAMLI:

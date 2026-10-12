@@ -144,6 +144,8 @@ def draft_transliterate_sentence(sentence: str) -> str:
             kok_yazi = (kh[0] if kh and ks and str(kh[1]).startswith(("ar", "fa")) else "").replace("\u0651", "")
             if kok_yazi and len(kok_yazi) > len(wl) - len("".join(ks)) - 2:
                 kok_yazi = ""                  # ünlüleri yazılan (Türkçe) kök: bacak باجاق -> bacağa باجاغه
+            if _cift_harf(yeni) > _cift_harf(o):
+                yeni = o                       # öğrenilmiş ek sonu harfi ikinci kez yazıyor (yiyecek+in یییه‌ه‌جكڭ): sözlük kökü + ek kalır
             if not (kok_yazi and o.replace("\u0651", "").startswith(kok_yazi) and not yeni.replace("\u0651", "").startswith(kok_yazi)):
                 o = yeni                       # Arapça/Farsça kökün harfleri değişmez: şafağın شفقڭ
         if re.search(r"[dt][ıu]ğ[ıu]nda$", wl):
@@ -154,7 +156,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
         if m and (dictionary.lookup_exact(wl[:-4] + "mak") or dictionary.lookup_exact(wl[:-4] + "mek")):
             o = re.sub("(?:ا|ه\u200c?)?(?:سین|سڭ)$", "اسڭ" if m.group(1) == "a" else "ه\u200cسڭ", o)
             # istek 2. tekil (Hayrat): kalında اسڭ (olasın اولاسڭ، davranasın طاوراناسڭ)، incede ه‌سڭ (gizleyesin كیزله‌یه‌سڭ)
-        return o
+        return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
     return WORD_RE.sub(kelime, sentence)
 
@@ -256,6 +258,84 @@ def _ek_kurallarini_yukle():
 
 
 _EK_KURALLARI = _ek_kurallarini_yukle()
+
+
+_BITISMEZ_HARF = set("\u0627\u0622\u062f\u0630\u0631\u0632\u0698\u0648")   # ا آ د ذ ر ز ژ و
+_UNSUZ_HARF = {"b": "\u0628", "c": "\u062c", "ç": "\u0686", "d": "\u062f\u0637\u0636", "f": "\u0641", "g": "\u0643\u063a",
+               "ğ": "\u063a\u0643", "h": "\u062d\u0647\u062e", "j": "\u0698", "k": "\u0643\u0642", "l": "\u0644", "m": "\u0645",
+               "n": "\u0646\u06ad", "p": "\u067e\u0628", "r": "\u0631", "s": "\u0633\u0635\u062b", "ş": "\u0634",
+               "t": "\u062a\u0637\u062f", "v": "\u0648", "z": "\u0632\u0630\u0636\u0638"}
+_IMIZ_RE = re.compile(r"([^aeıioöuüâîû'])([ıiuü])([mn])[ıiuü]z")
+
+
+def _imiz_yazimi(l: str, osm: str) -> str:
+    """Ünsüzden sonra -ımız/-ınız (Hayrat'ta 36 bin geçiş, harfe göre %95-100 tutarlı): kökün son harfi bitişmeyen harfse (ا د ذ ر ز ژ و)
+    ya da kök y ile bitiyorsa araya ی yazılır (قراریڭزی، سندیمز، لریڭز، سویله‌مه‌ییڭز); bitişen harften sonra yazılmaz (اكمكمز، قلبڭز).
+    Fiil emri (-ınız, kelime sonunda) her zaman ی: geçiniz كچیڭز، bakınız باقیڭز. Yalnız sözlükte olmayan kelimelerde (sonda)."""
+    m = None
+    for m in _IMIZ_RE.finditer(l):
+        pass
+    if not m:
+        return osm
+    ek = "\u0645\u0632" if m.group(3) == "m" else "\u06ad\u0632"
+    i = osm.rfind(ek)
+    if i < 2:
+        return osm
+    var = osm[i - 1] == "\u06cc"
+    k = i - 2 if var else i - 1
+    while k > 0 and osm[k] in "\u200c\u0651":
+        k -= 1
+    harf = osm[k]
+    if harf not in _UNSUZ_HARF.get(m.group(1), ""):
+        return osm                    # kökün son harfi Latin ünsüze uymuyor: ünlüyle biten kök (kapımız قاپومز، arzunuz) ya da y (köyümüz)
+    emir = m.group(3) == "n" and l.endswith(m.group(0)) and \
+        bool(dictionary.lookup_exact(l[:m.start(2)] + "mak") or dictionary.lookup_exact(l[:m.start(2)] + "mek"))
+    ister = emir or harf in _BITISMEZ_HARF
+    if ister and not var:
+        return osm[:i] + "\u06cc" + osm[i:]
+    if var and not ister:
+        return osm[:i - 1] + osm[i:]
+    return osm
+
+
+# Kelime sonunda ünsüz + iyelik ı + n'li hâl eki (Hayrat sayımı, bitişmeyen harften sonra ی / bitişen harften sonra ی):
+# -ını 3329:630 / 88:19281, -ına 5064:108 / 1737:18855, -ının 1139:714 (karışık: dokunulmaz) / 206:5631.
+_IYELIK_SON = ((re.compile(r"([^aeıioöuüâîû'])[ıiuü]n[ıiuü]$"), "\u0646\u06cc", True),
+               (re.compile(r"([^aeıioöuüâîû'])[ıiuü]n[ae]$"), "\u0646\u0647", True),
+               (re.compile(r"([^aeıioöuüâîû'])[ıiuü]n[ıiuü]n$"), "\u0646\u06ad", False))
+
+
+def _iyelik_hal_yazimi(l: str, osm: str) -> str:
+    for desen, ek, iki_yon in _IYELIK_SON if _IYELIK_SON_ACIK else ():
+        m = desen.search(l)
+        if not m or re.search(r"l[ae]r[ıi]n", l[m.start(1):]) or not osm.endswith(ek) or len(osm) < len(ek) + 2:
+            continue
+        kok = l[:m.start(1) + 1]
+        nkok = dictionary.lookup_exact(l[:m.start(1) + 3])
+        if not (dictionary._get_soft(kok) or dictionary._derin_kok_hit(kok)) or (nkok and nkok[0].endswith("\u0646")):
+            return osm                    # kök sözlükte yoksa ya da -n ile biten kök varsa ünlü kökün kendisi: hırçın+ı, miskin+i, kadın+ın
+        i = len(osm) - len(ek)
+        var = osm[i - 1] == "\u06cc"
+        k = i - 2 if var else i - 1
+        while k > 0 and osm[k] in "\u200c\u0651":
+            k -= 1
+        if osm[k] not in _UNSUZ_HARF.get(m.group(1), ""):
+            return osm
+        ister = osm[k] in _BITISMEZ_HARF
+        if ister and not var and iki_yon:
+            return osm[:i] + "\u06cc" + osm[i:]
+        if var and not ister:
+            return osm[:i - 1] + osm[i:]
+        return osm
+    return osm
+
+
+_IYELIK_SON_ACIK = __import__("os").environ.get("DENEME_IYELIK", "1") != "0"
+
+
+def _cift_harf(o: str) -> int:
+    """Ara boşlukla ya da bitişik iki ه (ه‌ه، هه) sayısı."""
+    return len(re.findall("\u0647\u200c?\u0647", o))
 
 
 def _hayrat_ek_kurali(w: str, o: str) -> str:

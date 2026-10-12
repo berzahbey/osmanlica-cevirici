@@ -275,9 +275,15 @@ def _ilgi_koku_mu(kok, h, ekler):
         return False
     if h[0].endswith("\u06ad") and kok.endswith(("in", "ın", "un", "ün")) and not ekler[0].startswith("ki"):
         return True
-    # iyelik hâlindeki biçim (cevabı -> جوابی) + n'li ek: cevab + ının -> جوابنڭ (Hayrat); kısa kök sözlükte olmalı
-    return h[0].endswith("\u06cc") and kok[-1:] in "ıiuü" and kok[-2:-1] not in "aeıioöuü" \
-        and ekler[0][:1] == "n" and bool(_get_soft(kok[:-1]))
+    return _iyelik_kok_mu(kok, h, ekler)
+
+
+def _iyelik_kok_mu(kok, h, ekler):
+    """İyelik hâlindeki biçim (cevabı جوابی، dili دیلی، kolu قولی) + n'li/m'li ek kök sayılmaz: cevab + ının -> جوابنڭ، dil + imiz -> دیلمز،
+    kol + una -> قولنه (Hayrat). Kısa kök sözlükte olmalı (Türkçe Hayrat kökü yumuşamasıyla: varlığ- -> varlık). Çoğul + iyelik (-ları) kalır."""
+    return bool(h and ekler) and h[0].endswith("\u06cc") and kok[-1:] in "ıiuü" and kok[-2:-1] not in "aeıioöuüâîû" \
+        and ekler[0][:1] in ("n", "m") and not kok[:-1].endswith(("lar", "ler")) \
+        and bool(_get_soft(kok[:-1]) or _derin_kok_hit(kok[:-1]))
 
 
 def lookup_with_suffix(word: str):
@@ -326,6 +332,28 @@ _ISIM_EKLERI = {e for e in LOOKUP_SUFFIXES if not e.startswith(("c", "ç"))} | {
     "imiz", "ımız", "umuz", "ümüz", "iniz", "ınız", "unuz", "ünüz", "miz", "mız", "muz", "müz", "niz", "nız", "nuz",
     "nüz", "ki", "nde", "nda", "ne", "na", "ni", "nı", "nu", "nü", "deki", "daki", "teki", "taki", "ndeki", "ndaki"}
 _DERIN_KOKEN = {"ar", "fa", "ar-fa", "fa-ar"}
+# Türkçe kök (tur 1b+3, 12 Ekim): Hayrat'ta yazımı belli Türkçe kelime de derin köke girer (yurtlarınızdan -> یورتلریڭزدن). Yalnız Hayrat
+# anahtarı, yalnız tam eşleşme; ek önünde yumuşamış son ünsüz Türkçe yazımla yumuşar (toprağ- -> طوپراغ، ağac- -> آغاج). OSM_DERIN_TR=0 kapatır.
+_DERIN_TR = _os.environ.get("OSM_DERIN_TR", "1") != "0"
+_TR_YUMUSAMA = {"ğ": ("k", {"\u0642": "\u063a", "\u0643": "\u0643"}), "b": ("p", {"\u067e": "\u0628"}), "c": ("ç", {"\u0686": "\u062c"})}
+
+
+def _derin_kok_hit(kok):
+    hit = _get_soft(kok)
+    if hit and hit[1] in _DERIN_KOKEN:
+        return hit
+    if not _DERIN_TR:
+        return None
+    h = DICTIONARY.get(kok)
+    if h and h[1] == "tr" and kok in HAYRAT_ANAHTAR:
+        return h
+    y = _TR_YUMUSAMA.get(kok[-1:])
+    if y and len(kok) >= 3 and not (kok[-3:-2] in ("d", "t") and kok[-2:-1] in ("ı", "i", "u", "ü")):   # -dığ- (gördüğü كوردیكی) -dık değil (gördük كوردك)
+        sert = kok[:-1] + y[0]
+        h = DICTIONARY.get(sert)
+        if h and h[1] == "tr" and sert in HAYRAT_ANAHTAR and h[0][-1:] in y[1]:
+            return (h[0][:-1] + y[1][h[0][-1]], "tr")
+    return None
 
 
 def _derin_kok(w: str):
@@ -350,12 +378,18 @@ def _derin_kok(w: str):
         return None, []
     for L in range(len(w) - 1, 2, -1):
         kok = w[:L]
-        hit = _get_soft(kok)
-        if not hit or hit[1] not in _DERIN_KOKEN:   # yalnız Arapça/Farsça kökler (Türkçe kelimeler kural motorunda)
+        hit = _derin_kok_hit(kok)
+        if not hit:                                # Arapça/Farsça kök ya da Hayrat'taki Türkçe kök
             continue
         ekler = next((e for e in bol(w[L:], 5) if rules.ek_sirasi_gecerli(e)), None)
         if ekler is None or not _ek_ses_uygun(kok, ekler[0]):
             continue
+        if hit[0].endswith("\u06ad") and kok.endswith(("in", "ın", "un", "ün")) and not ekler[0].startswith("ki"):
+            continue                               # ilgi/2. kişi biçimi kök değil: edin ایدڭ + sin, gördüğün كوردیكڭ + de
+        if kok.endswith(("lar", "ler")) and ekler[0][:1] in ("ı", "i"):
+            continue                               # çoğul + iyelik: yurt + ları+nız (یورتلریڭز), yurtlar + ınız (یورتلرڭز) değil
+        if _iyelik_kok_mu(kok, hit, ekler):
+            continue                               # iyelik biçimi + n'li/m'li ek: kitab + ınız (كتابڭز), kitabı + nız (كتابیڭز) değil
         if kok[-1] in "aeıioöuüâîû" and ekler[0][0] in "tç":   # ünlüden sonra sert ek olmaz (yara+tır değil)
             continue
         if len(ekler) >= 3 and len(kok) < 4:

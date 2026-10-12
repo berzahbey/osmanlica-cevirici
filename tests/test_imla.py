@@ -33,7 +33,7 @@ BEKLENEN = {
     # sık kelimeler ve özel adlar
     "nitekim": "نیته‌كیم", "buna": "بوڭا", "birşey": "بر شی", "Ali": "علی", "Hasan": "حسن", "Mısır": "مصر",
     # derin ek ayırma (Arapça kök + iyelik/hâl ekleri)
-    "âyetlerimizi": "آیتلرمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلندهكی",
+    "âyetlerimizi": "آیتلریمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلندهكی",
     # imlâ turu 3: OpenITI sıklık listesiyle gözden geçirilen kelimeler
     "tevilat": "تأویلات", "istidadı": "استعدادی", "münezzehtir": "منزّهدر", "rububiyet": "ربوبیت", "muvahhid": "موحّد",
     "mübiyn": "مبین", "risalet": "رسالت", "bizzat": "بالذّات",
