@@ -359,10 +359,11 @@ _KOPULA = {"dır", "dir", "dur", "dür", "tır", "tir", "tur", "tür"}   # ile +
 
 
 def lookup_with_suffix(word: str):
-    """Tur A (13 Ekim): -la/-le (ile) ekinden sonra n'li ek gelmez (fayda + la + nın değil: faydalanın fiil). Öyle bir ayırma bulunursa
+    """Tur A/B (13 Ekim): -la/-le (ile) ekinden sonra yalnız -dır ya da y'li ek gelebilir (fayda + la + nın, açık + la + sın, buda + la + lar
+    değil: fiil; tedâhülüyledir, süsleyici kalır). Öyle bir ayırma bulunursa
     sözlük yolu kullanılmaz (kural motoru + kök sözlüğü)."""
     hit, sufs = _lookup_with_suffix_ic(word)
-    if hit and len(sufs) > 1 and any(e in _ILE and n[:1] == "n" for e, n in zip(sufs, sufs[1:])):
+    if hit and len(sufs) > 1 and any(e in _ILE and n not in _KOPULA and n[:1] != "y" for e, n in zip(sufs, sufs[1:])):
         return None, []
     return hit, sufs
 

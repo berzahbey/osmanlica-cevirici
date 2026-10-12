@@ -133,6 +133,10 @@ def draft_transliterate_sentence(sentence: str) -> str:
         ca = _ca_eki(wl)
         if ca:
             return ca                 # -ca/-ce eki: Osmanlıca عثمانلیجه، devletçe دولتجه (Hayrat)
+        if "'" not in w and "\u2019" not in w and not dictionary.lookup_exact(wl):
+            ez = _ek_fiil(wl, repl)
+            if ez:
+                return ez             # ek-fiil -ken/-yse/-yiz (Tur B): halindeyken حالنده‌یكن، şüphedeyseniz شبهه‌ده‌یسه‌ڭز
         o = _lerin_eki(w, _matbaa_ekleri(w, _ek_duzelt(repl(m))))
         if "'" in w or "\u2019" in w or len(wl) < 4 or dictionary.lookup_exact(wl):
             return o
@@ -150,6 +154,11 @@ def draft_transliterate_sentence(sentence: str) -> str:
                 yeni = o                       # öğrenilmiş ek sonu harfi ikinci kez yazıyor (yiyecek+in یییه‌ه‌جكڭ): sözlük kökü + ek kalır
             if not (kok_yazi and o.replace("\u0651", "").startswith(kok_yazi) and not yeni.replace("\u0651", "").startswith(kok_yazi)):
                 o = yeni                       # Arapça/Farsça kökün harfleri değişmez: şafağın شفقڭ
+        if re.search(r"[dt][ıiuü]kt[ae]n$", wl):
+            o = re.sub("([دت])ی?([قك])دن$", r"\1\2دن", o)       # -dıktan/-dikten (Tur B, Hayrat): آچیقلادقدن، كوردكدن
+        if re.search(r"[dt][ıiuü]ğ[ıiuü]n[ıiuü]z", wl):
+            o = re.sub("([غك])ی?ن[یو]ز", r"\1ڭز", o)            # -dığınız/-duğunuz (Tur B, Hayrat): اولوندیغڭز، كوردیكڭز
+            o = o.replace("شتیغ", "شدیغ").replace("شتیك", "شدیك")   # -ştuğ- (kavuştuğunuz قاووشدیغڭز)
         if re.search(r"[dt][ıu]ğ[ıu]nda$", wl):
             o = re.sub("[دت][قغ]نده$", "دیغنده", o)          # -dığında (Hayrat: vardığında واردیغنده، baktığında باقدیغنده)
         if re.search(r"m[iü]yor", wl):
@@ -161,6 +170,46 @@ def draft_transliterate_sentence(sentence: str) -> str:
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
     return WORD_RE.sub(kelime, sentence)
+
+
+# ---- Tur B (13 Ekim): ek-fiil (i-) ekleri isimden sonra ayrı yazılır (Hayrat): -(y)ken یكن/كن، -(y)se/-(y)sa یسه/سه، -(y)seniz یسه‌ڭز،
+# -(y)iz/-(y)ız ییز/یز. Gövde sözlükte (kök + ek olarak) bulunmalı; fiil gövdesi (gelirken, olursa) kural motorunda kalır.
+_EK_FIIL = [("yseniz", "یسه\u200cڭز"), ("ysanız", "یسه\u200cڭز"), ("yken", "یكن"), ("ysem", "یسه\u200cم"), ("ysam", "یسه\u200cم"),
+            ("yse", "یسه"), ("ysa", "یسه"), ("yiz", "ییز"), ("yız", "ییز"), ("ken", "كن")]
+
+
+def _ek_fiil(wl: str, repl):
+    if __import__("os").environ.get("OSM_EK_FIIL", "1") == "0":
+        return None
+    m = re.match(r"(.{3,}(?:lar|ler))([ıi]z)$", wl)
+    if m:
+        h, _ = dictionary.lookup_with_suffix(m.group(1))
+        go = _ek_duzelt(repl(_Eslesme(m.group(1)))) if h else ""
+        if go.endswith("\u0644\u0631") and " " not in go:
+            return go + "\u0632"         # çoğul + -ız (Hayrat): olanlarız اولانلرز
+    for ek, yaz in _EK_FIIL:
+        if not wl.endswith(ek) or len(wl) - len(ek) < 3:
+            continue
+        g = wl[:-len(ek)]
+        if ek[0] == "y" and g[-1] not in "aeıioöuü":
+            continue
+        if re.search(r"(m[ae]|m[ae]l[ıi]|[ae]c[ae]k|[ıiuü]?yor)$", g):
+            continue                      # fiil gövdesi (alama-yız, katmalı-yız): eski yol
+        if ek == "ken" and (g[-1] in "aeıioöuü" or re.search(r"(r|z|m[ae]z|yor|m[ıiuü]ş|d[ıiuü]|t[ıiuü]|ac[ae]k|ec[ae]k)$", g)):
+            continue                      # fiil + ken (gelirken, yapmazken, giderken) eski yol
+        h, ekler = dictionary.lookup_with_suffix(g)
+        if not h or (not ekler and h[1] == "tr" and len(g) < 4):
+            continue
+        if rules._fiil_ayir(g):
+            continue
+        go = _ek_duzelt(repl(_Eslesme(g)))
+        if not go or " " in go:
+            continue
+        ara = "\u200c" if go.endswith(("\u0647", "\u0627", "\u062f", "\u0631", "\u0632", "\u0648")) and yaz[0] != "\u0643" else ""
+        if go.endswith("\u0647") and yaz[0] != "\u0643":
+            ara = "\u200c"
+        return go + ara + yaz
+    return None
 
 
 # ---- -ca/-ce/-ça/-çe eki (Hayrat: ek her zaman جه; devletçe دولتجه، ahlâkça اخلاقجه، Osmanlıca عثمانلیجه) ----
