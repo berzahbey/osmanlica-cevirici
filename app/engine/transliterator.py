@@ -451,7 +451,9 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         if l.startswith(lat) and l[len(lat):len(lat) + 1] != "r" and osm.startswith(kok) and not osm.startswith(kok + "ه"):
             osm = kok + "ه" + osm[len(kok):]
     # yeterlik -ebil/-abil ve -eme/-ama (ünsüzden sonra): گله‌بیلیر، بیله‌مز، یتیشه‌مزسڭ (Risale)
-    if re.search(r"[^aeıioöuüâîû][ea]bil", l) and "بیل" in osm:
+    _abil_h = dictionary.lookup_with_suffix(l)[0] if re.search(r"[^aeıioöuüâîû][ea]bil", l) else None
+    if re.search(r"[^aeıioöuüâîû][ea]bil", l) and "بیل" in osm and not (_abil_h and _abil_h[1] not in ("tr",)):
+        # Arapça kelimede -abil- ek değil (kabile قبیله، Tur A)
         i = osm.find("بیل", 1)
         if i > 0 and osm[i - 1] not in "اه\u200c":
             osm = osm[:i] + ("ا" if re.search(r"[^aeıioöuüâîû]abil", l) else "ه") + osm[i:]

@@ -1,0 +1,5 @@
+# ottoman_dict.tsv'den okunmayacak kayıtlar (Tur A, 13 Ekim): çekimli biçimi gölgeleyen şapkasız kayıtlar. Bir satır bir anahtar.
+katın
+uyun
+hamda
+kısar

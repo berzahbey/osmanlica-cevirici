@@ -102,6 +102,14 @@ def _hayrat_ek_parcasi(latin: str, osm: str) -> bool:
 
 
 
+# Tur A (13 Ekim): ottoman_dict'in şapkası düşmüş ("sozlukler") kayıtlarından, çekimli Türkçe/Arapça biçimle çakışıp onu gölgeleyenler
+# (katın قاطن = kat+ın، uyun عیون = uy+un، hamda حمضه = hamd+a، kısar قصار = kıs+ar). Bu kayıtlar ottoman_dict'ten okunmaz; kelime kök + ek olarak çözülür.
+CIKAR_FILE = Path(__file__).parent.parent / "data" / "sozluk_cikar.txt"
+_CIKAR = set()
+if CIKAR_FILE.exists():
+    _CIKAR = {x.strip() for x in open(CIKAR_FILE, encoding="utf-8") if x.strip() and not x.startswith("#")}
+
+
 def _load_extra_from_tsv() -> dict:
     extra = {}
     for dosya in (DATA_FILE, DUZELTME_FILE, HAYRAT_FILE, HAYRAT_AZ_FILE):  # Hayrat en son: tek ölçü
@@ -112,6 +120,8 @@ def _load_extra_from_tsv() -> dict:
             for row in reader:
                 if len(row) >= 3 and not row[0].startswith("#") and row[1].strip():
                     latin, osmanli, origin = row[0].strip(), row[1].strip(), row[2].strip()
+                    if dosya == DATA_FILE and turkish_lower(latin) in _CIKAR:
+                        continue
                     if not any("\u0621" <= c <= "\u064a" or "\u066e" <= c <= "\u06d3" or "\u06fa" <= c <= "\u06ff" for c in osmanli):
                         continue                      # harfsiz kayıt (Hayrat: as -> ؑ، asm -> ؐ): yalnız işaret, kelime değil
                     if osmanli[:1] in "إأ":
@@ -204,13 +214,13 @@ _FLAT_EXCLUDE = {"hala", "kar", "ama", "yar", "hal", "alem", "adet", "asik", "a�
 FLAT = {}
 for _k, _v in DICTIONARY.items():
     _fk = _flat(_k)
-    if _fk != _k and len(_fk) >= 4 and _fk not in DICTIONARY and _fk not in _FLAT_EXCLUDE:
+    if _fk != _k and len(_fk) >= 4 and _fk not in DICTIONARY and _fk not in _FLAT_EXCLUDE and _fk not in _CIKAR:
         FLAT.setdefault(_fk, _v)
 
 
 def _get(key: str):
     """Tam eşleşme; yoksa şapkasız eşleşme (ahiret -> âhiret, ya da tersi)."""
-    return DICTIONARY.get(key) or FLAT.get(key) or DICTIONARY.get(_flat(key))
+    return DICTIONARY.get(key) or FLAT.get(key) or (None if key in _CIKAR else DICTIONARY.get(_flat(key)))
 
 
 _SERTLES = {"ğ": "k", "b": "p", "c": "ç"}
@@ -344,7 +354,20 @@ def _iyelik_kisa(kok, h, ekler):
     return (kisa, h[1]), yeni
 
 
+_ILE = ("la", "le", "yla", "yle")
+_KOPULA = {"dır", "dir", "dur", "dür", "tır", "tir", "tur", "tür"}   # ile + -dır (tedâhülüyledir) olur
+
+
 def lookup_with_suffix(word: str):
+    """Tur A (13 Ekim): -la/-le (ile) ekinden sonra n'li ek gelmez (fayda + la + nın değil: faydalanın fiil). Öyle bir ayırma bulunursa
+    sözlük yolu kullanılmaz (kural motoru + kök sözlüğü)."""
+    hit, sufs = _lookup_with_suffix_ic(word)
+    if hit and len(sufs) > 1 and any(e in _ILE and n[:1] == "n" for e, n in zip(sufs, sufs[1:])):
+        return None, []
+    return hit, sufs
+
+
+def _lookup_with_suffix_ic(word: str):
     """(hit, ekler_listesi) dondurur. hit tam eslesme ise ekler_listesi
     bos listedir. Birden fazla ek ust uste binmisse (orn. yildiz+lar+a)
     EKLERI TEK TEK, en uzun eslesenden baslayarak ardisik soyar - boylece

@@ -1173,3 +1173,12 @@ anlam	آڭلام	tr
 ıslâm	اسلام	ar
 yalnızca	یالڭزجه	tr
 suyunuz	صویڭز	tr
+# Tur A (13 Ekim): şapkası düşmüş ottoman_dict kaydı yaygın kelimeyi gölgeliyordu (katil قتل katl، hilal خلال hilâl "ara"، kabile قابله "ebe"، usul اوصول)
+# ya da kayıt bozuktu (ilaha الاحه). Zahir kararı: katil = kâtil قاتل (öldürme anlamı katl قتل).
+katil	قاتل	ar
+hilal	هلال	ar
+kabile	قبیله	ar
+ilaha	الهه	ar
+tespih	تسبیح	ar
+mehir	مهر	ar
+usul	اصول	ar

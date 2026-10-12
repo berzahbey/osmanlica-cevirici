@@ -82,8 +82,37 @@ def _ek_gecerli(kok: str, kalan: str, tur: str) -> bool:
     return bool((_EK_N_UNLU if unlu else _EK_N_UNSUZ).match(kalan))
 
 
+# Tur A (13 Ekim): Arapça/Farsça isim + -la/-le/-lan/-len/-landır/-lendir/-laş/-leş fiil kökü (lanetle- لعنتله، faydalan- فائده‌لان،
+# rızıklandır- رزقلاندیر، hoşlan- خوشلان). Kök sözlüğünde yoksa isim sözlükteki yazımıyla, ek Hayrat'taki gibi (kalında لا، incede له/ل).
+_TUREV = [("landır", "لاندیر"), ("lendir", "لندیر"), ("laş", "لاش"), ("leş", "لش"), ("lan", "لان"), ("len", "لن"), ("la", "لا"), ("le", "له")]
+# Türkçe fiil, Arapça/Farsça isimden türemiş değil (sunucu ölçümü, Tur A): dinle- دیڭله، ısmarla- ایصمارلا، filizlen-، havla-، horla-
+_TUREV_DEGIL = {"din", "ısmar", "ismar", "filiz", "hav", "hor"}
+_TUREV_KOKEN = {"ar", "fa", "ar-fa", "fa-ar", "hayrat", "sozlukler"}
+
+
+def _turev(r: str):
+    if os.environ.get("OSM_TUREV", "1") == "0":
+        return None
+    from . import dictionary
+    for ek, yaz in _TUREV:
+        if r.endswith(ek) and len(r) - len(ek) >= 3:
+            isim = r[:-len(ek)]
+            if isim in _TUREV_DEGIL:
+                continue
+            h = dictionary.DICTIONARY.get(isim)
+            if not h or h[1] not in _TUREV_KOKEN or " " in h[0] or "\u060c" in h[0] or "N" not in KOK.get(isim, {"N": 1}):
+                continue
+            if h[1] == "sozlukler" and isim not in KOK:
+                continue                   # şapkası düşmüş sözlük kaydı (zıp زب، süs): Hayrat'ta isim olarak görülmeli (hoş, hatır)
+            if isim[-1] in _UNLU and not h[0].endswith(("\u0647", "\u0627")):
+                continue                   # ünlüyle biten isim, yazımı ünlü harfiyle bitmiyor: belirsiz
+            ara = "\u200c" if h[0].endswith("\u0647") else ""
+            return {"V": (h[0] + ara + yaz, 1)}
+    return None
+
+
 def _aday(w: str, r: str, kalan: str, f):
-    h = KOK.get(r)
+    h = KOK.get(r) or _turev(r)
     if not h or not _uyum(r, kalan):
         return None
     if re.search("[aeıioöuü][mn]$", r) and re.match("[ıiuü]z", kalan):
