@@ -10,6 +10,7 @@ from langdetect import detect, DetectorFactory
 
 from . import dictionary
 from . import rules
+from . import kok
 from .alphabet import turkish_lower
 
 DetectorFactory.seed = 0
@@ -94,7 +95,8 @@ def draft_transliterate_sentence(sentence: str) -> str:
             root = w[: len(w) - len("".join(sufs))]
             harmony = rules._harmony_class(w)
             return hit[0] + rules.ekleri_yaz(root, sufs, [], harmony, rules.ek_guvenilir(root, sufs))
-        return rules.transliterate_word_with_suffix(word)
+        o = rules.transliterate_word_with_suffix(word)
+        return kok.kokle(word, o) or o   # kök sözlüğü: kural motorunun kökü Hayrat yazımıyla (gizleyemezler كیزله‌یه‌مزلر)
 
     def tirnak_eki(m):
         kelime, isaret, ek = m.group(1), m.group(2), m.group(3)
