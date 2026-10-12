@@ -9,6 +9,7 @@ basit bir ek ayirma (suffix stripping) katmani eklenmistir.
 TSV format: latin_kelime<TAB>osmanlica_yazim<TAB>koken(ar/fa/tr/other)
 """
 import csv
+import re
 from pathlib import Path
 from .alphabet import turkish_lower
 
@@ -286,6 +287,63 @@ def _iyelik_kok_mu(kok, h, ekler):
         and bool(_get_soft(kok[:-1]) or _derin_kok_hit(kok[:-1]))
 
 
+_ZKOK = None
+_SERT_SON = {"b": "p", "c": "ç", "d": "t", "ğ": "k", "g": "k"}
+
+
+def _zkok():
+    global _ZKOK
+    if _ZKOK is None:
+        yol = Path(__file__).parent.parent / "data" / "zemberek_kok.txt"
+        _ZKOK = set(open(yol, encoding="utf-8").read().split()) if yol.exists() else set()
+    return _ZKOK
+
+
+def _iyelik_kisa(kok, h, ekler):
+    """Yanlış kök turu (13 Ekim): sözlükteki iyelik biçimi (oğlu اوغلی، kolu قولی، boynu بوینی) + n'li/m'li ek. Kısa kök sözlükte yoksa
+    (kol, oğl, boyn) ama Zemberek'e göre gerçek kökse (kol; ünlü düşmesiyle oğul, boyun; yumuşamayla kitab -> kitap) ve iyelik biçiminin
+    kendisi kök değilse, kısa kökün yazımı iyelik biçiminin yazımından ی atılarak alınır, ekler sözlük yolundan yazılır:
+    oğl + u+nu -> اوغلنی، kol + u+na -> قولنه، boyn + u+na -> بویننه (Hayrat). (kısa_hit, [ünlü] + ekler) ya da None. OSM_YANLIS_KOK=0 kapatır."""
+    if _os.environ.get("OSM_YANLIS_KOK", "1") == "0":
+        return None
+    if not (h and ekler and len(kok) >= 4) or not h[0].endswith("\u06cc") or len(h[0]) < 3:
+        return None
+    v, r = kok[-1], kok[:-1]
+    if v not in "ıiuü" or r[-1:] in "aeıioöuüâîû" or ekler[0][:1] not in ("n", "m") or r.endswith(("lar", "ler")):
+        return None
+    z = _zkok()
+    if not z or kok in z:
+        return None                        # iyelik biçimi gibi görünen gerçek kök (kapı، yazı، dolu) bölünmez
+    gercek = r in z or (r[:-1] + _SERT_SON.get(r[-1], r[-1])) in z \
+        or (len(r) >= 3 and r[-2] not in "aeıioöuüâîû" and (r[:-1] + v + r[-1]) in z)   # oğl -> oğul، boyn -> boyun
+    if not gercek:
+        return None
+    # Kökün yazımı (v3): iyelik biçiminin kendi yazımından (Hayrat: tahlili تحلیلی -> تحلیل، batını باطنی -> باطن; sözlükteki tahlil تخلیل،
+    # batın بطن eşsesli başka kelime). Türkçe kelimede sözlük kökü yalnız ünlü harfiyle ayrılıyorsa sözlük kökü (bütün بتون; Hayrat'ın
+    # bütünü بوتونی azınlık). Arapça/Farsça kelimede -i nisbet -î olabilir (sofi صوفی، Gazali): sözlükte geçerli kök yoksa dokunulmaz.
+    kok_hit = _get_soft(r) or _derin_kok_hit(r)
+    if kok_hit and (" " in kok_hit[0] or "\u060c" in kok_hit[0]):
+        kok_hit = None                     # anlam karşılığı kaydı (gazal غزال ، غزاله): kök değil
+    kisa = h[0][:-1]
+    _sesli = lambda x: re.sub("[\u0627\u0648\u06cc\u0651]", "", x)
+    if kok_hit and h[1] == "tr" and kok_hit[1] == "tr" and _sesli(kok_hit[0]) == _sesli(kisa):
+        kisa = kok_hit[0]
+    elif not kok_hit and h[1] != "tr" and v == "i":
+        return None
+    if kisa[-1:] in ("\u0648", "\u0627", "\u06cc", "\u0647"):
+        return None                        # kökün son harfi ünlü harfi: belirsiz, dokunulmaz
+    if r[-1] == "t" and kisa.endswith("\u062f"):
+        return None                        # tokatı طوقادی: Hayrat'ta kök hem طوقات hem طوقاد; kök yazımı belirsiz
+    from . import rules  # döngüsel içe aktarma olmasın diye burada
+    ekler = list(ekler)
+    yeni = [v + ekler[0]] + ekler[1:] if (v + ekler[0]) in _ISIM_EKLERI else [v] + ekler   # u + nu -> unu، i + miz -> imiz
+    if re.match("[ıiuü]n[ıiuü]n", "".join(yeni)) and kisa[-1:] in "\u0627\u062f\u0630\u0631\u0632\u0698\u0648":
+        return None                        # bitişmeyen harften sonra -ının: Hayrat'ta ی çoğu kez kalır (dördünün دردینڭ)
+    if "".join(yeni) not in rules._IYELIK_HAL and not rules.ek_guvenilir(r, yeni):
+        return None                        # kısa kökte ek yazımı güvenilmez (oğl + unuz+a): eski yol kalır
+    return (kisa, h[1]), yeni
+
+
 def lookup_with_suffix(word: str):
     """(hit, ekler_listesi) dondurur. hit tam eslesme ise ekler_listesi
     bos listedir. Birden fazla ek ust uste binmisse (orn. yildiz+lar+a)
@@ -302,6 +360,9 @@ def lookup_with_suffix(word: str):
         hit = _get(current)
         if hit and not _ilgi_koku_mu(current, hit, list(reversed(peeled))):
             return hit, list(reversed(peeled))
+        ik = _iyelik_kisa(current, hit, list(reversed(peeled)))
+        if ik:
+            return ik
         # Tek bir ek ayrılınca sözlükte bulunan kökler varsa, kökü EN UZUN olanı seç
         # (ahirete -> ahiret + e; "ahire + te" değil).
         direct = [(suf, _get_soft(current[: -len(suf)])) for suf in LOOKUP_SUFFIXES
@@ -310,6 +371,9 @@ def lookup_with_suffix(word: str):
         direct = [(suf, h) for suf, h in direct if h and not _ilgi_koku_mu(current[: -len(suf)], h, [suf])]
         if direct:
             suf, h = min(direct, key=lambda x: len(x[0]))
+            ik = _iyelik_kisa(current[: -len(suf)], h, list(reversed(peeled + [suf])))
+            if ik:
+                return ik
             return h, list(reversed(peeled + [suf]))
         best_suf = None
         for suf in LOOKUP_SUFFIXES:
@@ -376,6 +440,7 @@ def _derin_kok(w: str):
 
     if rules._fiil_ayir(w):          # Türkçe fiil çekimi (yaratan, saydınız, dediniz): kural motoru yazar
         return None, []
+    yedek = None
     for L in range(len(w) - 1, 2, -1):
         kok = w[:L]
         hit = _derin_kok_hit(kok)
@@ -388,6 +453,10 @@ def _derin_kok(w: str):
             continue                               # ilgi/2. kişi biçimi kök değil: edin ایدڭ + sin, gördüğün كوردیكڭ + de
         if kok.endswith(("lar", "ler")) and ekler[0][:1] in ("ı", "i"):
             continue                               # çoğul + iyelik: yurt + ları+nız (یورتلریڭز), yurtlar + ınız (یورتلرڭز) değil
+        ik = _iyelik_kisa(kok, hit, ekler)
+        if ik:
+            yedek = yedek or ik                    # oğlu + nu -> oğl + unu (اوغلنی): daha kısa bir sözlük kökü bulunmazsa kullanılır
+            continue
         if _iyelik_kok_mu(kok, hit, ekler):
             continue                               # iyelik biçimi + n'li/m'li ek: kitab + ınız (كتابڭز), kitabı + nız (كتابیڭز) değil
         if kok[-1] in "aeıioöuüâîû" and ekler[0][0] in "tç":   # ünlüden sonra sert ek olmaz (yara+tır değil)
@@ -397,4 +466,4 @@ def _derin_kok(w: str):
         if len(ekler) <= 2 and len(kok) < 3:
             continue
         return hit, ekler
-    return None, []
+    return yedek or (None, [])
