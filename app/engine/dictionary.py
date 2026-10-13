@@ -124,6 +124,13 @@ def _load_extra_from_tsv() -> dict:
                         continue
                     if not any("\u0621" <= c <= "\u064a" or "\u066e" <= c <= "\u06d3" or "\u06fa" <= c <= "\u06ff" for c in osmanli):
                         continue                      # harfsiz kayıt (Hayrat: as -> ؑ، asm -> ؐ): yalnız işaret, kelime değil
+                    # Tur E: sözlüklerden gelen çok yazımlı kayıt ("گراهت ، گراهیت", "انهار - انهر", "رسوا - ی"): ilk yazım;
+                    # tek kelimelik anahtarda tekrarlanan değer ("yavaş" -> یاواش یاواش, Hayrat'taki ikilemeden): tek kelime
+                    if "،" in osmanli or " - " in osmanli:
+                        osmanli = re.split(r"\s*،\s*|\s+-\s+", osmanli)[0].strip() or osmanli
+                    _parca = osmanli.split()
+                    if " " not in latin and len(_parca) > 1 and len(set(_parca)) == 1:
+                        osmanli = _parca[0]
                     if osmanli[:1] in "إأ":
                         osmanli = "ا" + osmanli[1:]   # Osmanlıcada kelime başında hemze yazılmaz (إنعام -> انعام)
                     if osmanli.endswith("اء") and " " not in osmanli:

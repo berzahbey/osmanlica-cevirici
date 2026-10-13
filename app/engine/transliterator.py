@@ -164,6 +164,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
                 yeni = o                       # Tur C: geniş zaman -ar'ın elifi (kılarsa قیلارسه، anlarsa آڭلارسه) silinmez
             if "\u0627\u06cc\u0627\u06cc" in yeni and "\u0627\u06cc\u0627\u06cc" not in o:
                 yeni = o                       # Tur C: öğrenilmiş ek sonu bileşik fiilde ای'yi ikiler (ذكر ایایده‌جك)
+            if kh and ks in (["in"], ["ın"], ["un"], ["ün"]) and o == kh[0] + "\u06ad" and dictionary.lookup_exact(wl[:-2]) \
+                    and not kh[0].endswith("\u06ad"):
+                yeni = o                       # Tur E: sözlük kökü + ilgi eki ڭ (evren+in اورنڭ): öğrenilmiş ek sonu (ینڭ) uygulanmaz
             if _cift_harf(yeni) > _cift_harf(o):
                 yeni = o                       # öğrenilmiş ek sonu harfi ikinci kez yazıyor (yiyecek+in یییه‌ه‌جكڭ): sözlük kökü + ek kalır
             if not (kok_yazi and o.replace("\u0651", "").startswith(kok_yazi) and not yeni.replace("\u0651", "").startswith(kok_yazi)):
@@ -1144,6 +1147,8 @@ _PARANTEZ_EK_RE = re.compile(r"(?<=[\u0600-\u06FF])([)\]”])['’]?(" + "|".joi
 
 def _kisaltmalar(metin: str) -> str:
     metin = re.sub(r"\bHz\.\s*", "Hazret ", metin)          # Hz. Muhammed -> حضرت محمّد
+    # Tur E: iki özel ad arasındaki "b." ibn (oğlu) kısaltmasıdır: Ahmed b. Hanbel -> احمد بن حنبل
+    metin = re.sub(r"(?<![^\W\d_])([A-ZÇĞİÖŞÜÂÎÛ][a-zçğıöşüâîû'’]{1,20}) b\. (?=[A-ZÇĞİÖŞÜÂÎÛ][a-zçğıöşüâîû])", "\\1 \u0628\u0646 ", metin)
     metin = re.sub(r"\bAdem(?=[a-zçğıöşü'’]|\b)", "Âdem", metin)  # büyük harfli Adem peygamberdir (عدم değil)
     metin = re.sub(r"\bAlim(?!ler|lerin|lik)(?=[a-zçğıöşü'’”)]|\b)", "Aliym", metin)  # büyük harfli Alim: Allah'ın ismi علیم
     for rx, ar in _KISALTMA:

@@ -882,6 +882,15 @@ def transliterate_word_with_suffix(word: str) -> str:
 
     if best_suf:
         stem = word[: -len(best_suf)]
+        # Tur E: ünlüyle biten gövde + n'li ek (orma+nın) yerine n ile biten Zemberek kökü + ek (orman+ın اورمانڭ، evren+in اورنڭ)
+        # Gövdenin kendisi de kökse (çevre/çevren) n'li kök ancak sözlükte varsa (evren); -mA mastarı (düzeltme+nin) ayrılmaz
+        if best_suf[:1] == "n" and best_suf[1:] in SUFFIXES and stem[-1:] in "aeıioöuü" and stem not in _ZAMIR \
+                and (stem + "n") in _zemberek_kokleri():
+            from . import dictionary as _D
+            _zk = _zemberek_kokleri()
+            if not (stem in _zk and not _D.lookup_exact(stem + "n")) \
+                    and not (stem[-2:] in ("ma", "me") and len(stem) >= 5 and stem[:-2] in _zk):
+                best_suf, stem = best_suf[1:], stem + "n"
         # a/e ile biten isim ek alınca sondaki ه korunur: duruşma+nın طوروشمهنڭ، ülke+sinde اولكهسنده (Hayrat)
         son_unlu = stem[-1:] in ("a", "e") and len(stem) >= 3
         if len(stem) >= 4 and stem[-2:] in ("ma", "me") and stem[-3] not in "aeıioöuü" and best_suf[:1] == "s":
@@ -893,6 +902,22 @@ def transliterate_word_with_suffix(word: str) -> str:
             best_suf, harmony, known_root=False, prev=stem)
 
     return _govde_yaz(word, True, "")
+
+
+_ZAMIR = {"o", "bu", "şu", "ne", "ki", "kendi", "biri", "hepsi", "kimi", "ora", "bura", "şura", "nere"}
+_ZKOK_ONBELLEK = None
+
+
+def _zemberek_kokleri():
+    global _ZKOK_ONBELLEK
+    if _ZKOK_ONBELLEK is None:
+        import os as _o
+        yol = _o.path.join(_o.path.dirname(_o.path.abspath(__file__)), "..", "data", "zemberek_kok.txt")
+        try:
+            _ZKOK_ONBELLEK = {x.strip() for x in open(yol, encoding="utf-8") if x.strip()}
+        except OSError:
+            _ZKOK_ONBELLEK = set()
+    return _ZKOK_ONBELLEK
 
 
 def transliterate_text_fallback(text: str) -> str:
