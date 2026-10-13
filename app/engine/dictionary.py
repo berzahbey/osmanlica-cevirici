@@ -365,7 +365,19 @@ def lookup_with_suffix(word: str):
     hit, sufs = _lookup_with_suffix_ic(word)
     if hit and len(sufs) > 1 and any(e in _ILE and n not in _KOPULA and n[:1] != "y" for e, n in zip(sufs, sufs[1:])):
         return None, []
+    if hit and len(sufs) > 1 and any(n in _T_EKLER_SES and e[-1:] in "aeıioöuü" for e, n in zip(sufs, sufs[1:])):
+        return None, []                    # Tur C: ünlüden sonra t'li ek olmaz (kork+u+tur değil: korkut+ur): kural motoru
+    if not hit:
+        m = _KI_RE.match(turkish_lower(word).strip())
+        if m:
+            h2, s2 = lookup_with_suffix(m.group(1))
+            if h2 and " " not in h2[0]:
+                return h2, list(s2) + ["ki", m.group(2)]   # Tur C: …daki + ni (önlerindekini اوڭلرنده‌كینی، yanlarındakini)
     return hit, sufs
+
+
+_KI_RE = re.compile(r"^(.{3,}?[dt][ae])ki(ni|nı|ne|na|nde|nda|nden|ndan|nin|nın|ler|lar|leri|ları|lerini|larını|lerine|larına|"
+                    r"lerinin|larının|lerinden|larından|lerde|larda|lerden|lardan|yle|yla)$")
 
 
 def _lookup_with_suffix_ic(word: str):

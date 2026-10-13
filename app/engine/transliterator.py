@@ -106,8 +106,8 @@ def draft_transliterate_sentence(sentence: str) -> str:
         if ayrik:
             return ayrik + isaret + rules.ekleri_yaz(turkish_lower(kelime), [], [turkish_lower(ek)],
                                                      rules._harmony_class(turkish_lower(kelime + ek)))
-        tam = _ek_duzelt(repl(_Eslesme(kelime + "'" + ek)))
-        kok = _ek_duzelt(repl(_Eslesme(kelime)))
+        tam = _ek_duzelt(repl(_Eslesme(kelime + "'" + ek)), kelime + ek)
+        kok = _ek_duzelt(repl(_Eslesme(kelime)), kelime)
         if not tam.startswith(kok):
             # şedde farkı (sözlükte "hak'tan" حقدن, "hak" حقّ): şeddesiz karşılaştırılır, ek kısmı tam yazımdan alınır
             t2, k2 = tam.replace("\u0651", ""), kok.replace("\u0651", "")
@@ -137,23 +137,38 @@ def draft_transliterate_sentence(sentence: str) -> str:
             ez = _ek_fiil(wl, repl)
             if ez:
                 return ez             # ek-fiil -ken/-yse/-yiz (Tur B): halindeyken حالنده‌یكن، şüphedeyseniz شبهه‌ده‌یسه‌ڭز
-        o = _lerin_eki(w, _matbaa_ekleri(w, _ek_duzelt(repl(m))))
+        o = _lerin_eki(w, _matbaa_ekleri(w, _ek_duzelt(repl(m), w)))
         if "'" in w or "\u2019" in w or len(wl) < 4 or dictionary.lookup_exact(wl):
             return o
-        kok = wl[:-3]
-        if re.search(r"[aeıioöuü]n[ıiuü]z$", wl) and dictionary.lookup_exact(kok) and not re.search(r"[ğsy][ıiuü]$", kok) and \
+        mn = re.search(r"[aeıioöuü](n[ıiuü]z)(" + "|".join(_NIZ_SONRA) + r")?$", wl)
+        kok = wl[:mn.start(1)] if mn else wl[:-3]
+        _kh = dictionary.lookup_exact(kok) if mn else None
+        if mn and mn.group(2) and (dictionary.lookup_exact(kok[:-1]) or dictionary._get_soft(kok[:-1]) or kok[:-1] in globals()["kok"].ZKOK or kok[:-1].endswith(("ât", "ūt"))
+                                   or (kok[-1] in "uü" and _kh and _kh[0].endswith("\u06cc")) or _fiil_koku_mu(kok[:-2]) and kok[-2:] in ("ma", "me")):
+            mn = None                          # ünsüzle biten kök + iyelik -ınız + hâl (adâlet+iniz+den): _imiz_yazimi
+        if mn and dictionary.lookup_exact(kok) and not re.search(r"[ğsy][ıiuü]$", kok) and \
                 not (re.search(r"[dt][ıiuü]$", kok) and (dictionary.lookup_exact(kok[:-2] + "mak") or dictionary.lookup_exact(kok[:-2] + "mek"))):
-            return _ek_duzelt(repl(_Eslesme(kok))) + "ڭز"   # ünlüyle biten isim + -nız: ordunuz اوردوڭز (oldunuz değil)
+            return _ek_duzelt(repl(_Eslesme(kok)), kok) + "ڭز" + _NIZ_SONRA.get(mn.group(2) or "", "")
+            # ünlüyle biten isim + -nız: ordunuz اوردوڭز (oldunuz değil); Tur C: + hâl eki (elçinizi ایلچیڭزی، kapınıza)
         if _EK_KURALLARI:
             yeni = _hayrat_ek_kurali(wl, o)   # sözlükte olmayan kelime: Hayrat'tan öğrenilen ek sonu
             kh, ks = dictionary.lookup_with_suffix(wl)
             kok_yazi = (kh[0] if kh and ks and str(kh[1]).startswith(("ar", "fa")) else "").replace("\u0651", "")
             if kok_yazi and len(kok_yazi) > len(wl) - len("".join(ks)) - 2:
                 kok_yazi = ""                  # ünlüleri yazılan (Türkçe) kök: bacak باجاق -> bacağa باجاغه
+            if yeni.count("\u0627\u0631") < o.count("\u0627\u0631") and _genis_zaman(wl):
+                yeni = o                       # Tur C: geniş zaman -ar'ın elifi (kılarsa قیلارسه، anlarsa آڭلارسه) silinmez
+            if "\u0627\u06cc\u0627\u06cc" in yeni and "\u0627\u06cc\u0627\u06cc" not in o:
+                yeni = o                       # Tur C: öğrenilmiş ek sonu bileşik fiilde ای'yi ikiler (ذكر ایایده‌جك)
             if _cift_harf(yeni) > _cift_harf(o):
                 yeni = o                       # öğrenilmiş ek sonu harfi ikinci kez yazıyor (yiyecek+in یییه‌ه‌جكڭ): sözlük kökü + ek kalır
             if not (kok_yazi and o.replace("\u0651", "").startswith(kok_yazi) and not yeni.replace("\u0651", "").startswith(kok_yazi)):
                 o = yeni                       # Arapça/Farsça kökün harfleri değişmez: şafağın شفقڭ
+        em = _emir_in(wl, w[:1].isupper())
+        if em:
+            return em                          # Tur C: emir -ın/-in (inin اینڭ، uyun اویڭ، faydalanın فائده‌لانڭ)
+        if re.search(r"[ae]r[ıi][zm]$", wl) and _genis_zaman(wl):
+            o = re.sub("ری([زم])$", r"ر\1", o)               # Tur C: geniş zaman -arız/-erim (Hayrat: başlarız باشلارز، bekleriz بكلرز)
         if re.search(r"[dt][ıiuü]kt[ae]n$", wl):
             o = re.sub("([دت])ی?([قك])دن$", r"\1\2دن", o)       # -dıktan/-dikten (Tur B, Hayrat): آچیقلادقدن، كوردكدن
         if re.search(r"[dt][ıiuü]ğ[ıiuü]n[ıiuü]z", wl):
@@ -169,7 +184,16 @@ def draft_transliterate_sentence(sentence: str) -> str:
             # istek 2. tekil (Hayrat): kalında اسڭ (olasın اولاسڭ، davranasın طاوراناسڭ)، incede ه‌سڭ (gizleyesin كیزله‌یه‌سڭ)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
-    return WORD_RE.sub(kelime, sentence)
+    return WORD_RE.sub(lambda m: _he_ki(kelime(m), m.group(0)), sentence)
+
+
+def _he_ki(o: str, latin: str) -> str:
+    """Tur C: -deki/-daki ekinde he bitişmez (Hayrat دەكی; çevirici ه + ZWNJ): یانلرنده‌كی. Eskiden دهكی bitişik basılıyordu."""
+    if "\u0647\u0643\u06cc" in o and re.search(r"[dt][ae]ki", turkish_lower(latin)):
+        o = o.replace("\u062f\u0647\u0643\u06cc", "\u062f\u0647\u200c\u0643\u06cc")
+    if "\u0647\u06ad" in o and not re.search(r"h['’]?[ıiuüâ]?n", turkish_lower(latin)):   # Allah'ın اللّهڭ، padişahın: ه ünsüz
+        o = o.replace("\u0647\u06ad", "\u0647\u200c\u06ad")   # Tur C: he + ڭ bitişmez (سه‌ڭز، طلبه‌ڭز; Hayrat ە)
+    return o
 
 
 # ---- Tur B (13 Ekim): ek-fiil (i-) ekleri isimden sonra ayrı yazılır (Hayrat): -(y)ken یكن/كن، -(y)se/-(y)sa یسه/سه، -(y)seniz یسه‌ڭز،
@@ -178,15 +202,56 @@ _EK_FIIL = [("yseniz", "یسه\u200cڭز"), ("ysanız", "یسه\u200cڭز"), ("y
             ("yse", "یسه"), ("ysa", "یسه"), ("yiz", "ییز"), ("yız", "ییز"), ("ken", "كن")]
 
 
+def _fiil_koku_mu(r: str) -> bool:
+    if len(r) < 2:
+        return False
+    return bool(dictionary.lookup_exact(r + "mak") or dictionary.lookup_exact(r + "mek") or "V" in kok.KOK.get(r, {}))
+
+
+_NIZ_SONRA = {"": "", "ı": "\u06cc", "i": "\u06cc", "u": "\u06cc", "ü": "\u06cc", "a": "\u0647", "e": "\u0647",
+              "da": "\u062f\u0647", "de": "\u062f\u0647", "dan": "\u062f\u0646", "den": "\u062f\u0646",
+              "ın": "\u06ad", "in": "\u06ad", "un": "\u06ad", "ün": "\u06ad", "la": "\u0644\u0647", "le": "\u0644\u0647",
+              "dır": "\u062f\u0631", "dir": "\u062f\u0631", "dur": "\u062f\u0631", "dür": "\u062f\u0631"}
+
+
+def _emir_in(wl: str, buyuk: bool = False):
+    """Tur C: sözlükte olmayan kelime = fiil kökü (ünsüzle biten) + -ın/-in/-un/-ün: 2. çoğul emir ڭ (Hayrat: girin كیرڭ، bakın باقڭ).
+    Kök kök sözlüğünde (faydalan فائده‌لان) ya da sözlükte -mak/-mek ile (in-, uy-). İlgi eki de ünsüzden sonra ڭ: yazım aynı."""
+    m = re.match(r"^(.+[^aeıioöuüâîû])[ıiuü]n$", wl)
+    if not m or dictionary.lookup_with_suffix(wl)[0]:
+        return None
+    r = m.group(1)
+    v = kok.KOK.get(r, {}).get("V") or (kok._turev(r) or {}).get("V")
+    if v:
+        return v[0] + "\u06ad"
+    if len(r) == 2 and _fiil_koku_mu(r) and wl not in kok.ZKOK and not buyuk:   # irin (isim), Asın (özel ad) değil
+        return rules.transliterate_word(r) + "\u06ad"
+    return None
+
+
+def _genis_zaman(wl: str) -> bool:
+    """Tur C: fiil kökü + geniş zaman -r/-ar/-er + kişi/şart eki (kıl+ar+sa, cevapla+r+ız, anla+r+sa). Çoğul -lar/-ler değil."""
+    m = re.match(r"^(.+?)([ae]?)r(sa|se|ız|iz|sak|sek|sanız|seniz|sam|sem|sın|sin|sınız|siniz|ım|im|ken)$", wl)
+    if not m:
+        return False
+    return _fiil_koku_mu(m.group(1) + m.group(2)) or (bool(m.group(2)) and _fiil_koku_mu(m.group(1)))
+
+
 def _ek_fiil(wl: str, repl):
     if __import__("os").environ.get("OSM_EK_FIIL", "1") == "0":
         return None
     m = re.match(r"(.{3,}(?:lar|ler))([ıi]z)$", wl)
-    if m:
+    if m and not _genis_zaman(wl):     # Tur C: cevapla+r+ız fiil (جوابلارز)، çoğul + ız değil
         h, _ = dictionary.lookup_with_suffix(m.group(1))
-        go = _ek_duzelt(repl(_Eslesme(m.group(1)))) if h else ""
+        go = _ek_duzelt(repl(_Eslesme(m.group(1))), m.group(1)) if h else ""
         if go.endswith("\u0644\u0631") and " " not in go:
             return go + "\u0632"         # çoğul + -ız (Hayrat): olanlarız اولانلرز
+    m = re.match(r"(.{2,}[^aeıioöuüâîûy])([ıiuü]z)$", wl)
+    if m and not re.search(r"(s[ıiuü]z|[ıiuü]m[ıiuü]z|[ıiuü]n[ıiuü]z)$", wl) and not re.search(r"[aeıioöuüâîû][nm]$", m.group(1)):
+        h = dictionary.lookup_exact(m.group(1))
+        if h and h[1] in ("ar", "fa", "ar-fa", "fa-ar") and " " not in h[0] and "\u060c" not in h[0] \
+                and not h[0].endswith(("\u06ad", "\u0645")):
+            return h[0] + "\u0632"      # Tur C: Arapça/Farsça isim + -ız/-iz (Hayrat): muhtâcız محتاجز، hazırız حاضرز، aitiz عائدز
     for ek, yaz in _EK_FIIL:
         if not wl.endswith(ek) or len(wl) - len(ek) < 3:
             continue
@@ -202,7 +267,7 @@ def _ek_fiil(wl: str, repl):
             continue
         if rules._fiil_ayir(g):
             continue
-        go = _ek_duzelt(repl(_Eslesme(g)))
+        go = _ek_duzelt(repl(_Eslesme(g)), g)
         if not go or " " in go:
             continue
         ara = "\u200c" if go.endswith(("\u0647", "\u0627", "\u062f", "\u0631", "\u0632", "\u0648")) and yaz[0] != "\u0643" else ""
@@ -302,6 +367,8 @@ def _ek_kurallarini_yukle():
                 continue
             p = satir.rstrip("\n").split("\t")
             if len(p) >= 3:
+                if "\u0651" in p[2].replace("\u0644\u0651\u0647", "") and "\u0651" not in p[1]:
+                    continue                  # Tur C: ek sonu kuralı şedde eklemez (şedde kökündür: akdine عقدّینه değil)
                 kural.setdefault(p[0], []).append((p[1], p[2]))
     for v in kural.values():
         v.sort(key=lambda x: -len(x[0]))
@@ -471,6 +538,9 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     # demek, vermek kökleri tarihî yazımla (kural motorunun çözemediği çekimlerde): dedim دیدم، verdiler ویردیلر
     if l.startswith("ded") and osm.startswith("دد"):
         osm = "دید" + osm[2:]
+    if re.match(r"^deme(d|z|s|y|l|m[ae]|k[ae]n|n)", l) and osm.startswith("دم") and not osm.startswith("دمی") and \
+            not dictionary.lookup_with_suffix(l)[0]:
+        osm = "دی" + osm[1:]                               # Tur C: demedikçe دیمه‌دكجه، demeden دیمه‌دن (Hayrat)
     if re.match(r"^ver(d|m|i|e|s|y|l)", l) and not l.startswith(("verem", "vergi")) and osm.startswith("ور") and not osm.startswith("ویر"):
         osm = "ویر" + osm[2:]
     # -maya/-meye (mastar + yönelme): قورتارمغه، گیتمگه (Risale)
@@ -518,15 +588,16 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     elif re.search(r"([eüuıia]r|m[ea]z)s[ıiuü]n[ıiuü]z$", l):
         osm = re.sub(r"(سینیز|سونوز|سیڭز|سنیز)$", "سڭز", osm)
     # -uyla/-üyle (iyelik + ile): نوریله، یولیله
-    if re.search(r"[^aeıioöuüâîû][uü]yl[ae]$", l) and osm.endswith("ویله"):
-        osm = osm[:-4] + "یله"
+    _uy = dictionary.lookup_exact(l[:-3]) if re.search(r"[^aeıioöuüâîû][uü]yl[ae]$", l) else None
+    if re.search(r"[^aeıioöuüâîû][uü]yl[ae]$", l) and osm.endswith("ویله") and not (_uy and _uy[0].endswith("\u0648")):
+        osm = osm[:-4] + "یله"     # Tur C: u ile biten isim + -yla değil (ordu+yla اوردویله)
     # ayrılma eki -dan matbaada دن (sözlükte olmayan kelimede): قیزدن
     if l.endswith("dan") and osm.endswith("دان") and not dictionary.lookup_exact(l):
         osm = osm[:-3] + "دن"
     # kazan-: قزانمق؛ ön (eski ñ): اوڭنده
     if l.startswith("kazan") and osm.startswith("قازان"):
         osm = "قزان" + osm[5:]
-    if re.match(r"^ön(ü|e|de|den|ce|üm|ün)", l) and osm.startswith("اون"):
+    if re.match(r"^ön(ü|e|de|den|ce|üm|ün|ler)", l) and osm.startswith("اون"):   # Tur C: önlerinde
         osm = "اوڭ" + osm[3:]
     # yemek fiili: ییدم، ییمش، ییمز، ییمه‌یور (yedi "7" ve yer "mekân" belirsiz, dokunulmaz)
     if re.match(r"^ye(dim|dik|diler|miş|mek|mez|miyor|sin|meleri|meli)", l) and osm.startswith("ی") and not osm.startswith("یی"):
@@ -540,7 +611,7 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     if re.search(r"m(e|a)s[ıi]n(ler|lar)?$", l):
         osm = re.sub(r"مسین(لر)?$", lambda m: ("مه" if re.search(r"mes[ıi]n", l) else "ما") + "سین" + (m.group(1) or ""), osm)
     # ölüm, ölmek: ئولوم (Risale)
-    if l.startswith("öl") and osm.startswith("اول"):
+    if l.startswith("öl") and not l.startswith("ölç") and osm.startswith("اول"):   # Tur C: ölçü اولچو (Hayrat), ölüm ئولوم
         osm = "ئو" + osm[2:]
     # parça-: پارچه‌لانمق
     if l.startswith("parça") and osm.startswith("پارچا"):
@@ -563,7 +634,9 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     _kok_n = _kok in _IN_ILE_BITEN_KOKLER and bool(_ks) and _ks[0][:1] in "dt"
     if len(l) >= 6 and not _kok_n and not re.match(r"^(bu|şu|o)n(da|dan|daki|un|lar)", l) and \
             re.search(r"([ıiuü]n(da|de|dan|den|daki|deki)|s[ıiuü]n[ıiuüae]|s[ıiuü]n[ıiuü]n)(d[ıiuü]r|t[ıiuü]r)?$", l):
-        osm = re.sub(r"(?:ین|ون)(ده|دن|دهكی|دكی|ی|ه|ڭ)(در)?$", r"ن\1\2", osm)
+        osm = re.sub(r"(?<=..)(?:ین|ون)(ده|دن|دهكی|دكی|ی|ه|ڭ)(در)?$", r"ن\1\2", osm)   # Tur C: (?<=..) ev: اونده‌كی، انده‌كی değil
+    elif len(l) >= 8 and re.search(r"[ıiuü]n(da|de)ki(ni|nı|ne|na|nde|nda|nden|ndan|nin|nın|ler|lar|leri|ları|lerin|ların|lere|lara)$", l):
+        osm = re.sub(r"(?<=..)(?:ین|ون)(دهكی(?:نی|نه|نده|ندن|نڭ|لر|لری|لرڭ|لره))$", r"ن\1", osm)   # Tur C: önlerindekini اوڭلرنده‌كینی
     # 3. tekil emir: fiil kökü + -sın/-sin سین، -sun/-sün سون (Hayrat: etsin ایتسین، olsun اولسون، geçirsin كچیرسین);
     # geniş zaman 2. tekil (bilirsin بیلیرسڭ) dokunulmaz: kökü "bilir" diye bir fiil yok
     m3 = re.search(r"s([ıiuü])n$", l)
@@ -627,6 +700,47 @@ def _arapca_tarifler(metin: str) -> str:
     return _HARF_I_TARIF_RE.sub(_harf_i_tarif, metin)
 
 
+# Tur C: et-/ed- çekiminin geçerli başları (ed + ünsüzle başlayan ek olmaz: edikçe, ediklerini değil; edin yalnız emir)
+_ET_KUYRUK = re.compile(r"^(et($|m|t|s)|ed(er|ip|en|ec|eb|eg|em|eli|ey|esi|il|iy|iv|inc|ic|iş|in$|iniz$|e$))")
+_ET_ISIM_EK = {"ti": "\u062f\u06cc", "tı": "\u062f\u06cc", "tir": "\u062f\u0631", "tır": "\u062f\u0631", "te": "\u062f\u0647",
+               "ta": "\u062f\u0647", "ten": "\u062f\u0646", "tan": "\u062f\u0646", "tim": "\u062f\u0645", "tik": "\u062f\u0643"}
+
+
+_BILESIK_KOK = None
+
+
+def _bilesik_kok() -> dict:
+    """Tur C: sözlükteki (çoğu Hayrat) birleşik fiil kayıtlarından isim kısmının yazımı: arzetti عرض ایتدی -> arz: عرض,
+    zikrolunan ذكر اولونان -> zikr: ذكر. Aynı isim için en çok geçen yazım."""
+    global _BILESIK_KOK
+    if _BILESIK_KOK is None:
+        from collections import Counter, defaultdict
+        say = defaultdict(Counter)
+        for k, v in dictionary.DICTIONARY.items():
+            if " " not in v[0] or v[0].count(" ") != 1:
+                continue
+            isim, fiil = v[0].split(" ")
+            m = re.match(r"^([a-zçğıöşüâîû]{2,}?)(et|ed|ol)", k)
+            if not m or not fiil.startswith(("\u0627\u06cc", "\u0627\u0648\u0644", "\u0623\u06cc")):
+                continue
+            if (m.group(2) == "ol") != fiil.startswith("\u0627\u0648\u0644"):
+                continue
+            say[m.group(1)][isim] += 1
+        _BILESIK_KOK = {k: c.most_common(1)[0][0] for k, c in say.items()}
+    return _BILESIK_KOK
+
+
+def _etmekli(kok: str) -> bool:
+    """Kök sözlükte "etmek"le birleşik fiil olarak geçiyor mu (zulm: ظلم ایدر، hükm: حكم ایتدی)."""
+    for ek in ("etmek", "eder", "etti", "eden", "edip", "edilir", "olunur", "olur"):
+        h = dictionary.lookup_exact(kok + ek)
+        if h and " " in h[0]:
+            return True
+    return False
+# Tur C: Arapça/Farsça isim + olmak çekimi ayrı yazılır (Hayrat: emrolunan امر اولونان، mahvolur محو اولور، zikrolunan ذكر اولونان)
+_OL_KUYRUK = re.compile(r"^ol(un|ur|du|dı|muş|mak|ma|mu|acak|acağ|an|up|sa|sun|ab|ama|ay|abil|unca|duk|duğ|maz|mad|mas|mış)")
+
+
 def _bilesik_fiil(word: str):
     """Arapça/Farsça isim + etmek/edilmek bitişik yazılmışsa ayrı yazar (Osmanlıca imlâsı):
     halkeden -> خلق ایدن, zanneder -> ظن ایدر, hissedilir -> حس ایدیلیر, fehmetmek -> فهم ایتمك."""
@@ -637,22 +751,68 @@ def _bilesik_fiil(word: str):
             continue
         if kuyruk.startswith(("edeb", "edep", "edib", "edip")):
             continue
+        if not _ET_KUYRUK.match(kuyruk):
+            continue                       # Tur C: geçerli et-/ed- çekimi değil (de+medikçe -> dem + edikçe, sad+edindeki değil)
         # -et ile biten isim + hâl eki/ek-fiil (âhiret+te, rahmet+ten, rahmet+tir, mâhiyet+e+dir) fiil değildir
         if re.match(r"^(ette|ete|eti|etin|etle|eten|etten|ettir|ettirler|ettı|edir|edirler)$", kuyruk) or \
                 re.match(r"^(ette|etten|etle)", kuyruk):
             continue
         kok = w[:k]
-        if kuyruk.startswith("ede") and dictionary.lookup_exact(kok + "e"):
-            continue                       # halke+den (حلقه) gibi: isim + ayrılma eki olabilir
+        if kuyruk.startswith("ede") and dictionary.lookup_exact(kok + "e") and \
+                (re.match(r"^(d[ae]n?|d[ae]ki|d[ıi]r)$", w[k + 1:]) or dictionary.lookup_with_suffix(w)[0]):
+            continue                       # halke+den (حلقه) gibi: isim + ayrılma eki olabilir; Tur C: sözlükte hiç
+            #                                bulunmayan kelimede isim + geçersiz ek (hacce+der) ise bileşik fiil (حجّ ایدر)
+        _isim = dictionary.lookup_exact(kok + "et")
+        _kh = dictionary.lookup_exact(kok)
+        if _isim and kuyruk.startswith("et") and _isim[1] in ("ar", "fa", "ar-fa", "fa-ar", "sozlukler") and \
+                not (_kh and _kh[1] in ("ar", "fa", "ar-fa", "fa-ar") and not re.search(r"([^aeıioöuüâîû])\1$", kok)) and \
+                _isim[0][-1:] in ("\u062a", "\u0629", "\u0637") and " " not in _isim[0] and not _etmekli(kok) and \
+                re.match(r"^(t[ıi](r|m|k|n|ler|niz)?|t[ae]n?|t[ae]ki|t[ıi]rler|i|e|in|ine|ini|inde|inden|le|ler\w*)$", w[k + 2:]):
+            return _isim[0] + _ET_ISIM_EK.get(w[k + 2:], rules.transliterate_word_with_suffix(w[k + 2:]))
+            # Tur C: -et ile biten Arapça isim + ek (ümmet+ti امّتدی، cennet+ti): ümm + etti değil. Yalnız kök sözlükte Arapça/Farsça
+            # değilse ya da ikiz ünsüzle bitiyorsa (ümm, cenn); şevk+etti شوق ایتدی، hitab+etti fiil kalır
         if kok[-1] in "aeıioöuüâîû" or (kok.endswith("y") and kok[-2:-1] in "iî"):
             continue                       # İlahiye+den gibi isim çekimi; ünlüyle biten kök birleşik fiil olmaz
         adaylar = [kok]
         if len(kok) >= 3 and kok[-1] == kok[-2]:
             adaylar.append(kok[:-1])       # hiss+etmek -> his, zann+etmek -> zan, redd -> red
+        if len(kok) >= 4 and kok[-1] == "t" and kok[-2] not in "aeıioöuüâîû":
+            adaylar.append(kok[:-1] + "d")  # Tur C: kast+etmek -> kasd قصد
         for a in adaylar:
             h = dictionary.lookup_exact(a)
-            if h and h[1] in ("ar", "fa", "ar-fa", "fa-ar") and len(a) >= 2:
-                return h[0] + " " + rules.transliterate_word_with_suffix(kuyruk)
+            if h and h[1] in ("ar", "fa", "ar-fa", "fa-ar") and len(a) >= 2 and " " not in h[0]:
+                isim = _bilesik_kok().get(kok) or h[0]      # Tur C: Hayrat'taki birleşik fiilin isim yazımı (arz عرض، ارض değil)
+                if isim == h[0].replace("\u0651", ""):
+                    isim = h[0]                                # şedde korunur (ردّ، عدّ، ظنّ)
+                if a != kok[:len(a)]:
+                    return isim + " " + draft_transliterate_sentence(kuyruk)   # Tur C yeni yol (kast -> kasd): kuyruk tam kelime gibi
+                return isim + " " + rules.transliterate_word_with_suffix(kuyruk)
+    return _ol_bilesik(w)
+
+
+def _ol_bilesik(w: str):
+    """Tur C: Arapça/Farsça isim + olmak bitişik yazılmışsa ayrı (emrolunduğunuz -> امر اولوندیغڭز). OSM_OL_BILESIK=0 kapatır."""
+    if __import__("os").environ.get("OSM_OL_BILESIK", "1") == "0":
+        return None
+    for k in range(len(w) - 3, 2, -1):
+        kuyruk = w[k:]
+        if not _OL_KUYRUK.match(kuyruk):
+            continue
+        kok = w[:k]
+        if kok[-1] in "aeıioöuüâîû" or dictionary.lookup_exact(w[:k + 2]):
+            continue                       # ünlüyle biten isim (kafa+ol değil) ya da "…ol" bir kelime (kontrol, petrol)
+        adaylar = [kok] + ([kok[:-1]] if len(kok) >= 3 and kok[-1] == kok[-2] else [])
+        bk = _bilesik_kok().get(kok)
+        if bk:
+            ek = rules.transliterate_word_with_suffix(kuyruk)
+            return bk + " " + ek if ek.startswith("\u0627\u0648\u0644") else None
+        for a in adaylar:
+            h = dictionary.lookup_exact(a)
+            if h and h[1] in ("ar", "fa", "ar-fa", "fa-ar") and len(a) >= 3 and " " not in h[0]:
+                ek = rules.transliterate_word_with_suffix(kuyruk)
+                if not ek.startswith("\u0627\u0648\u0644"):
+                    return None
+                return h[0] + " " + ek
     return None
 
 
@@ -716,7 +876,10 @@ def _ek_mi(s: str) -> bool:
     return bol(s, 3)
 
 
-def _ek_duzelt(w: str) -> str:
+def _ek_duzelt(w: str, latin: str = None) -> str:
+    """-yla/-yle (ile) ییله -> یله (kuvvetiyle قوّتیله). Tur C: Latin kelime -yla/-yle ile bitmiyorsa dokunulmaz (yıl+a ییله، یله değil)."""
+    if latin is not None and not turkish_lower(latin).endswith(("yla", "yle")):
+        return w
     return w[:-4] + "یله" if w.endswith("ییله") else w
 
 

@@ -32,8 +32,8 @@ DURUMLAR = [
     ("saltanat (ın)a", ("icerir", "(ڭ)ه")),
     ("Eyyühe'l-veled'in", ("icerir", "الولدڭ")),
     ("İbn-î Sinâ", ("icerir", " ی ")),
-    ("Bir şehre (mısran) inin,", ("icerir", " اینین")),   # fiil: ek sayilmaz
-    ("Hepiniz oradan inin!", ("icerir", " اینین")),
+    ("Bir şehre (mısran) inin,", ("icerir", " اینڭ")),   # fiil: ek sayilmaz; Tur C: emir -in ڭ (Hayrat: girin كیرڭ)
+    ("Hepiniz oradan inin!", ("icerir", " اینڭ")),
     ("Gökten in!", ("icerir", " این!")),
     # 2. olcumde cikan asiri genislik: bunlar ek DEGIL (12 Ekim)
     ("Bir kağıda veya erkeğin (ya da zekerin)", ("icerir", "(یا ده")),

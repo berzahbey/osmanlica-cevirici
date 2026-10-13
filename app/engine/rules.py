@@ -473,9 +473,17 @@ for _forms, _bas, _bit in [
         _SIRA[_f] = (_bas, _bit)
 
 
+_KI_SONRASI = {"ni", "nı", "ne", "na", "nde", "nda", "nden", "ndan", "nin", "nın", "ler", "lar", "leri", "ları", "lerini", "larını",
+               "lerine", "larına", "lerinin", "larının", "lerinden", "larından", "lerde", "larda", "lerden", "lardan", "yle", "yla"}
+
+
 def ek_sirasi_gecerli(sufs) -> bool:
     son = 0
-    for s in sufs:
+    for i, s in enumerate(sufs):
+        if i and son == 3.5:
+            if s not in _KI_SONRASI:
+                return False             # Tur C: -ki'den sonra yeni isim gibi: -ni/-ne/-nde/-ler… (önlerindekini, yanındakiler)
+            son = 0
         bas, bit = _SIRA.get(s, (None, None))
         if bas is None:
             return False

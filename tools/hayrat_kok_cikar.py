@@ -45,6 +45,9 @@ def zemberek():
     return Z
 
 
+HAM = defaultdict(Counter)   # Tur C: Latin kelime -> Hayrat'taki ham yazımlar (ە bitişmez he bilgisi için)
+
+
 def hayrat():
     H = defaultdict(Counter)
     for line in open(KOK_DIZIN / "hayrat_kelime_ciftleri.tsv", encoding="utf-8"):
@@ -52,7 +55,37 @@ def hayrat():
         if " " in o.strip():
             continue
         H[turkish_lower(l)][N(o)] += int(s)
+        HAM[turkish_lower(l)][o] += int(s)
     return H
+
+
+def ham_yazim(r, y):
+    """Tur C: kökün yazımında kelime ortasındaki he Hayrat'ta ە (bitişmez: كله‌جك، خسته‌لان) ise ه + ZWNJ. Kökle başlayan Hayrat
+    kelimelerinin ham yazımlarına bakılır; ortadaki her ه için çoğunluk ە ise ZWNJ eklenir. Normal yazım değişmez."""
+    if "\u0647" not in y[:-1]:
+        return y
+    say = defaultdict(Counter)
+    for lk, hamlar in HAM.items():
+        if not lk.startswith(r) or len(lk) > len(r) + 6:
+            continue
+        for ham, n in hamlar.items():
+            if not N(ham).startswith(y):
+                continue
+            i = 0
+            for c in ham:
+                if re.match("[\u064b-\u0650\u0652\u0670\u200c]", c):
+                    continue
+                if i < len(y) - 1 and c in ("\u0647", "\u06d5"):
+                    say[i][c == "\u06d5"] += n
+                i += 1
+                if i >= len(y):
+                    break
+    out = []
+    for i, c in enumerate(y):
+        out.append(c)
+        if c == "\u0647" and i < len(y) - 1 and say[i][True] > say[i][False]:
+            out.append(ZW)
+    return "".join(out)
 
 
 def oyla(H, r, ekler, yalin=True):
@@ -148,6 +181,8 @@ def main():
             y, n, nt = cikti[(r, tur)]
             if y[:1] in ("\u0623", "\u0625"):
                 y = "\u0627" + y[1:]                     # kelime başında hemze yazılmaz (eyle أیله -> ایله; dictionary.py ile aynı)
+            if nt != "ottoman_dict":
+                y = ham_yazim(r, y)
             f.write(f"{r}\t{y}\t{tur}\t{n}\t{nt}\n")
     print(f"{len(cikti)} kök -> {yol}")
     # Zemberek'in bütün kökleri (yazımı bilinmeyenler dahil): motor, daha uzun gerçek kökün başını kök saymasın (ham+am "hamam")

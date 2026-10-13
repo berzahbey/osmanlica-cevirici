@@ -27,3 +27,6 @@ karın	قارین	R1:(sancı\w*|ağrı\w*|boşluğ\w*)
 kara	قاره	C:(deniz\w*|bahr\w*|berr\w*|kıta\w*)
 altından	آلتوندن	C:(gümüş\w*|yapılmış|ma.?m[ûu]l|sikke\w*)
 gül	كول	C:ağla\w*
+kadir	قادر	L1:(şey.?e|şeylere|herşeye)
+kadir	قادر	R1:(olan\w*|olduğ\w*|değil\w*|iken|idi|olmak\w*|olmaz\w*|olur\w*)
+tan	طاڭ	R1:(yeri\w*|vakti\w*|ağar\w*|sök\w*|ışı\w*)

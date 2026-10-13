@@ -254,7 +254,7 @@ belâgat	بلاغت	N	91
 ben	بن	N	2626	
 bendegân	بندگان	N	1	ottoman_dict
 bendegî	بندگی	N	1	ottoman_dict
-bendeniz	بندهڭز	N	29	
+bendeniz	بنده‌ڭز	N	29	
 benimki	بنمكی	N	3	
 benlik	بنلك	N	62	
 benliğ	بنلك	N	62	yumusama
@@ -298,7 +298,7 @@ bilfarz	بالفرض	N	1	ottoman_dict
 bilgi	بیلكی	N	6	
 bilir	بیلیر	N	164	
 bilistifade	بالاستفاده	N	1	ottoman_dict
-bilmece	بیلمهجه	N	2	
+bilmece	بیلمه‌جه	N	2	
 bilmukabele	بالمقابله	N	1	ottoman_dict
 bilumum	بالعموم	N	1	ottoman_dict
 bin	بیڭ	N	3364	
@@ -418,7 +418,7 @@ cumhur	جمهور	N	3
 cühelâ	جهلاء	N	1	ottoman_dict
 cülûs	جلوس	N	1	ottoman_dict
 cümle	جمله	N	331	
-cümlesi	جملهسی	N	148	
+cümlesi	جمله‌سی	N	148	
 cürm	جرم	N	43	dusme
 cürüm	جرم	N	43	
 cüsse	جثه	N	1	ottoman_dict
@@ -752,8 +752,8 @@ gazete	غزته	N	59
 gazve	غزوه	N	1	ottoman_dict
 gece	كیجه	N	380	
 gel	كل	V	1391	
-gelecek	كلهجك	N	485	
-geleceğ	كلهجك	N	485	yumusama
+gelecek	كله‌جك	N	485	
+geleceğ	كله‌جك	N	485	yumusama
 gelen	كلن	N	1776	
 gelir	كلیر	N	636	
 gemi	كمی	N	39	
@@ -783,7 +783,7 @@ girdi	كیردی	N	139
 giriş	كیریش	V	6	
 git	كیت	V	400	
 giy	كیی	V	46	
-giyecek	كییهجك	N	3	
+giyecek	كییه‌جك	N	3	
 giyeceğ	كییهجك	N	3	yumusama
 giyin	كیین	V	3	
 gizle	كیزله	V	11	
@@ -807,7 +807,7 @@ gönül	كوڭل	N	40
 gör	كور	V	618	
 gördür	كوردیر	V	8	
 göre	كوره	N	797	
-görenek	كورهنك	N	11	
+görenek	كوره‌نك	N	11	
 göreneğ	كورهنك	N	11	yumusama
 görmez	كورمز	N	37	
 görün	كورون	V	211	
@@ -964,9 +964,9 @@ hassas	حساس	N	1	ottoman_dict
 hassaten	خاصة	N	1	ottoman_dict
 hasse	حاسه	N	1	ottoman_dict
 hasta	خسته	N	371	
-hastalan	خستهلان	V	4	
-hastalık	خستهلق	N	380	
-hastalığ	خستهلغ	N	380	yumusama
+hastalan	خسته‌لان	V	4	
+hastalık	خسته‌لق	N	380	
+hastalığ	خسته‌لغ	N	380	yumusama
 hastane	خستخانه	N	1	ottoman_dict
 hasıl	حصیل	N	1	ottoman_dict
 hasır	حصر	N	3	
@@ -1323,8 +1323,8 @@ izhar	اظهار	N	1	ottoman_dict
 izin	اذن	N	107	
 izn	اذن	N	107	dusme
 izzet	عزّت	N	93	
-içecek	ایچهجك	N	14	
-içeceğ	ایچهجك	N	14	yumusama
+içecek	ایچه‌جك	N	14	
+içeceğ	ایچه‌جك	N	14	yumusama
 içeri	ایچری	N	16	
 içim	ایچم	N	5	
 içinde	ایچنده	N	3180	
@@ -2006,7 +2006,7 @@ mühr	مهر	N	12	dusme
 mühür	مهر	N	12	
 mühürdar	مهردار	N	1	ottoman_dict
 müjde	مژده	N	232	
-müjdele	مژدهله	V	7	
+müjdele	مژده‌له	V	7	
 mükellef	مكلّف	N	53	
 mükemmel	مكمّل	N	534	
 müktesebat	مکتسبات	N	1	ottoman_dict
@@ -2144,7 +2144,7 @@ nebat	نبات	N	1	ottoman_dict
 nebatî	نباتی	N	1	ottoman_dict
 nebi	نبی	N	1	ottoman_dict
 necabet	نجابت	N	1	ottoman_dict
-neden	نهدن	N	309	
+neden	نه‌دن	N	309	
 nedim	ندیم	N	1	ottoman_dict
 nedret	ندرت	N	1	ottoman_dict
 nefer	نفر	N	129	
@@ -2164,11 +2164,11 @@ nekbet	نکبت	N	1	ottoman_dict
 nekes	نکس	N	1	ottoman_dict
 nem	نم	N	1	ottoman_dict
 nere	نره	N	258	
-nerede	نرهده	N	216	
+nerede	نره‌ده	N	216	
 nesil	نسل	N	17	
 nesl	نسل	N	17	dusme
 netice	نتیجه	N	235	
-neticelen	نتیجهلن	V	9	
+neticelen	نتیجه‌لن	V	9	
 nevbahar	نوبهار	N	1	ottoman_dict
 nevruz	نوروز	N	1	ottoman_dict
 neyzen	نيزن	N	1	ottoman_dict
@@ -2244,7 +2244,7 @@ parmağ	پارماغ	N	114	yumusama
 pars	پارس	N	1	ottoman_dict
 parti	پارتی	N	34	
 parça	پارچه	N	429	
-parçala	پارچهلا	V	15	
+parçala	پارچه‌لا	V	15	
 parıltı	پاریلتی	N	3	
 patiska	پاتیسقه	N	3	
 patla	پاتلا	V	15	
@@ -2373,7 +2373,7 @@ sahn	صحن	N	1	ottoman_dict
 sahra	صحرا	N	1	ottoman_dict
 sahre	صخره	N	1	ottoman_dict
 sahte	ساخته	N	1	ottoman_dict
-sahtekâr	ساختهكار	N	27	
+sahtekâr	ساخته‌كار	N	27	
 sahtiyan	سختيان	N	1	ottoman_dict
 sakal	صقال	N	15	
 sakil	ثقيل	N	1	ottoman_dict
@@ -2756,7 +2756,7 @@ tekâmül	تكامل	N	11
 tekâpu	تکاپو	N	1	ottoman_dict
 tekâsüf	تكاثف	N	8	
 tel	تل	N	21	
-telefon	تلهفون	N	44	
+telefon	تله‌فون	N	44	
 telgraf	تلغراف	N	50	
 telhis	تلخیص	N	1	ottoman_dict
 telmih	تلمیح	N	1	ottoman_dict
@@ -2954,8 +2954,8 @@ veli	ولی	N	2
 velâyet	ولایت	N	88	
 ver	ویر	V	1476	
 verdi	ویردی	N	337	
-verecek	ویرهجك	N	231	
-vereceğ	ویرهجك	N	231	yumusama
+verecek	ویره‌جك	N	231	
+vereceğ	ویره‌جك	N	231	yumusama
 verese	ورثه	N	1	ottoman_dict
 vesvese	وسوسه	N	77	
 vezne	وزنه	N	1	ottoman_dict
@@ -2967,7 +2967,7 @@ vükelâ	وكلا	N	2
 yak	یاق	V	22	
 yakacak	یاقاجق	N	4	
 yakacağ	یاقاجغ	N	4	yumusama
-yakala	یاقهلا	V	9	
+yakala	یاقه‌لا	V	9	
 yakaza	یقظه	N	10	
 yaklaş	یاقلاش	V	3	
 yakın	یاقین	N	581	
@@ -3036,8 +3036,8 @@ yetiş	یتیش	V	140
 yetmiş	یتمش	N	177	
 yeşillen	یشیللن	V	5	
 yirmi	یكرمی	N	803	
-yiyecek	یییهجك	N	31	
-yiyeceğ	یییهجك	N	31	yumusama
+yiyecek	یییه‌جك	N	31	
+yiyeceğ	یییه‌جك	N	31	yumusama
 yok	یوق	N	580	
 yoksul	یوقسول	N	3	
 yol	یول	N	660	
@@ -3099,7 +3099,7 @@ zecir	زجر	N	13
 zecr	زجر	N	13	dusme
 zecrî	زجری	N	1	ottoman_dict
 zede	زده	N	1	ottoman_dict
-zedele	زدهله	V	3	
+zedele	زده‌له	V	3	
 zehir	زهر	N	77	
 zehirle	زهرله	V	3	
 zehr	زهر	N	77	dusme
@@ -3155,7 +3155,7 @@ zındığ	زندیغ	N	95	yumusama
 âlim	عالم	N	158	
 âmâ	آما	N	8	
 âşık	عاشق	N	64	
-çabala	چابهلا	V	9	
+çabala	چابه‌لا	V	9	
 çadır	چادیر	N	13	
 çak	چاق	V	5	
 çal	چال	V	23	
@@ -3178,8 +3178,8 @@ zındığ	زندیغ	N	95	yumusama
 çağır	چاغیر	V	31	
 çehre	چهره	N	5	
 çek	چك	V	109	
-çekecek	چكهجك	N	17	
-çekeceğ	چكهجك	N	17	yumusama
+çekecek	چكه‌جك	N	17	
+çekeceğ	چكه‌جك	N	17	yumusama
 çeker	چكر	N	101	
 çekic	چكیج	N	6	yumusama
 çekil	چكیل	V	62	
@@ -3252,7 +3252,7 @@ zındığ	زندیغ	N	95	yumusama
 ört	اورت	V	4	
 örümcek	اورومجك	N	19	
 örümceğ	اورومجك	N	19	yumusama
-öteki	اوتهكی	N	149	
+öteki	اوته‌كی	N	149	
 öyle	اویله	N	2853	
 özr	عذر	N	21	dusme
 özür	عذر	N	21	
@@ -3322,7 +3322,7 @@ zındığ	زندیغ	N	95	yumusama
 şehvet	شهوت	N	7	
 şek	شك	N	41	
 şeker	شكر	N	46	
-şekerleme	شكرلهمه	N	3	
+şekerleme	شكرله‌مه	N	3	
 şekil	شكل	N	223	
 şekk	شك	N	41	ikiz
 şekl	شكل	N	223	dusme
@@ -3374,6 +3374,6 @@ zındığ	زندیغ	N	95	yumusama
 şükr	شكر	N	637	dusme
 şükür	شكر	N	637	
 şüphe	شبهه	N	44	
-şüphesiz	شبههسز	N	16	
+şüphesiz	شبهه‌سز	N	16	
 şürekâ	شرکا	N	1	ottoman_dict
 şırınga	شیرینغه	N	12	

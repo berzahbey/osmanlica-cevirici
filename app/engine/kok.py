@@ -176,6 +176,8 @@ def _kokle1(w: str, o: str, r: str, yazim: str, tur: str):
                 ek = ek[1:]
             if not ek:
                 return None
+            if tur == "V" and r[-1] not in _UNLU and re.match("d[ıiuü]r", kalan) and ek.startswith("\u062f\u0631"):
+                ek = "\u062f\u06cc\u0631" + ek[2:]   # Tur C: fiil kökü + ettirgen -dır (Hayrat: şenlendiren شنلندیرن، rızıklandır رزقلاندیر)
             if tur == "N" and r[-1] in _UNLU and re.match("n($|l[ae]$)", kalan) and ek[:1] in ("\u0646", "\u06ad"):
                 ek = "\u06ad" + ek[1:]      # ünlüyle biten isim + 2. tekil iyelik -n: elbise+n البسه‌ڭ، anne+n+le آننه‌ڭله
             if yazim.endswith("\u0647") and not ek.startswith("\u200c"):
