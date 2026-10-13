@@ -11,6 +11,7 @@ from langdetect import detect, DetectorFactory
 from . import dictionary
 from . import rules
 from . import kok
+_KOK_MOD = kok
 from .alphabet import turkish_lower
 
 DetectorFactory.seed = 0
@@ -127,6 +128,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
             return ayrik
         if wl in dictionary.HAYRAT_ANAHTAR:
             return repl(m)            # Hayrat'taki tam kelime: ek kuralları dokunmaz (tek ölçü)
+        kv = _KOK_MOD.KOK.get(wl, {})
+        if "V" in kv and "N" not in kv and "'" not in w and not dictionary.lookup_exact(wl) and not dictionary.lookup_with_suffix(wl)[0]:
+            return kv["V"][0]         # Tur D: yalın fiil kökü (emir): vur اور (Hayrat), eskiden harf harf وور
         tz = _tenvin_zarf(wl)
         if tz:
             return tz                 # Arapça -en zarfı: hakîkaten حقیقتًا، zâhiren ظاهرًا (Hayrat)
@@ -182,6 +186,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
         if m and (dictionary.lookup_exact(wl[:-4] + "mak") or dictionary.lookup_exact(wl[:-4] + "mek")):
             o = re.sub("(?:ا|ه\u200c?)?(?:سین|سڭ)$", "اسڭ" if m.group(1) == "a" else "ه\u200cسڭ", o)
             # istek 2. tekil (Hayrat): kalında اسڭ (olasın اولاسڭ، davranasın طاوراناسڭ)، incede ه‌سڭ (gizleyesin كیزله‌یه‌سڭ)
+        o = _tur_d_ekler(wl, o)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
     return WORD_RE.sub(lambda m: _he_ki(kelime(m), m.group(0)), sentence)
@@ -193,7 +198,81 @@ def _he_ki(o: str, latin: str) -> str:
         o = o.replace("\u062f\u0647\u0643\u06cc", "\u062f\u0647\u200c\u0643\u06cc")
     if "\u0647\u06ad" in o and not re.search(r"h['’]?[ıiuüâ]?n", turkish_lower(latin)):   # Allah'ın اللّهڭ، padişahın: ه ünsüz
         o = o.replace("\u0647\u06ad", "\u0647\u200c\u06ad")   # Tur C: he + ڭ bitişmez (سه‌ڭز، طلبه‌ڭز; Hayrat ە)
+    return _unlu_he(o, latin)
+
+
+_OSM_HARF = "[\u0621-\u064a\u067e\u0686\u0698\u06a9\u06ad\u06af\u06cc]"
+
+
+def _tur_d_ekler(wl: str, o: str) -> str:
+    """Tur D: sözlükte olmayan kelimede (kural motoru) ek ortasındaki fazla elif ve -nız (Hayrat yazımı). OSM_TUR_D_EK=0 kapatır.
+    - çoğul -lar + ek: لار -> لر (sınırlarıdır صینیرلریدر، bozguncuların، sapanlardandınız); geniş zaman -ar (başla-r، kıl-ar) dokunulmaz;
+    - -acak + ek: اجاق/اجاغ -> اجق/اجغ (harcayacaklarını، olacağın اولاجغڭ); -mış + ek: میش -> مش (sarsılmışlardı);
+    - -nız + ek: نیز/نوز -> ڭز (hepinizi هپڭزی، erkeklerinizden)، mastar -ma/-me + nız -> مه‌ڭز (düzeltmenize دوزلتمه‌ڭزه)."""
+    if not _TUR_D_EK_ACIK or " " in o:
+        return o
+    cogul = [m.start() for m in re.finditer("lar", wl)]
+    if cogul and re.search("\u0644\u0627\u0631" + _OSM_HARF, o) and \
+            not any(_fiil_koku_mu(wl[:i] + "la") or _fiil_koku_mu(wl[:i] + "l") or _fiil_koku_mu(wl[:i]) or wl.startswith("larak", i)
+                for i in cogul):
+        o = re.sub("\u0644\u0627\u0631(?=" + _OSM_HARF + ")", "\u0644\u0631", o)
+    m = re.search("([ae])c[ae][kğ]", wl)
+    if m and m.end() < len(wl) and wl[:m.end()] not in kok.ZKOK and wl[:m.end() - 1] + "k" not in kok.ZKOK and re.search("\u0627\u062c\u0627[\u0642\u063a]" + _OSM_HARF, o):
+        o = re.sub("\u0627\u062c\u0627([\u0642\u063a])(?=" + _OSM_HARF + ")", "\u0627\u062c\\1", o)
+    ms = re.search("s[ae]l[ae]r", wl)
+    if ms and _fiil_koku_mu(wl[:ms.start()]):
+        o = re.sub("\u0633(?:\u0627|\u0647\u200c?)?\u0644\u0627?\u0631", "\u0633\u0647\u200c\u0644\u0631", o, count=1)
+        # şart -sa + çoğul (Hayrat: olsalardı اولسه‌لردی، etselerdi ایتسه‌لردی): dursalardı طورسه‌لردی
+    if re.search("m[ıi]ş(l[ae]r|t|d|s)", wl):
+        o = re.sub("\u0645\u06cc\u0634(?=" + _OSM_HARF + ")", "\u0645\u0634", o)
+    my = re.search("y[ae]n(d[ae]n|d[ae]|[ıi]|[ae]|l[ae]r)$", wl)
+    if my and (_fiil_koku_mu(wl[:my.start()]) or "V" in kok.KOK.get(wl[:my.start()], {})):   # gaye+ne değil
+        o = re.sub("\u06cc\u0647\u200c?\u0646(?=(?:\u062f\u0646|\u062f\u0647|\u06cc|\u0647|\u0644\u0631)$)", "\u06cc\u0646", o)   # gizleyenden كیزله‌یندن
+    me = re.search("[^aeıioöuü]([ae])s[ıi]n[ıi]z$", wl)
+    if me and _fiil_koku_mu(wl[:me.start() + 1]):
+        o = re.sub("(?<=[^\u0627\u0647\u200c])\u0633\u06cc?\u06ad\u0632$", ("\u0627" if me.group(1) == "a" else "\u0647\u200c") + "\u0633\u06ad\u0632", o)
+        # istek -esiniz (Hayrat: bilesiniz بیله‌سڭز، olasınız اولاسڭز): düşünesiniz دوشونه‌سڭز
+    mm = re.search("m[ae]n[ıi]z", wl)
+    if mm and (_fiil_koku_mu(wl[:mm.start()]) or re.search("[^aeıioöuü]m[ae]$", wl[:mm.start()])):
+        # mastar + -nız (Hayrat: olmanız اولمه‌ڭز، buyurmanızı بویورمه‌ڭزی، çalışmanıza): مه‌ڭز
+        o = re.sub("\u0645[\u0647\u0627]?\u200c?(?:\u06ad|[\u06cc\u0648]?\u0646[\u06cc\u0648])\u0632", "\u0645\u0647\u200c\u06ad\u0632", o)
+    mz = re.search("(?<=[aeıioöuüâîû])[ıiuü]?n[ıiuü]z(?=[a-ln-zçğıöşü])", wl)
+    if mz and mz.start() >= 3 and not re.search("n[ıiuü]z[ıi]?m", wl) and \
+            not any(wl[:L] in kok.ZKOK for L in range(mz.end(), len(wl) + 1)):   # -izm, boynuz, beniz, deniz, nizam değil
+        if re.search("m[ae]n[ıi]z[a-zçğıöşü]", wl):
+            o = re.sub("\u0645[\u0647\u0627]?\u200c?\u0646[\u06cc\u0648]\u0632(?=" + _OSM_HARF + ")", "\u0645\u0647\u200c\u06ad\u0632", o)
+        o = re.sub("([\u06cc\u0648]?)\u0646[\u06cc\u0648]\u0632(?=" + _OSM_HARF + ")", "\\1\u06ad\u0632", o)
+    if re.search("ğ[ıiuü]n[ıiuü]z", wl):
+        o = re.sub("([\u0643\u063a])\u06cc(\u06ad\u0632)", "\\1\\2", o)   # -ğiniz كڭز (Hayrat: ettiğiniz ایتدیگڭز)
     return o
+
+
+_TUR_D_EK_ACIK = __import__("os").environ.get("OSM_TUR_D_EK", "1") != "0"
+_HARF_SONRA = re.compile("\u0647(?=[\u0621-\u064a\u067e\u0686\u0698\u06a9\u06ad\u06af\u06cc])")
+
+
+def _unlu_he(o: str, latin: str) -> str:
+    """Tur D: ünlü (e/a) okunan he, arkasından harf gelince bitişmez (Hayrat ە; Türkçe ek sınırında 35.243 ە / 1.100 bitişik):
+    توبه‌لری، قبله‌سنه، صدقه‌دن، كیزله‌مه‌لری. Ünsüz h (Allah'ın، günahları، fıkhı، şehir) bitişik kalır: Latin'deki h sayısı kadar ه/ح/خ
+    ünsüz sayılır, baştan sırayla; fazlası ünlüdür. Hayrat'taki tam kelimeye dokunulmaz (tek ölçü). OSM_UNLU_HE=0 kapatır."""
+    if not _UNLU_HE_ACIK or "\u0647" not in o or " " in o:
+        return o
+    l = turkish_lower(latin).replace("’", "'")
+    if l in dictionary.HAYRAT_ANAHTAR:
+        return o
+    unsuz = l.count("h") - o.count("\u062d") - o.count("\u062e")
+    out, i = [], 0
+    for j, c in enumerate(o):
+        out.append(c)
+        if c == "\u0647":
+            if unsuz > 0:
+                unsuz -= 1
+            elif _HARF_SONRA.match(o, j):
+                out.append("\u200c")
+    return "".join(out)
+
+
+_UNLU_HE_ACIK = __import__("os").environ.get("OSM_UNLU_HE", "1") != "0"
 
 
 # ---- Tur B (13 Ekim): ek-fiil (i-) ekleri isimden sonra ayrı yazılır (Hayrat): -(y)ken یكن/كن، -(y)se/-(y)sa یسه/سه، -(y)seniz یسه‌ڭز،

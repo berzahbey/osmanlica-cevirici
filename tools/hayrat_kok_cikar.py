@@ -29,7 +29,8 @@ def N(x):
 # (Latin ek, Osmanlıca yazımı): yalnız yazımı kesin ve kökün sonunu değiştirmeyen ekler
 EKLER_V = [("mek", "مك"), ("mak", "مق"), ("di", "دی"), ("dı", "دی"), ("du", "دی"), ("dü", "دی"), ("ti", "دی"), ("tı", "دی"),
            ("tu", "دی"), ("tü", "دی"), ("miş", "مش"), ("mış", "مش"), ("muş", "مش"), ("müş", "مش"), ("meli", "ملی"), ("malı", "ملی"),
-           ("mez", "مز"), ("maz", "مز"), ("se", "سه"), ("sa", "سه"), ("dik", "دك"), ("dık", "دق"), ("mesi", "مسی"), ("ması", "مسی")]
+           ("mez", "مز"), ("maz", "مز"), ("se", "سه"), ("sa", "سه"), ("dik", "دك"), ("dık", "دق"), ("mesi", "مسی"), ("ması", "مسی"),
+           ("yıp", "یوب"), ("yip", "یوب"), ("yup", "یوب"), ("yüp", "یوب")]   # Tur D: ünlüyle biten fiil + -yıp (harcayıp خرجایوب)
 EKLER_N = [("ler", "لر"), ("lar", "لر"), ("den", "دن"), ("dan", "دن"), ("ten", "دن"), ("tan", "دن"), ("de", "ده"), ("da", "ده"),
            ("dir", "دیر"), ("dır", "دیر"), ("dur", "دیر"), ("dür", "دیر"), ("le", "له"), ("la", "له"), ("dir", "در"), ("dır", "در"),
            ("dur", "در"), ("dür", "در")]
@@ -148,7 +149,9 @@ def main():
             if n / top < (0.9 if tur == "V" else 0.75) or not gecerli(r, y, tur):
                 continue                               # Hayrat iki türlü yazıyorsa (kapandı قاپاندی / kapanmış قپانمش) alınmaz
             if len(ekturu[y]) < 2:
-                continue                               # tek ek türünden gelen kanıt yetmez (kas- yazımı kasdı قصدی'den gelmesin)
+                continue
+            if tur == "V" and len(r) <= 3 and r[-1] in "ae" and "N" in Z.get(r[:-1], {}) and len(ekturu[y] - {"\u06cc\u0648\u0628"}) < 2:
+                continue                               # Tur D: -yıp kanıtıyla gelen ve isim + yönelme gibi görünen kısa fiil (el+e: ele-) alınmaz                               # tek ek türünden gelen kanıt yetmez (kas- yazımı kasdı قصدی'den gelmesin)
             cikti[(r, tur)] = (y, n, "")                  # isim ve fiil ayrı: boya بویه / boya- بویا، dal دال / dal- طال
             # ek önünde yumuşama (kitab-, toprağ-): Zemberek'in Voicing işareti ya da çok heceli Türkçe k/p/ç
             hece = len(re.findall("[aeıioöuüâîû]", r))
