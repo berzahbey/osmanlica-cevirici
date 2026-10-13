@@ -150,9 +150,17 @@ def draft_transliterate_sentence(sentence: str) -> str:
         if mn and mn.group(2) and (dictionary.lookup_exact(kok[:-1]) or dictionary._get_soft(kok[:-1]) or kok[:-1] in globals()["kok"].ZKOK or kok[:-1].endswith(("ât", "ūt"))
                                    or (kok[-1] in "uü" and _kh and _kh[0].endswith("\u06cc")) or _fiil_koku_mu(kok[:-2]) and kok[-2:] in ("ma", "me")):
             mn = None                          # ünsüzle biten kök + iyelik -ınız + hâl (adâlet+iniz+den): _imiz_yazimi
+        if mn and kok[-1:] in "ıiuü" and len(kok) >= 5:
+            _k1 = dictionary.lookup_exact(kok[:-1])
+            if _k1 and (str(_k1[1]).startswith(("ar", "fa")) or kok[:-1].endswith(("an", "en"))) and dictionary.lookup_with_suffix(wl)[0] \
+                    and _k1[0][-1:] not in "\u062f\u0630\u0631\u0632\u0648\u0698\u0627":   # bitişmeyen harften sonra Hayrat ی yazar (cihadınız جهادیڭز)
+                mn = None                      # Tur F: ünsüzle biten Arapça isim / -an sıfat-fiil + -ınız (ilah+ınız الهڭز، yaratan+ınız)
         if mn and dictionary.lookup_exact(kok) and not re.search(r"[ğsy][ıiuü]$", kok) and \
                 not (re.search(r"[dt][ıiuü]$", kok) and (dictionary.lookup_exact(kok[:-2] + "mak") or dictionary.lookup_exact(kok[:-2] + "mek"))):
-            return _ek_duzelt(repl(_Eslesme(kok)), kok) + "ڭز" + _NIZ_SONRA.get(mn.group(2) or "", "")
+            _kg = _ek_duzelt(repl(_Eslesme(kok)), kok)
+            if kok[-2:] in ("ma", "me") and _fiil_koku_mu(kok[:-2]) and _kg[-1:] in "\u0627\u0647":
+                _kg = _kg[:-1] + "\u0647\u200c"   # Tur F: mastar + -nız (Hayrat olmanız اولمه‌ڭز): almanız آلمه‌ڭز (alma آلما değil)
+            return _kg + "ڭز" + _NIZ_SONRA.get(mn.group(2) or "", "")
             # ünlüyle biten isim + -nız: ordunuz اوردوڭز (oldunuz değil); Tur C: + hâl eki (elçinizi ایلچیڭزی، kapınıza)
         if _EK_KURALLARI:
             yeni = _hayrat_ek_kurali(wl, o)   # sözlükte olmayan kelime: Hayrat'tan öğrenilen ek sonu
@@ -246,7 +254,7 @@ def _tur_d_ekler(wl: str, o: str) -> str:
             o = re.sub("\u0645[\u0647\u0627]?\u200c?\u0646[\u06cc\u0648]\u0632(?=" + _OSM_HARF + ")", "\u0645\u0647\u200c\u06ad\u0632", o)
         o = re.sub("([\u06cc\u0648]?)\u0646[\u06cc\u0648]\u0632(?=" + _OSM_HARF + ")", "\\1\u06ad\u0632", o)
     if re.search("ğ[ıiuü]n[ıiuü]z", wl):
-        o = re.sub("([\u0643\u063a])\u06cc(\u06ad\u0632)", "\\1\\2", o)   # -ğiniz كڭز (Hayrat: ettiğiniz ایتدیگڭز)
+        o = re.sub("([\u0643\u063a\u06af])\u06cc(\u06ad\u0632)", "\\1\\2", o)   # -ğiniz كڭز (Hayrat: ettiğiniz ایتدیگڭز)
     return o
 
 

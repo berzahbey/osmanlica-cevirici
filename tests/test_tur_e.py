@@ -1,4 +1,4 @@
-"""Tur E (13 Ekim): kitap raporlarından — sözlükteki çok yazımlı kayıt (kerahet) ve ikileme değeri (yavaş), şapkası düşmüş
+"""Tur E/F (13 Ekim): kitap raporlarından — sözlükteki çok yazımlı kayıt (kerahet) ve ikileme değeri (yavaş), şapkası düşmüş
 "sozlukler" kaydının gölgelediği kelimeler (hane, sahabe, sükut: Hayrat yazımı), orma+nın yerine orman+ın, sözlük kökü + ilgi eki
 (evrenin), "b." = ibn, radıyallahu, tek tek düzeltmeler. "korunan"lar bozulmamalı.
 Çalıştırma: docker run --rm -v "$PWD":/k -w /k berzahbey/osmanlica-cevirici:latest python tests/test_tur_e.py"""
@@ -17,7 +17,12 @@ DURUMLAR = [
     ("ormanın", "اورمانڭ"), ("ormanda", "اورمانده"), ("çevrenin", "چوره‌نڭ"), ("düzeltmenin", "دوزلتمه‌نڭ"), ("Haris", "حارث"), ("evrenin", "اورنڭ"), ("konu", "قونو"), ("ilişkin", "ایلیشكین"),
     ("sânî", "ثانی"), ("mebde", "مبدأ"), ("müstahil", "مستحیل"), ("olmıyan", "اولمیان"),
     ("Ahmed b. Hanbel", "احمد بن حنبل"), ("Ömer radıyallahu anhu", "عمر رضی الله عنه"),
+    # Tur F (Bakara okuma listesi): mastar + -nız, -ğiniz (gaf), ünsüzle biten Arapça isim + -ınız, a/e ile biten isim + -sine
+    ("almanız", "آلمه‌ڭز"), ("tutmanız", "طوتمه‌ڭز"), ("isteğinizi", "ایسته‌كڭزی"), ("belirlediğinizin", "بلیرلدیكڭزڭ"),
+    ("devletiniz", "دولتڭز"), ("yaratanınız", "یارادانڭز"), ("öfkesine", "اوفكه‌سنه"), ("perdesinden", "پرده‌سندن"),
+    ("Birçoğunu", "بر چوغنی"), ("Sâbiîler", "صابئیلر"), ("Râinâ", "راعنا"),
     # korunan
+    ("cihadınız", "جهادیڭز"), ("dostunuz", "دوستیڭز"), ("kapınız", "قاپوڭز"), ("giymesine", "كییمسنه"), ("olmanız", "اولمه‌ڭز"),
     ("bunun", "بونڭ"), ("onun", "اونڭ"), ("dinin", "دینڭ"), ("babanın", "بابانڭ"), ("dünyanın", "دنیانڭ"), ("devenin", "دوه‌نڭ"),
     ("bakiye", "بقیه"), ("karı", "قاری"), ("su", "صو"), ("pazar", "پازار"), ("Bkz. s. 45", "بقز. س. ٤٥"), ("sonun", "صوڭڭ"),
 ]

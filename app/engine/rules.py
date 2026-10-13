@@ -874,6 +874,10 @@ def transliterate_word_with_suffix(word: str) -> str:
             return result
 
     # EXCEPTIONS'a ulasilamadi - guvenli, eski (tek ek) davranisa don
+    # Tur F: a/e ile biten isim + 3. kişi iyelik + hâl (öfke+sine اوفكه‌سنه، perde+sinden): -sI- yalnız ünlüden sonra gelir; kök sonu ه korunur
+    _ms = re.match(r"^(.{2,}[ae])(s[ıi]n[ae]|s[ıi]nd[ae]n?|s[ıi]n[ıi]n?)$", word)
+    if _ms and _ms.group(2) in _IYELIK_HAL and not _fiil_ayir(word) and not re.search(r"(?:[^aeıioöuü]|m[ae])m[ae]$", _ms.group(1)):   # -mAsI (giymesine) eskisi gibi
+        return _govde_yaz(_ms.group(1), True, _ms.group(2)) + _IYELIK_HAL[_ms.group(2)]
     best_suf = None
     for suf in SUFFIXES:
         if word.endswith(suf) and len(word) - len(suf) >= 2:
