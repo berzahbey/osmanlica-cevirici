@@ -33,6 +33,10 @@ DURUMLAR = [
     ("zikretmemek", "ذكر ایتمه\u200cمك"), ("yağmasını", "یاغمه\u200cسنی"), ("yağması", "یاغمه\u200cسی"), ("yağmanın", "یغمانڭ"), ("amaları", "اعمالری"),
     ("esmasını", "اسماسنی"), ("onbir", "اون بر"), ("binbir", "بیڭ بر"),
     ("bırakmasın", "بیراقماسین"), ("tutmasın", "طوتماسین"), ("bırakmasınlar", "بیراقماسینلر"), ("bırakması", "بیراقمه\u200cسی"),
+    # Tur H (Bakara okuma): asla, hıtta, öde-, tamamla-, bozguncu, ödülü, savması, elif maksurayla biten ad + -ya ayrı
+    ("asla", "اصلا"), ("hıtta", "حطّه"), ("ödediğiniz", "اوده\u200cدیكڭز"), ("ödesin", "اوده\u200cسین"), ("tamamlayın", "تماملایڭ"),
+    ("bozguncuların", "بوزغونجیلرڭ"), ("bozguncuyu", "بوزغونجی یی"), ("ödülü", "اودولی"), ("savması", "صاومه\u200cسی"),
+    ("Musa'ya", "موسی یه"), ("İsa'ya", "عیسی یه"), ("Mustafa'ya", "مصطفی یه"), ("Urfa'ya", "اورفه\u200cیه"), ("Zekeriya'ya", "زكریایه"), ("Kâbe'ye", "كعبه\u200cیه"),
     ("cihadınız", "جهادیڭز"), ("dostunuz", "دوستیڭز"), ("kapınız", "قاپوڭز"), ("giymesine", "كییمسنه"), ("olmanız", "اولمه‌ڭز"),
     ("bunun", "بونڭ"), ("onun", "اونڭ"), ("dinin", "دینڭ"), ("babanın", "بابانڭ"), ("dünyanın", "دنیانڭ"), ("devenin", "دوه‌نڭ"),
     ("bakiye", "بقیه"), ("karı", "قاری"), ("su", "صو"), ("pazar", "پازار"), ("Bkz. s. 45", "بقز. س. ٤٥"), ("sonun", "صوڭڭ"),

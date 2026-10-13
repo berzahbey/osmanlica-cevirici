@@ -13,6 +13,7 @@ from engine.alphabet import turkish_lower
 
 # Bağlama göre değişen ya da Hayrat örneği tek/yanıltıcı olan kelimeler (gerekçesiyle)
 BILINEN = {
+    "asla": "Tur H: aslâ اصلا (Hayrat 99 kez, Arapça aslı); şapkasız asla Hayrat'ta 8 kez اصله: Hayrat çoğunluğu ve aslî imlâ",
     "rabbine": "bağlam: 2. kişi ربڭه (Rabbine = senin Rabbine), 3. kişi ربنه; onaylı metinde ayet ayet",
     "et": "cümlede Arapça isimden sonra ایت (tesbih et); tek başına sınanınca ات",
     "çağlar": "'çağlar boyu' isim: چاغلر; Hayrat'taki tek örnek fiil (چاغلار)",

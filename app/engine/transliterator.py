@@ -81,6 +81,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
                 if not sufs and tails_l and tails_l[0][:1] == "n" and kok_yazi.endswith("\u0633\u06cc") \
                         and b.endswith(("si", "sı", "su", "sü")):
                     kok_yazi = kok_yazi[:-1]   # Gazetesi'nin -> غزتهسنڭ (Hayrat)
+                if not sufs and tails_l in (["ya"], ["ye"]) and b.endswith(("a", "â")) and turkish_lower(word).replace("\u2019", "'").endswith(("'ya", "'ye")) and kok_yazi.endswith("ی") \
+                        and " " not in kok_yazi:
+                    return kok_yazi + " یه"   # Tur H: elif maksura ile biten ad + -ya ayri (Hayrat: Mustafa'ya, Isa'ya)
                 return kok_yazi + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs))
             return rules.transliterate_word_with_suffix(base) + rules.ekleri_yaz(b, [], tails_l, harmony)
 

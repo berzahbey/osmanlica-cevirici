@@ -19,13 +19,17 @@ _SABIT_SON = ("ken", "ki", "yor", "leyin", "daş", "taş")
 
 def _yukle():
     d = {}
-    yol = Path(__file__).resolve().parent.parent / "data" / "hayrat_kok.tsv"
-    if not yol.exists():
-        return d
-    for line in open(yol, encoding="utf-8"):
-        p = line.rstrip("\n").split("\t")
-        if len(p) >= 3:
-            d.setdefault(p[0], {})[p[2]] = (p[1], int(p[3]) if len(p) > 3 and p[3].isdigit() else 1)   # kök -> {"N"/"V": (yazım, kanıt)}
+    veri = Path(__file__).resolve().parent.parent / "data"
+    for ad in ("hayrat_kok.tsv", "kok_elle.tsv"):   # Tur H: kok_elle.tsv elle eklenen kokler (uretici dokunmaz), sonra okunur
+        yol = veri / ad
+        if not yol.exists():
+            continue
+        for line in open(yol, encoding="utf-8"):
+            if line.startswith("#"):
+                continue
+            p = line.rstrip("\n").split("\t")
+            if len(p) >= 3:
+                d.setdefault(p[0], {})[p[2]] = (p[1], int(p[3]) if len(p) > 3 and p[3].isdigit() else 1)   # kök -> {"N"/"V": (yazım, kanıt)}
     return d
 
 
