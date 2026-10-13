@@ -218,6 +218,16 @@ _FLAT_EXCLUDE = {"hala", "kar", "ama", "yar", "hal", "alem", "adet", "asik", "a�
                  "rahim", "alim", "katil", "hakim", "sura", "şura", "yarim", "yaran"}
 
 # Sözlükte şapkalı kayıtlı kelimeler için şapkasız ek anahtarlar (âhiret -> ahiret).
+# Tur G: şapkasız tenvinli kayıt (hakikaten حقیقةً) Hayrat'taki şapkalı yazımı alır (hakîkaten حقیقتًا)
+_HAYRAT_DUZ = {}
+for _k in HAYRAT_ANAHTAR:
+    if _k in DICTIONARY:
+        _HAYRAT_DUZ.setdefault(_flat(_k), _k)
+for _k, _v in list(DICTIONARY.items()):
+    if _v[0].endswith("\u0629\u064b") and _k not in HAYRAT_ANAHTAR and _HAYRAT_DUZ.get(_k) and _HAYRAT_DUZ[_k] != _k \
+            and DICTIONARY[_HAYRAT_DUZ[_k]][0].endswith("\u0627"):
+        DICTIONARY[_k] = DICTIONARY[_HAYRAT_DUZ[_k]]
+
 FLAT = {}
 for _k, _v in DICTIONARY.items():
     _fk = _flat(_k)

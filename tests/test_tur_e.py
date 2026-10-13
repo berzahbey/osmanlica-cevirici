@@ -1,4 +1,4 @@
-"""Tur E/F (13 Ekim): kitap raporlarından — sözlükteki çok yazımlı kayıt (kerahet) ve ikileme değeri (yavaş), şapkası düşmüş
+"""Tur E/F/G (13 Ekim): kitap raporlarından — sözlükteki çok yazımlı kayıt (kerahet) ve ikileme değeri (yavaş), şapkası düşmüş
 "sozlukler" kaydının gölgelediği kelimeler (hane, sahabe, sükut: Hayrat yazımı), orma+nın yerine orman+ın, sözlük kökü + ilgi eki
 (evrenin), "b." = ibn, radıyallahu, tek tek düzeltmeler. "korunan"lar bozulmamalı.
 Çalıştırma: docker run --rm -v "$PWD":/k -w /k berzahbey/osmanlica-cevirici:latest python tests/test_tur_e.py"""
@@ -21,7 +21,18 @@ DURUMLAR = [
     ("almanız", "آلمه‌ڭز"), ("tutmanız", "طوتمه‌ڭز"), ("isteğinizi", "ایسته‌كڭزی"), ("belirlediğinizin", "بلیرلدیكڭزڭ"),
     ("devletiniz", "دولتڭز"), ("yaratanınız", "یارادانڭز"), ("öfkesine", "اوفكه‌سنه"), ("perdesinden", "پرده‌سندن"),
     ("Birçoğunu", "بر چوغنی"), ("Sâbiîler", "صابئیلر"), ("Râinâ", "راعنا"),
+    # Tur G (Asâ-yı Mûsâ karşılaştırması): bitişik sayılar, -iye sıfatı, -âne, -stan, elifle biten Arapça kök + ek, sözlük kayıtları
+    ("onbir", "اون بر"), ("Yirmiikinci", "یكرمی ایكنجی"), ("binüçyüz", "بیڭ اوچ یوز"), ("hikmet-i umumîye", "حكمت عمومیه"), ("kudret-i İlahîye", "قدرت الهیّه"), ("maksad-ı hakîkîye", "مقصد حقیقی یه"),
+    ("mürîdane", "مریدانه"), ("bostan", "بوستان"), ("mezaristan", "مزارستان"), ("şahane", "شاهانه"), ("semasını", "سماسنی"),
+    ("Zülkemal", "ذو الكمال"), ("billah", "باللّه"), ("ülemanın", "علمانڭ"), ("hakikaten", "حقیقتا"),
     # korunan
+    ("terakkîye", "ترقّی یه"), ("birinci", "برنجی"), ("onun", "اونڭ"), ("binlerce", "بیڭلرجه"), ("insane", "انسانه"), ("uzaktan", "اوزاقدن"),
+    ("hapishane", "حبس خانه"), ("kahvehane", "قهوه‌خانه"), ("duasını", "دعاسنی"),
+    # Tur G2 (rapor_g1): birbir- sayi degil, bilesik fiil kuyrugunda ZWNJ, fiil + -mA + -sI, a'ma
+    ("birbirin", "بربرڭ"), ("birbir", "بربر"), ("birbirine", "بربرینه"), ("hapsetmemek", "حپس ایتمه\u200cمك"), ("hapsedilmeyi", "حپس ایدیلمه\u200cیی"),
+    ("zikretmemek", "ذكر ایتمه\u200cمك"), ("yağmasını", "یاغمه\u200cسنی"), ("yağması", "یاغمه\u200cسی"), ("yağmanın", "یغمانڭ"), ("amaları", "اعمالری"),
+    ("esmasını", "اسماسنی"), ("onbir", "اون بر"), ("binbir", "بیڭ بر"),
+    ("bırakmasın", "بیراقماسین"), ("tutmasın", "طوتماسین"), ("bırakmasınlar", "بیراقماسینلر"), ("bırakması", "بیراقمه\u200cسی"),
     ("cihadınız", "جهادیڭز"), ("dostunuz", "دوستیڭز"), ("kapınız", "قاپوڭز"), ("giymesine", "كییمسنه"), ("olmanız", "اولمه‌ڭز"),
     ("bunun", "بونڭ"), ("onun", "اونڭ"), ("dinin", "دینڭ"), ("babanın", "بابانڭ"), ("dünyanın", "دنیانڭ"), ("devenin", "دوه‌نڭ"),
     ("bakiye", "بقیه"), ("karı", "قاری"), ("su", "صو"), ("pazar", "پازار"), ("Bkz. s. 45", "بقز. س. ٤٥"), ("sonun", "صوڭڭ"),
