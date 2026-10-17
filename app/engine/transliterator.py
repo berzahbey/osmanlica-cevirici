@@ -84,6 +84,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
                 if not sufs and tails_l in (["ya"], ["ye"]) and b.endswith(("a", "â")) and turkish_lower(word).replace("\u2019", "'").endswith(("'ya", "'ye")) and kok_yazi.endswith("ی") \
                         and " " not in kok_yazi:
                     return kok_yazi + " یه"   # Tur H: elif maksura ile biten ad + -ya ayri (Hayrat: Mustafa'ya, Isa'ya)
+                if not sufs and tails_l in (["ya"], ["ye"]) and b.endswith(("i", "ı", "î")) and kok_yazi.endswith("ی") \
+                        and " " not in kok_yazi and turkish_lower(word).replace("\u2019", "'").endswith(("'ya", "'ye")):
+                    return kok_yazi + " یه"   # Tur J: i ile biten ad + kesmeli -ye ayri (Hayrat: Efendi'ye افندی یه): Elçi'ye
                 return kok_yazi + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs))
             return rules.transliterate_word_with_suffix(base) + rules.ekleri_yaz(b, [], tails_l, harmony)
 
@@ -234,7 +237,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
         o = _tur_d_ekler(wl, o)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
-    return WORD_RE.sub(lambda m: _he_ki(kelime(m), m.group(0)), sentence)
+    return WORD_RE.sub(lambda m: _tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), sentence)
 
 
 def _he_ki(o: str, latin: str) -> str:
@@ -331,6 +334,81 @@ def _unlu_he(o: str, latin: str) -> str:
 _UNLU_HE_ACIK = __import__("os").environ.get("OSM_UNLU_HE", "1") != "0"
 
 
+# ---- Tur J (17 Ekim, Bakara denetimi 2): kelime sonu duzeltmeleri. Hayrat'taki tam kelimeye dokunulmaz. OSM_TUR_J=0 kapatir. ----
+_TUR_J_ACIK = __import__("os").environ.get("OSM_TUR_J", "1") != "0"
+_KOPULA = ("dır", "dir", "dur", "dür", "tır", "tir", "tur", "tür")
+_TJ_UNLU = "aeıioöuüâîû"
+
+
+def _tj_fiil(r: str) -> bool:
+    """Fiil koku: sozlukte -mak/-mek ya da kok sozlugunde; isimden -la/-le ile turemis fiil (bağış+la, temiz+le)."""
+    if _fiil_koku_mu(r):
+        return True
+    m = re.fullmatch(r"(.{3,}?)l[ae]n?", r)
+    return bool(m and (dictionary.lookup_exact(m.group(1)) or dictionary.lookup_exact(r)))
+
+
+def _tur_j(o: str, latin: str) -> str:
+    if not _TUR_J_ACIK or not o or " " in o:
+        return o
+    w = latin
+    wl = turkish_lower(w).replace("’", "'")
+    if "'" in wl or wl in dictionary.HAYRAT_ANAHTAR or len(wl) < 4:
+        return o
+    tam = dictionary.lookup_exact(wl)
+    # a) ettirgen emir -dIr (Hayrat yağdırdı یاغدیردی، alıştırmak آلیشدیرمق): kok sozlugunde fiil olan kelime ek-fiil -dır sanilmaz
+    kv = kok.KOK.get(wl, {})
+    if not tam and "V" in kv and "N" not in kv and wl.endswith(_KOPULA):
+        h, s = dictionary.lookup_with_suffix(wl)
+        if h and s and s[-1] in _KOPULA and len(s) == 1:
+            return kv["V"][0].replace("\u06af", "\u0643")
+    if tam:
+        return o
+    # b) iki harfli kok (ünlü + ünsüz) + ilgi/iyelik -ın/-in: ڭ (Hayrat işin ایشڭ، başın باشڭ): eşin اشڭ (ekin, akın gibi isimler haric)
+    m = re.fullmatch(r"([aeıioöuü][^aeıioöuü])([ıiuü])n", wl)
+    if m and wl not in kok.ZKOK:
+        r = dictionary.lookup_exact(m.group(1))
+        if r and " " not in r[0] and (o == r[0] + "\u06cc\u0646" or o == r[0] + "\u0648\u0646"):
+            return r[0] + "\u06ad"
+    # c) -ıver- tezlik fiili (Hayrat oluvermeleri اولیویرمهلری، bakıver باقیویر، salıverdim صالیویردم)
+    m = re.fullmatch(r"(.+?)([ıiuü])(ver(?:[^aeıioöuü]|[aeıioöuü]).*|ver)", wl)
+    if m and len(m.group(1)) >= 2 and _tj_fiil(m.group(1)) and not _fiil_koku_mu(m.group(1) + m.group(2)):
+        kv1 = kok.KOK.get(m.group(1), {}).get("V")
+        gov = kv1[0] if kv1 else draft_transliterate_sentence(m.group(1)).strip()
+        kuy = _he_ki(draft_transliterate_sentence(m.group(3)).strip(), m.group(3))
+        if gov and kuy.startswith("\u0648\u06cc\u0631") and " " not in gov + kuy:
+            return (gov + "\u06cc" + kuy).replace("\u06af", "\u0643")
+    # d) mastar + 2. tekil iyelik -nı/-na (Hayrat olmanı اولمهڭی، buyurmanı بویورمهڭی، okutmanı اوقوتمهڭی)
+    m = re.fullmatch(r"(.+)m([ae])n([ıiae])", wl)
+    if m and _tj_fiil(m.group(1)) and not dictionary.lookup_exact(wl[:-1]) and wl[:-1] not in kok.ZKOK \
+            and not dictionary.lookup_with_suffix(wl[:-1])[0]:
+        y = re.sub("\u0645[\u0627\u0647]?\u200c?\u0646[\u06cc\u0647]$", "\u0645\u0647\u200c\u06ad" + ("\u06cc" if m.group(3) in "ıi" else "\u0647"), o)
+        if y != o:
+            return y
+    # e) olumsuz mastar -meme- (Hayrat görmemek كورمهمك، etmemeniz ایتمهمهڭز): ödememek اودهمهمك، düşmemeniz دوشمهمهڭز
+    i = wl.find("meme")
+    if i >= 2 and _tj_fiil(wl[:i]) and "\u0645\u0645" in o:
+        o = o.replace("\u0645\u0645", "\u0645\u0647\u200c\u0645", 1)
+        if re.search(r"meme(s|l[ıi])", wl):
+            o = o.replace("\u0645\u0647\u200c\u0645\u0647\u200c", "\u0645\u0647\u200c\u0645", 1)   # Hayrat bilmemesini بیلمهمسنی، vermemeli ویرمهملی
+    # f) -(y)emeyecek (Hayrat ödeyemeyeceğiz اودهیهمهیهجگز، söyleyemez سویلهیهمز)
+    if "yemeyece" in wl:
+        o = o.replace("\u06cc\u0645\u06cc\u0647\u200c\u062c", "\u06cc\u0647\u200c\u0645\u0647\u200c\u06cc\u0647\u200c\u062c")
+    # g) kalın -madan (Hayrat okumadan اوقومادن، 36 kelime): yummadan یوممادن
+    if wl.endswith("madan") and _tj_fiil(wl[:-5]) and not dictionary.lookup_exact(wl[:-3]) and wl[:-3] not in kok.ZKOK:
+        # yalniz fiil + -madan (zarf-fiil); isim + -dan (lokmadan لقمهدن، sıtmadan) Hayrat'ta مهدن
+        o = re.sub("\u0645\u0647\u200c?\u062f\u0646$", "\u0645\u0627\u062f\u0646", o)
+    # h) -lardan + ek: لردن (Hayrat onlardandır اونلردندر): sapanlardandınız صاپانلردندیڭز
+    if "lardan" in wl:
+        o = o.replace("\u0644\u0631\u062f\u0627\u0646", "\u0644\u0631\u062f\u0646")
+    # i) ettirgen -dIr/-tIr + -uyor: ییور (Hayrat dolduruyor طولدیرییور، bulunduruyor، durduruyorlar، boğduruyordu):
+    #    öldürüyordunuz ئولدیرییوردیڭز. Öteki -uyor/-üyor Hayrat'ta ویور (konuşuyor قونوشویور، görüyor كورویور): dokunulmaz
+    m = re.search(r"[dt][ıiuü]r([uü])yor", wl)
+    if m and _fiil_koku_mu(wl[:m.start(1)]) and _fiil_koku_mu(wl[:m.start(1) - 3]):   # öl+dür، dol+dur (otur değil)
+        o = o.replace("\u0631\u0648\u06cc\u0648\u0631", "\u0631\u06cc\u06cc\u0648\u0631", 1)
+    return o
+
+
 # ---- Tur B (13 Ekim): ek-fiil (i-) ekleri isimden sonra ayrı yazılır (Hayrat): -(y)ken یكن/كن، -(y)se/-(y)sa یسه/سه، -(y)seniz یسه‌ڭز،
 # -(y)iz/-(y)ız ییز/یز. Gövde sözlükte (kök + ek olarak) bulunmalı; fiil gövdesi (gelirken, olursa) kural motorunda kalır.
 _EK_FIIL = [("yseniz", "یسه\u200cڭز"), ("ysanız", "یسه\u200cڭز"), ("yken", "یكن"), ("ysem", "یسه\u200cم"), ("ysam", "یسه\u200cم"),
@@ -405,6 +483,8 @@ def _ek_fiil(wl: str, repl):
         go = _ek_duzelt(repl(_Eslesme(g)), g)
         if not go or " " in go:
             continue
+        if ek in ("yiz", "yız") and go.endswith("\u06cc"):
+            return _unlu_he(go, g) + " \u06cc\u06cc\u0632"   # Tur J: ی + -yiz ayri (Hayrat etmeliyiz ایتملی ییز)
         ara = "\u200c" if go.endswith(("\u0647", "\u0627", "\u062f", "\u0631", "\u0632", "\u0648")) and yaz[0] != "\u0643" else ""
         if go.endswith("\u0647") and yaz[0] != "\u0643":
             ara = "\u200c"
@@ -2019,3 +2099,46 @@ def transliterate_text(turkish_text, *args, **kwargs):
     if isinstance(turkish_text, str) and turkish_text:
         turkish_text = _sayilari_ayir(_IYE_IZAFET.sub(r"\1i\2", turkish_text))
     return _transliterate_text_ongorusuz(turkish_text, *args, **kwargs)
+
+
+
+# ---- Tur J (17 Ekim): en dış katman — mealde parantez içindeki Arapça okunuş (el-muttaqîn) Kur'an'daki Arapça yazımıyla ----
+from . import kuran_okunus as _kuran_okunus
+_transliterate_text_okunussuz = transliterate_text
+_OKUNUS_PARANTEZ = re.compile(r"\(([^()\n]{2,80})\)")
+_OKUNUS_GUCLU = re.compile(r"(q|['’‘]|(?<![^\W\d_])(?:e[lsşrtdzn]|at|ed)-|(?<![^\W\d_])el(?=[bcçdfğhkmnprsştvyz]))")
+
+
+def _okunus_mu(ic: str, ayetli: bool) -> bool:
+    if re.search(r"[A-ZÇĞİÖŞÜÂÎÛ0-9öüç/]", ic) or not re.fullmatch(r"[a-zğıışâîûq'’‘\- ]+", ic):
+        return False                     # büyük harf, rakam, ö/ü/ç (Türkçe), eğik çizgi: okunuş değil
+    if _OKUNUS_GUCLU.search(ic):
+        return True
+    return ayetli and bool(re.search(r"[âîû]|ğ", ic))     # ayet numaralı paragrafta uzun ünlü ya da ğ (eşribû, ğulfun)
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not isinstance(turkish_text, str) or "(" not in turkish_text:
+        return _transliterate_text_okunussuz(turkish_text, *args, **kwargs)
+    saklanan = []
+    parcalar = []
+    for par in turkish_text.split("\n"):
+        m = re.match(r"\s*(\d{1,3})\s*[.)]", par)
+        ayet = int(m.group(1)) if m else None
+
+        def degis(mm):
+            ic = mm.group(1).strip()
+            if not _okunus_mu(ic, ayet is not None):
+                return mm.group(0)
+            ar = _kuran_okunus.bul(ic, ayet)
+            if not ar:
+                return mm.group(0)
+            saklanan.append(ar)
+            return "(" + chr(0xeb00 + len(saklanan) - 1) + ")"
+        parcalar.append(_OKUNUS_PARANTEZ.sub(degis, par) if len(saklanan) < 200 else par)
+    if not saklanan:
+        return _transliterate_text_okunussuz(turkish_text, *args, **kwargs)
+    out = _transliterate_text_okunussuz("\n".join(parcalar), *args, **kwargs)
+    for i, ar in enumerate(saklanan):
+        out = out.replace("" + chr(0xeb00 + i), ar)
+    return out

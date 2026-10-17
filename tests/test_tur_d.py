@@ -13,7 +13,7 @@ ZW = "‌"
 DURUMLAR = [
     ("sınırlarıdır", "صینیرلریدر"), ("bozguncuların", "بوزغونجیلرڭ"), ("harcayacaklarını", "خرجایاجقلرینی"), ("olacağın", "اولاجغڭ"),
     ("sarsılmışlardı", "صارصیلمشلردی"), ("hepinizi", "هپڭزی"), ("erkeklerinizden", "ارككلریڭزدن"), ("düzeltmenize", "دوزلتمه‌ڭزه"),
-    ("düşmemeniz", "دوشممه‌ڭز"), ("almanızı", "آلمه‌ڭزی"), ("dursalardı", "طورسه‌لردی"), ("harcarsanız", "خرجارسه‌ڭز"), ("vur", "اور"),
+    ("düşmemeniz", "دوشمه‌مه‌ڭز"), ("almanızı", "آلمه‌ڭزی"), ("dursalardı", "طورسه‌لردی"), ("harcarsanız", "خرجارسه‌ڭز"), ("vur", "اور"),
     ("gizleyenden", "كیزله‌یندن"), ("düşünesiniz", "دوشونه‌سڭز"), ("yapmayacaklardı", "یاپمایاجقلردی"), ("dururlarken", "طورورلركن"),
     # korunan
     ("başlarsa", "باشلارسه"), ("kılarız", "قیلارز"), ("bacakları", "باجاقلری"), ("bacağına", "باجاغنه"), ("basılarak", "باصیلارق"),

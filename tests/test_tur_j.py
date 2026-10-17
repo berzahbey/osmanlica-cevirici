@@ -1,0 +1,99 @@
+"""Tur J (17 Ekim, Bakara denetimi 2): kâf-ı nûnî ve emir (ölün, eşin, kalın), ettirgen -dır (yağdır, alıştır), -ıver-, -mAnI, -mAmA-,
+-yemeyecek, -madan, -lardan, ettirgen + -uyor, ی + -yiz, kesmeli ad + -ye, sözlük kayıtları, Hayrat ZWNJ kayıtları, parantez içi Kur'an
+okunuşları (kuran_okunus.py). "korunan"lar bozulmamalı. Yazım birebir (ZWNJ dahil) karşılaştırılır.
+Çalıştırma: docker run --rm -v "$PWD":/k -w /k berzahbey/osmanlica-cevirici:latest python tests/test_tur_j.py"""
+import logging
+import os
+import sys
+
+logging.disable(50)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "app"))
+from engine.transliterator import transliterate_text as T  # noqa: E402
+
+DURUMLAR = [
+    ('\xf6l\xfcn', '\u0626\u0648\u0644\u06ad'),
+    ('\xd6l\xfcn!', '\u0626\u0648\u0644\u06ad!'),
+    ('e\u015fin', '\u0627\u0634\u06ad'),
+    ('Sen ve e\u015fin cennette kal\u0131n', '\u0633\u0646 \u0648 \u0627\u0634\u06ad \u062c\u0646\u0651\u062a\u062f\u0647 \u0642\u0627\u0644\u06ad'),
+    ('kal\u0131n bir kitap', '\u0642\u0627\u0644\u06cc\u0646 \u0628\u0631 \u0643\u062a\u0627\u0628'),
+    ('al\u0131\u015ft\u0131r', '\u0622\u0644\u06cc\u0634\u062f\u06cc\u0631'),
+    ('ya\u011fd\u0131r', '\u06cc\u0627\u063a\u062f\u06cc\u0631'),
+    ('sab\u0131r ya\u011fd\u0131r', '\u0635\u0628\u0631 \u06cc\u0627\u063a\u062f\u06cc\u0631'),
+    ('diledi\u011fine', '\u062f\u06cc\u0644\u0647\u200c\u062f\u06cc\u0643\u0646\u0647'),
+    ('kap\u0131verecek', '\u0642\u0627\u067e\u06cc\u0648\u06cc\u0631\u0647\u200c\u062c\u0643'),
+    ('oluverir', '\u0627\u0648\u0644\u06cc\u0648\u06cc\u0631\u0631'),
+    ('\xe7arp\u0131vermi\u015fti', '\u0686\u0627\u0631\u067e\u06cc\u0648\u06cc\u0631\u0645\u0634\u062f\u06cc'),
+    ('\xf6ld\xfcr\xfcn', '\u0626\u0648\u0644\u062f\u06cc\u0631\u06ad'),
+    ('Asan\u0131 ta\u015fa vur', '\u0639\u0635\u0627\u06ad\u06cc \u0637\u0627\u0634\u0647 \u0627\u0648\u0631'),
+    ('b\xfcy\xfcy\xfc', '\u0628\u0648\u06cc\u0648\u06cc\u06cc'),
+    ('b\u0131ld\u0131rc\u0131n', '\u0628\u0644\u062f\u0631\u062c\u06cc\u0646'),
+    ('rahimlerinde', '\u0631\u062d\u0645\u0644\u0631\u0646\u062f\u0647'),
+    ('sapsar\u0131', '\u0635\u0627\u067e \u0635\u0627\u0631\u06cc'),
+    ('Unzurn\xe2', '\u0627\u0646\u0638\u0631\u0646\u0627'),
+    ('vesilesiyiz', '\u0648\u0633\u06cc\u0644\u0647\u200c\u0633\u06cc \u06cc\u06cc\u0632'),
+    ('yummadan', '\u06cc\u0648\u0645\u0645\u0627\u062f\u0646'),
+    ('\xf6deyemeyece\u011fi', '\u0627\u0648\u062f\u0647\u200c\u06cc\u0647\u200c\u0645\u0647\u200c\u06cc\u0647\u200c\u062c\u0643\u06cc'),
+    ('sapanlardand\u0131n\u0131z', '\u0635\u0627\u067e\u0627\u0646\u0644\u0631\u062f\u0646\u062f\u06cc\u06ad\u0632'),
+    ('ba\u011f\u0131\u015flaman\u0131', '\u0628\u0627\u063a\u06cc\u0634\u0644\u0627\u0645\u0647\u200c\u06ad\u06cc'),
+    ('olman\u0131', '\u0627\u0648\u0644\u0645\u0647\u200c\u06ad\u06cc'),
+    ('alacas\u0131z', '\u0622\u0644\u0627\u062c\u0647\u200c\u0633\u0632'),
+    ('rehinler', '\u0631\u0647\u0646\u0644\u0631'),
+    ('d\xfc\u015fmemeniz', '\u062f\u0648\u0634\u0645\u0647\u200c\u0645\u0647\u200c\u06ad\u0632'),
+    ('\xf6dememek', '\u0627\u0648\u062f\u0647\u200c\u0645\u0647\u200c\u0645\u0643'),
+    ('lehinizedir', '\u0644\u0647\u06ad\u0632\u0647\u200c\u062f\u0631'),
+    ('\u0130lah\u0131n\u0131z', '\u0627\u0644\u0647\u06ad\u0632'),
+    ('\xf6ld\xfcr\xfcyordunuz', '\u0626\u0648\u0644\u062f\u06cc\u0631\u06cc\u06cc\u0648\u0631\u062f\u06cc\u06ad\u0632'),
+    ("El\xe7i'ye", '\u0627\u06cc\u0644\u0686\u06cc \u06cc\u0647'),
+    ('defad\u0131r', '\u062f\u0641\u0639\u0647\u200c\u062f\u0631'),
+    ('mucizeyi', '\u0645\u0639\u062c\u0632\u0647\u200c\u06cc\u06cc'),
+    ('vesilesi', '\u0648\u0633\u06cc\u0644\u0647\u200c\u0633\u06cc'),
+    ('lokmadan', '\u0644\u0642\u0645\u0647\u200c\u062f\u0646'),
+    ('okumadan', '\u0627\u0648\u0642\u0648\u0645\u0627\u062f\u0646'),
+    ('r\xe2himler', '\u0631\u0627\u062d\u0645\u0644\u0631'),
+    ('konu\u015fuyor', '\u0642\u0648\u0646\u0648\u0634\u0648\u06cc\u0648\u0631'),
+    ('g\xf6r\xfcyor', '\u0643\u0648\u0631\u0648\u06cc\u0648\u0631'),
+    ('oturuyor', '\u0627\u0648\u062a\u0648\u0631\u0648\u06cc\u0648\u0631'),
+    ('seviyorsunuz', '\u0633\u0648\u06cc\u0648\u0631\u0633\u06ad\u0632'),
+    ('ekin', '\u0627\u0643\u06cc\u0646'),
+    ('ak\u0131n', '\u0622\u0642\u06cc\u0646'),
+    ('i\u015fin', '\u0627\u06cc\u0634\u06ad'),
+    ('ba\u015f\u0131n', '\u0628\u0627\u0634\u06ad'),
+    ('zaman\u0131', '\u0632\u0645\u0627\u0646\u06cc'),
+    ('d\xfc\u015fman\u0131', '\u062f\u0648\u0634\u0645\u0627\u0646\u06cc'),
+    ('hikmet-i \u015fer\u2018iye', '\u062d\u0643\u0645\u062a \u0634\u0631\u0639\u06cc\u06cc\u0647'),
+    ("Ali'ye", '\u0639\u0644\u06cc \u06cc\u0647'),
+    ("Mustafa'ya", '\u0645\u0635\u0637\u0641\u06cc \u06cc\u0647'),
+    ('bah\xe7esidir', '\u0628\u0627\u063a\u0686\u0647\u200c\u0633\u06cc\u062f\u0631'),
+    ('etmemek', '\u0627\u06cc\u062a\u0645\u0647\u200c\u0645\u0643'),
+    ('olmas\u0131n', '\u0627\u0648\u0644\u0645\u0627\u0633\u06cc\u0646'),
+    ('suyu', '\u0635\u0648\u06cc\u06cc'),
+    ('yaz\u0131y\u0131', '\u06cc\u0627\u0632\u06cc \u06cc\u06cc'),
+    ('verir', '\u0648\u06cc\u0631\u0631'),
+    ('gelince', '\u0643\u0644\u0646\u062c\u0647'),
+    ('kal\u0131nca', '\u0642\u0627\u0644\u06cc\u0646\u062c\u0647'),
+    ('ya\u011f\u0131nca', '\u06cc\u0627\u063a\u0646\u062c\u0647'),
+    ('sald\u0131r', '\u0635\u0627\u0644\u062f\u06cc\u0631'),
+    ('\xe7oban\u0131n\u0131n', '\u0686\u0648\u0628\u0627\u0646\u0646\u06ad'),
+    ('2. Sak\u0131nanlar (el-muttaq\xeen) i\xe7in', '\u0662. \u0635\u0627\u0642\u06cc\u0646\u0627\u0646\u0644\u0631 (\u0627\u0644\u0645\u062a\u0651\u0642\u06cc\u0646) \u0627\u06cc\u0686\u0648\u0646'),
+    ('6. nank\xf6rl\xfck edenleri (el-kefer\xfb) uyarsan da', '\u0666. \u0646\u0627\u0646\u0643\u0648\u0631\u0644\u0643 \u0627\u06cc\u062f\u0646\u0644\u0631\u06cc (\u0643\u0641\u0631\u0648\u0627) \u0627\u0648\u06cc\u0627\u0631\u0633\u0647\u200c\u06ad \u062f\u0647'),
+    ('14. \u015eeytanlar\u0131yla (\u015fey\xe2t\xeenihim) ba\u015f ba\u015fa', '\u0661\u0664. \u0634\u06cc\u0637\u0627\u0646\u0644\u0631\u06cc\u0644\u0647 (\u0634\u06cc\u0627\u0637\u06cc\u0646\u0647\u0645) \u0628\u0627\u0634 \u0628\u0627\u0634\u0647'),
+    ("256. Dinde zorlama yoktur (l\xe2 ikr\xe2he f\xee'd-d\xeen).", '\u0662\u0665\u0666. \u062f\u06cc\u0646\u062f\u0647 \u0632\u0648\u0631\u0644\u0627\u0645\u0647 \u06cc\u0648\u0642\u062f\u0631 (\u0644\u0627 \u0625\u0643\u0631\u0627\u0647 \u0641\u06cc \u0627\u0644\u062f\u0651\u06cc\u0646).'),
+    ('57. b\u0131ld\u0131rc\u0131n (es-selv\xe2) indirdik', '\u0665\u0667. \u0628\u0644\u062f\u0631\u062c\u06cc\u0646 (\u0627\u0644\u0633\u0651\u0644\u0648\u06cc) \u0627\u06cc\u0646\u062f\u06cc\u0631\u062f\u0643'),
+    ("156. derler (inn\xe2 lill\xe2hi ve inn\xe2 ileyhi r\xe2ci'\xfbn).", '\u0661\u0665\u0666. \u062f\u06cc\u0631\u0644\u0631 (\u0625\u0646\u0651\u0627 \u0644\u0644\u0651\u0647 \u0648\u0625\u0646\u0651\u0627 \u0625\u0644\u06cc\u0647 \u0631\u0627\u062c\u0639\u0648\u0646).'),
+    ('58. secde ederek (boyun e\u011ferek) girin', '\u0665\u0668. \u0633\u062c\u062f\u0647 \u0627\u06cc\u062f\u0631\u0643 (\u0628\u0648\u06cc\u0648\u0646 \u0627\u0643\u0647\u200c\u0631\u0643) \u0643\u06cc\u0631\u06ad'),
+    ('Bu kitapta (bkz. s. 12) ve (Allah) ge\xe7er.', '\u0628\u0648 \u0643\u062a\u0627\u0628\u062f\u0647 (\u0628\u0642\u0632. \u0633. \u0661\u0662) \u0648 (\u0627\u0644\u0644\u0647) \u0643\u0686\u0631.'),
+]
+
+
+def main():
+    kalan = 0
+    for w, beklenen in DURUMLAR:
+        c = T(w).strip()
+        if c != beklenen:
+            kalan += 1
+            print(f"KALDI {w} -> {c} (beklenen {beklenen})")
+    print("SONUC: HEPSI GECTI" if not kalan else f"SONUC: {kalan} TEST KALDI")
+
+
+if __name__ == "__main__":
+    main()
