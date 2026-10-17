@@ -18,6 +18,8 @@ DATA_FILE = Path(__file__).parent.parent / "data" / "ottoman_dict.tsv"
 DUZELTME_FILE = Path(__file__).parent.parent / "data" / "duzeltmeler.tsv"
 HAYRAT_FILE = Path(__import__("os").environ.get("HAYRAT_DOSYA") or Path(__file__).parent.parent / "data" / "hayrat.tsv")  # Risale-i Nur (Hayrat) eksik kelimeler
 HAYRAT_AZ_FILE = Path(__file__).parent.parent / "data" / "hayrat_az.tsv"  # Hayrat'ta az geçen, meallerde gereken kelimeler
+# Tur L: Hayrat'ta 1 kez geçen ya da sözlüğe girmemiş kelimeler; yalnız hiçbir sözlükte olmayan anahtar için (OSM_HAYRAT_TEK=0 kapatır)
+HAYRAT_TEK_FILE = Path(__file__).parent.parent / "data" / "hayrat_tek.tsv"
 
 SEED_DICTIONARY = {
     "kitap": ("كتاب", "ar"), "kalem": ("قلم", "ar"), "insan": ("انسان", "ar"),
@@ -133,7 +135,7 @@ def _load_extra_from_tsv() -> dict:
                         osmanli = _parca[0]
                     if osmanli[:1] in "إأ":
                         osmanli = "ا" + osmanli[1:]   # Osmanlıcada kelime başında hemze yazılmaz (إنعام -> انعام)
-                    if osmanli.endswith("اء") and " " not in osmanli:
+                    if osmanli.endswith("اء") and " " not in osmanli and not re.search("[âa]en$", latin.lower()):   # Tur L: iktifâen اكتفاء (tenvin hemzede)
                         osmanli = osmanli[:-1]        # sondaki hemze yazılmaz: شفاء -> شفا، كبریاء -> كبریا (Risale)
                     if osmanli.endswith("ة"):
                         _son = latin.rstrip("'")[-1:].lower()
@@ -227,6 +229,18 @@ for _k, _v in list(DICTIONARY.items()):
     if _v[0].endswith("\u0629\u064b") and _k not in HAYRAT_ANAHTAR and _HAYRAT_DUZ.get(_k) and _HAYRAT_DUZ[_k] != _k \
             and DICTIONARY[_HAYRAT_DUZ[_k]][0].endswith("\u0627"):
         DICTIONARY[_k] = DICTIONARY[_HAYRAT_DUZ[_k]]
+
+# Tur L: Hayrat'ta 1 kez geçen / sözlüğe girmemiş kelimeler ayrı tutulur: yalnız kelimenin TAMAMI eşleşince kullanılır,
+# kök olarak (ek ayırmada, türetmede) kullanılmaz (aşır عشر kaydı aşırı'yı bozmasın). Hayrat kelimesi gibi korunur.
+HAYRAT_TEK = {}
+if HAYRAT_TEK_FILE.exists() and _os.environ.get("OSM_HAYRAT_TEK", "1") != "0":
+    with open(HAYRAT_TEK_FILE, "r", encoding="utf-8") as _f:
+        for _row in csv.reader(_f, delimiter="\t"):
+            if len(_row) >= 3 and not _row[0].startswith("#") and _row[1].strip():
+                _a = turkish_lower(_row[0].strip())
+                if _a not in DICTIONARY:
+                    HAYRAT_TEK[_a] = _row[1].strip().replace("\u064a", "\u06cc").replace("\u06a9", "\u0643")
+                    HAYRAT_ANAHTAR.add(_a)
 
 FLAT = {}
 for _k, _v in DICTIONARY.items():

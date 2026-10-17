@@ -25,7 +25,7 @@ BEKLENEN = {
     # imlâ turu 2: sözlük denetleyicisinin bulduğu bozuk kayıtlar
     "mal": "مال", "malları": "ماللری", "dakika": "دقیقه", "mahlukat": "مخلوقات", "vehm": "وهم", "kabr": "قبر",
     "felsefe": "فلسفه", "irşad": "ارشاد", "oysa": "اویسه", "celal": "جلال", "zemin": "زمین", "elif": "الف",
-    "Hakk'a": "حقّه", "Rabb'e": "ربّه", "Âdem'i": "آدمی", "nev'i": "نوع", "O'nun": "اونڭ", "Kur'an'ın": "قرآنڭ",
+    "Hakk'a": "حقّه", "Rabb'e": "ربّه", "Âdem'i": "آدمی", "nev'i": "نوعی", "O'nun": "اونڭ", "Kur'an'ın": "قرآنڭ",
     "Ali'lerdir": "علیلردر",
     # Türkçe fiillerin tarihî yazımı, kelime başında medli elif
     "ettiği": "ایتدیكی", "edilmiştir": "ایدیلمشدر", "verdiği": "ویردیكی", "demiştir": "دیمشدر", "dediğimiz": "دیدیكمز",

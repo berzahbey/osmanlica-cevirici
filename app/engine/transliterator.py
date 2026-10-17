@@ -31,11 +31,58 @@ def detect_language(text: str) -> str:
         return "tr"
 
 
+_AYIN_EKLERI = set("i ı u ü in ın un ün de da den dan te ta ten tan dir dır dur dür tir tır ini ını ine ına inde ında inden ından "
+                   "iyle ıyla le la dı di".split())   # Tur L: ayınlı kelimeden sonra kesmeli ek (iye, a, anın: kelimenin parçası olabilir)
+_EDDIN_RE = re.compile(r"(.{2,}?)[eüuiı]dd[iî]n")
+
+
+def _eddin_adi(word: str):
+    """Tur L: -eddin/-üddin adları Arapça terkip olarak (Hayrat): Şemseddin شمس الدّین، Celâleddîn جلال الدّین، Fahreddin فخر الدّین,
+    Bahâeddin بهاء الدّین. Adın ilk parçası sözlükte Arapça kelime olmalı (seddin, reddin gibi Türkçe kelimelere dokunulmaz)."""
+    if "'" in word or "\u2019" in word:
+        return None
+    m = _EDDIN_RE.fullmatch(turkish_lower(word))
+    if not m:
+        return None
+    ad = m.group(1)
+    if ad in ("alâ", "ala"):
+        return "\u0639\u0644\u0627\u0621 \u0627\u0644\u062f\u0651\u06cc\u0646"   # Alâeddin علاء الدّین
+    h = dictionary.lookup_exact(ad) or dictionary.lookup_exact(ad.replace("â", "a").replace("î", "i").replace("û", "u"))
+    if not h or h[1] not in ("ar", "sozlukler", "ar-fa", "fa-ar", "hayrat") or " " in h[0]:
+        return None
+    y = h[0]
+    if y.endswith("\u0627"):
+        y += "\u0621"                    # Bahâ, Alâ: بهاء الدّین، علاء الدّین
+    return y + " \u0627\u0644\u062f\u0651\u06cc\u0646"
+
+
 def draft_transliterate_sentence(sentence: str) -> str:
     """Cümledeki her kelimeyi önce sözlükte arar, bulamazsa kural motoruna düşer."""
     def repl(m):
         word = m.group(0)
+        _ed = _eddin_adi(word)
+        if _ed:
+            return _ed
+        _mk = re.fullmatch(r"Kur[aâ]n(?:['\u2019]?([a-zçğıöşü]{1,8}))?", word)
+        if _mk and (not _mk.group(1) or _ek_mi(_mk.group(1)) or (_mk.group(1).endswith("ki") and _ek_mi(_mk.group(1)[:-2]))):
+            # Tur L: kesmesiz büyük harfli "Kuran" (Kuran'da, Kuranı) Kur'ân'dır: قرآن (küçük harfli "kuran" kurmak fiilidir)
+            return "\u0642\u0631\u0622\u0646" + (rules.ekleri_yaz("kuran", [], [_mk.group(1)], rules._harmony_class("kuran" + _mk.group(1))) if _mk.group(1) else "")
         if "'" in word or "\u2019" in word:
+            _pp = word.replace("\u2019", "'").split("'")
+            _ed = _eddin_adi(_pp[0]) if len(_pp) == 2 and _ek_mi(turkish_lower(_pp[1])) else None
+            if _ed:   # Şemseddin'in -> شمس الدّینڭ
+                _b = turkish_lower(_pp[0])
+                return _ed + rules.ekleri_yaz(_b, [], [turkish_lower(_pp[1])], rules._harmony_class(_b + turkish_lower(_pp[1])))
+            if len(_pp) == 2 and _pp[0] and turkish_lower(_pp[1]) in _AYIN_EKLERI and not dictionary.lookup_exact(word.replace("\u2019", "'")):
+                _ay = dictionary.lookup_exact(turkish_lower(_pp[0]) + "'")
+                if _ay and _ay[0].endswith("\u0639") and " " not in _ay[0]:
+                    # Tur L: ayınla biten Arapça kelime + kesmeli ek (nev'in نوعڭ، kat'ı قطعی، bey'i بیعی): kesme ayındır
+                    _b, _e = turkish_lower(_pp[0]), turkish_lower(_pp[1])
+                    return _ay[0] + rules.ekleri_yaz(_b, [], [_e], rules._harmony_class(_b + _e))
+        if "'" in word or "\u2019" in word:
+            _tamk = dictionary.lookup_exact(word.replace("\u2019", "'"))
+            if _tamk and len(word.replace("\u2019", "'").split("'")) == 2 and turkish_lower(word.replace("\u2019", "'")) in dictionary.HAYRAT_ANAHTAR:
+                return _tamk[0]   # Tur L: Hayrat'taki kesmeli tam kelime (ye'se یأسه; kesmesiz yese ییسه başka kelime)
             parts = word.replace("\u2019", "'").split("'")
             base = parts[0]
             tails = parts[1:]
@@ -60,7 +107,11 @@ def draft_transliterate_sentence(sentence: str) -> str:
                     # Şeddeli kök + ek: Hakk'a -> Hakk + a (حقّه); sözlükteki "hakka" (حقا, "gerçekten") başka kelime
                     base, tails = joined.replace("'", ""), parts[k:]
                     break
-            if base == parts[0] and len(parts) == 2 and not _ek_mi(turkish_lower(parts[1])):
+            _p1 = turkish_lower(parts[1]) if len(parts) == 2 else ""
+            _zamir_n = (len(parts) == 2 and _p1[:1] == "n" and len(_p1) > 1 and (_ek_mi(_p1[1:]) or _p1[1:] in ("deki", "daki", "teki", "taki")
+                                                                       or (_p1[1:].endswith(("ki", "kini", "kine")) and _ek_mi(_p1[1:_p1.rindex("ki")])))
+                        and turkish_lower(parts[0])[-1:] in "ıiuüae")   # Tur L: Lâhikası'nda, Nûriyesi'ndeki (ayın değil, zamir n'si + ek)
+            if base == parts[0] and len(parts) == 2 and not _ek_mi(_p1) and not _zamir_n:
                 # ayın/hemze işareti (ma’nâ, te’mîn): ek ayıracı değil, kelimenin parçası
                 tam = turkish_lower(word.replace("\u2019", "'"))
                 h2 = rules._harmony_class(tam.replace("'", ""))
@@ -132,6 +183,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
         ayrik = _ayrik_ek(m.string, m.start(), wl) if hasattr(m, "string") else None
         if ayrik:
             return ayrik
+        _wt = wl.replace("\u2019", "'").replace("\u2018", "'")
+        if _wt in dictionary.HAYRAT_TEK:
+            return dictionary.HAYRAT_TEK[_wt]   # Tur L: Hayrat'ta az geçen kelime, yalnız tam eşleşmede (kök olarak kullanılmaz)
         if wl in dictionary.HAYRAT_ANAHTAR:
             return repl(m)            # Hayrat'taki tam kelime: ek kuralları dokunmaz (tek ölçü)
         my = re.fullmatch(r"(.{3,}[ıiuü])y([ıiuüae])", wl)
@@ -237,7 +291,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
         o = _tur_d_ekler(wl, o)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
-    return WORD_RE.sub(lambda m: _tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), sentence)
+    return WORD_RE.sub(lambda m: _tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), sentence)
 
 
 def _he_ki(o: str, latin: str) -> str:
@@ -338,6 +392,24 @@ _UNLU_HE_ACIK = __import__("os").environ.get("OSM_UNLU_HE", "1") != "0"
 _TUR_J_ACIK = __import__("os").environ.get("OSM_TUR_J", "1") != "0"
 _KOPULA = ("dır", "dir", "dur", "dür", "tır", "tir", "tur", "tür")
 _TJ_UNLU = "aeıioöuüâîû"
+
+
+_OVDOV_RE = re.compile(r"(ö|dö|sö)v(?=[eüdmsçkr])")
+_OVDOV = {"ö": "\u0627\u0648\u0648", "dö": "\u062f\u0648\u0648", "sö": "\u0633\u0648\u0648"}
+
+
+def _tur_l(o: str, latin: str) -> str:
+    """Tur L (son yazım): öv-/döv-/söv- fiilleri Hayrat'ta eski imlâyla ك (övülmek اوكولمك، dövülür دوكولور، sövmek سوكمك);
+    kural motoru اووو yazıyordu. Hayrat'taki ve sözlükte tam kaydı olan kelimeye dokunulmaz."""
+    if not o or " " in o:
+        return o
+    wl = turkish_lower(latin).replace("\u2019", "'")
+    m = _OVDOV_RE.match(wl)
+    if m and wl not in dictionary.HAYRAT_ANAHTAR and not dictionary.lookup_exact(wl):
+        bas = _OVDOV[m.group(1)]
+        if o.startswith(bas):
+            o = bas[:-1] + "\u0643" + o[len(bas):]
+    return o
 
 
 def _tur_k(o: str, latin: str) -> str:
@@ -586,6 +658,8 @@ def _tenvin_zarf(wl: str):
         if h and h[0].endswith("\u0647"):
             return h[0][:-1] + "\u0629\u064b"
     h = dictionary._get(kok)
+    if h and kok[-1] in "aâ" and h[0].endswith("\u0627") and " " not in h[0] and h[1] in ("ar", "sozlukler", "ar-fa"):
+        return h[0] + "\u0621"          # Tur L: ibtidâen ابتداء، intihâen انتهاء (Hayrat: tenvin hemzenin üstünde: اكتفاءً)
     if not h or kok[-1] in "aeıioöuüâîû":
         return None
     y = h[0]
@@ -1591,15 +1665,35 @@ def _ifade_yukle():
 
 
 _IFADE, _IFADE_RE = _ifade_yukle()
+
+
+def _ifade_alanlari(metin):
+    """Tur L: metindeki Hayrat ifadelerinin yerleri (dış katmanlar bu alandaki kelimeyi ayrıca çevirmesin)."""
+    kucuk = metin.replace("I", "ı").replace("İ", "i").lower()
+    if not _IFADE_RE or len(kucuk) != len(metin):
+        return []
+    return [(m.start(), m.end()) for m in _IFADE_RE.finditer(kucuk)
+            if _IFADE.get(_ifade_anahtar(m.group(1))) or _IFADE.get(_ifade_anahtar(m.group(1)).translate(_SAPKA_TR))]
 _BERI_RE = re.compile(r"(?<=دن|تن) (?:برو|بری)(?=$|[\s،.؛:!؟»)\]])")
 _SORU_RE = re.compile(r" (می(?:دیر|در|سڭ|سڭز|سین|یز|ییز|یم|یدی|یدیر|كه)?)(?=$|[\s،.؛:!؟?»)\]])")
 _transliterate_text_ifadesiz = transliterate_text
 
 
-def _bitisik(out):
+def _bitisik(out, latin=None, beri=True):
     out = out.replace("\u201c", '"').replace("\u201d", '"').replace("\u201e", '"')   # Hayrat düz tırnak
-    out = _BERI_RE.sub("بری", out)          # seneden beri -> سنهدنبری (Hayrat)
+    if beri:
+        out = _beri_bitistir(out, latin)
     return _SORU_RE.sub(r"\1", out)           # var mıdır -> وارمیدر، olmaz mı -> اولمازمی
+
+
+def _beri_bitistir(out, latin):
+    turler = re.findall(r"(?:den|dan|ten|tan)[\s]+(beri|berü|biri)(?![a-zçğıöşüâîû])", turkish_lower(latin)) if latin else []
+    if "biri" not in turler:
+        out = _BERI_RE.sub("بری", out)      # seneden beri -> سنهدنبری (Hayrat)
+    else:   # Tur L: "-den biri" (biri: bir tanesi) ayrı kalır, yalnız "beri" bitişir (Hayrat: binden biri بیڭدن بری)
+        sira = iter(turler)
+        out = _BERI_RE.sub(lambda m: m.group(0) if next(sira, "biri") == "biri" else "بری", out)
+    return out
 
 
 _IFADE_IZAFET_RE = re.compile(r"-([yY])?[ıiuüIİUÜ](?=[\s\-\u2013]|$)")
@@ -1613,10 +1707,10 @@ def _ifade_ek(latin, ek):
 
 def transliterate_text(turkish_text, *args, **kwargs):
     if not _IFADE_RE or not turkish_text:
-        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs))
+        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs), turkish_text)
     kucuk = turkish_text.replace("I", "ı").replace("İ", "i").lower()
     if len(kucuk) != len(turkish_text):
-        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs))
+        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs), turkish_text)
     parcalar, son = [], 0
     for m in _IFADE_RE.finditer(kucuk):
         yazim = _IFADE.get(_ifade_anahtar(m.group(1))) or _IFADE.get(_ifade_anahtar(m.group(1)).translate(_SAPKA_TR))
@@ -1626,6 +1720,10 @@ def transliterate_text(turkish_text, *args, **kwargs):
             continue          # kesmeden sonrası ek değil (Bu da‘vâ: "bu da" + "vâ" değil, ayınlı kelime)
         parcalar.append(("metin", turkish_text[son:m.start()]))
         if m.group(2):
+            _ek2 = turkish_lower(turkish_text[m.start(2):m.end(2)])
+            _son2 = turkish_lower(turkish_text[m.start(1):m.end(1)].rstrip())
+            if _ek2[:1] == "n" and yazim.endswith("\u0633\u06cc") and _son2.endswith(("si", "s\u0131", "su", "s\u00fc")):
+                yazim = yazim[:-1]   # Tur L: Meyve Risâlesi'nin -> رساله‌سنڭ (Hayrat), iyelik ی'si n'li ekten önce düşer
             yazim += _ifade_ek(turkish_text[m.start(1):m.end(1)], turkish_text[m.start(2):m.end(2)])
         son = m.end()
         iz = _IFADE_IZAFET_RE.match(turkish_text, son)
@@ -1639,7 +1737,7 @@ def transliterate_text(turkish_text, *args, **kwargs):
             son = iz.end()
         parcalar.append(("ifade", yazim))
     if not parcalar:
-        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs))
+        return _bitisik(_transliterate_text_ifadesiz(turkish_text, *args, **kwargs), turkish_text)
     parcalar.append(("metin", turkish_text[son:]))
     out = []
     for tur, p in parcalar:
@@ -1647,8 +1745,8 @@ def transliterate_text(turkish_text, *args, **kwargs):
             out.append(p)
         else:
             bas, sonb = p[: len(p) - len(p.lstrip())], p[len(p.rstrip()):]
-            out.append(bas + _transliterate_text_ifadesiz(p.strip(), *args, **kwargs) + sonb)
-    return _bitisik("".join(out))
+            out.append(bas + _beri_bitistir(_transliterate_text_ifadesiz(p.strip(), *args, **kwargs), p) + sonb)
+    return _bitisik("".join(out), beri=False)
 
 
 # ---- Ayınlı (‘) ve uzatma çizgili (ā ī ū) kelimeler: sözlükteki anahtar doğrudan (Hayrat: da‘vâ دعوا، tab‘ طبع، iskāt اسقاط) ----
@@ -1662,10 +1760,11 @@ def transliterate_text(turkish_text, *args, **kwargs):
     if not turkish_text or not (_AYIN_OZEL & set(turkish_text)):
         return _transliterate_text_ayinsiz(turkish_text, *args, **kwargs)
     saklanan = []
+    ifade_alani = _ifade_alanlari(turkish_text)   # Tur L: Hayrat ifadesindeki ayınlı kelime ayrı çevrilmez
 
     def sakla(m):
         w = m.group(0)
-        if not (_AYIN_OZEL & set(w)) or len(saklanan) > 6000:
+        if not (_AYIN_OZEL & set(w)) or len(saklanan) > 6000 or any(a <= m.start() < b for a, b in ifade_alani):
             return w
         h = dictionary.lookup_exact(turkish_lower(w.replace("\u02bb", "\u2018")))
         if not h:
@@ -1824,9 +1923,12 @@ def transliterate_text(turkish_text, *args, **kwargs):
     if not turkish_text or "-" not in turkish_text:
         return _transliterate_text_disilsiz(turkish_text, *args, **kwargs)
     saklanan = []
+    ifade_alani = _ifade_alanlari(turkish_text)
 
     def sakla(m):
         izafet = m.group(2)
+        if any(a <= m.start() < b for a, b in ifade_alani):
+            return m.group(0)            # Tur L: Hayrat ifadesinin içinde (kable'l-vukū' قبل الوقوع)
         onceki = re.search(r"(\S+-[ıiuüIİUÜ]) $", turkish_text[:m.start()])
         if onceki and _IFADE.get(_ifade_anahtar(onceki.group(1).lstrip("(\u201c\u2018" + chr(34) + chr(39)) + " " + m.group(0))):
             return m.group(0)            # Hayrat ifadesi (adem-i sırfa عدم صرفه): ifade katmanına bırak

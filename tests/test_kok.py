@@ -23,7 +23,7 @@ DURUMLAR = [
     ("atacağız", "آتاجغز"), ("asıldı", "آصیلدی"), ("dilek", "دیلك"), ("demet", "دمت"), ("gülerken", "كولركن"),
     ("dalarken", "طالاركن"), ("bekler", "بكلر"), ("benzetip", "بڭزتوب"),
     # sunucu ölçümü 1'de bozulan (12 Ekim): ottoman_dict anlam karşılığı, uzun kökün başı, -lık, -yan fiil eki
-    ("oysaki", "اویساكی"), ("hamam", "هامام"), ("ortamda", "اورتامده"), ("karşılığında", "قارشیلیغنده"), ("yarayan", "یارایان"),
+    ("oysaki", "اویساكی"), ("hamam", "حمام"), ("ortamda", "اورتامده"), ("karşılığında", "قارشیلیغنده"), ("yarayan", "یارایان"),
     # uzun kök engeli fiilde uygulanmaz
     ("anlamıştık", "آڭلامشدق"), ("işleme", "ایشله‌مه"),
     # sunucu ölçümü 2'de bozulan: isim kökü fiil çekiminde (yara+dılan, yara+nan, asıl+ır)
