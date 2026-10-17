@@ -131,6 +131,20 @@ def draft_transliterate_sentence(sentence: str) -> str:
             return ayrik
         if wl in dictionary.HAYRAT_ANAHTAR:
             return repl(m)            # Hayrat'taki tam kelime: ek kuralları dokunmaz (tek ölçü)
+        my = re.fullmatch(r"(.{3,}[ıiuü])y([ıiuüae])", wl)
+        if my and "'" not in w and "’" not in w and not dictionary.lookup_exact(wl) and wl not in _KOK_MOD.ZKOK \
+                and (dictionary.lookup_exact(my.group(1)) or my.group(1) in _KOK_MOD.ZKOK) and not _fiil_koku_mu(my.group(1)) \
+                and not (my.group(2) in "ae" and (my.group(1) not in _KOK_MOD.ZKOK or re.search(r"[^aeıioöuüâîû][iî]y[ae]$", wl) and "â" in wl)):
+            # -ya/-ye yalniz Zemberek kokunde: Arapca -iye disil sifat olabilir (ahlakiye, umumiye, zatiye): ayrilmaz
+            _sy = draft_transliterate_sentence(w[:len(my.group(1))]).strip()
+            _ek = " یی" if my.group(2) in "ıiuü" else " یه"
+            _tm = repl(m)
+            if not (_sy[:-1] and _tm.startswith(_sy[:-1])):
+                # Tur I2: kok tek basina baska yaziliyorsa (testi, pihti) kelimenin kendi yazimindan ayrilir
+                _sy = _tm[:-2] if _tm.endswith(("ییی", "ییه")) else (_tm[:-1] if _tm.endswith("یه") else "")
+            if _sy.endswith("ی") and " " not in _sy:
+                return _sy + _ek
+                # Tur I: ی ile biten kelime + -yi / -ya ayri (Hayrat: yaziyi, dogruya, simdiye; suyu bitisik kalir)
         kv = _KOK_MOD.KOK.get(wl, {})
         if "V" in kv and "N" not in kv and "'" not in w and not dictionary.lookup_exact(wl) and not dictionary.lookup_with_suffix(wl)[0]:
             return kv["V"][0]         # Tur D: yalın fiil kökü (emir): vur اور (Hayrat), eskiden harf harf وور

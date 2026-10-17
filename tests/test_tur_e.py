@@ -37,6 +37,12 @@ DURUMLAR = [
     ("asla", "اصلا"), ("hıtta", "حطّه"), ("ödediğiniz", "اوده\u200cدیكڭز"), ("ödesin", "اوده\u200cسین"), ("tamamlayın", "تماملایڭ"),
     ("bozguncuların", "بوزغونجیلرڭ"), ("bozguncuyu", "بوزغونجی یی"), ("ödülü", "اودولی"), ("savması", "صاومه\u200cسی"),
     ("Musa'ya", "موسی یه"), ("İsa'ya", "عیسی یه"), ("Mustafa'ya", "مصطفی یه"), ("Urfa'ya", "اورفه\u200cیه"), ("Zekeriya'ya", "زكریایه"), ("Kâbe'ye", "كعبه\u200cیه"),
+    # Tur I (Bakara EPUB): ی + -yi/-ya ayri, Arapca -iye bitisik, baglam (aciklar, bagislar, koru), domuz, dosdogru
+    ("buzağıyı", "بوزاغی یی"), ("doğruya", "طوغری یه"), ("ilişkiye", "ایلیشكی یه"), ("şimdiye", "شیمدی یه"), ("suyu", "صویی"), ("kapıyı", "قاپویی"),
+    ("testiye", "تستی یه"), ("pıhtıyı", "پیهتی یی"), ("kürsüye", "كرسی یه"), ("sufiye", "صوفیه"), ("bilgiyi", "بیلكی یی"), ("büyücüyü", "بویوجی یی"),
+    ("hediye", "هدیّه"), ("umumiye", "عمومیه"), ("ahlâkiye", "اخلاقیه"), ("domuz", "طوڭوز"), ("dosdoğru", "طوسطوغری"), ("saldırın", "صالدیرڭ"),
+    ("ödenir", "اوده\u200cنیر"), ("ekini", "اكینی"), ("Allah ayetlerini size böyle açıklar.", "الله آیتلرینی سزه بویله آچیقلار."),
+    ("Dilediğini bağışlar.", "دیله\u200cدیكنی باغیشلار."), ("bizi ateş azabından koru.", "بزی آتش عذابندن قورو."),
     ("cihadınız", "جهادیڭز"), ("dostunuz", "دوستیڭز"), ("kapınız", "قاپوڭز"), ("giymesine", "كییمسنه"), ("olmanız", "اولمه‌ڭز"),
     ("bunun", "بونڭ"), ("onun", "اونڭ"), ("dinin", "دینڭ"), ("babanın", "بابانڭ"), ("dünyanın", "دنیانڭ"), ("devenin", "دوه‌نڭ"),
     ("bakiye", "بقیه"), ("karı", "قاری"), ("su", "صو"), ("pazar", "پازار"), ("Bkz. s. 45", "بقز. س. ٤٥"), ("sonun", "صوڭڭ"),

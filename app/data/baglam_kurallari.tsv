@@ -30,3 +30,6 @@ gül	كول	C:ağla\w*
 kadir	قادر	L1:(şey.?e|şeylere|herşeye)
 kadir	قادر	R1:(olan\w*|olduğ\w*|değil\w*|iken|idi|olmak\w*|olmaz\w*|olur\w*)
 tan	طاڭ	R1:(yeri\w*|vakti\w*|ağar\w*|sök\w*|ışı\w*)
+açıklar	آچیقلار	C:(ayet\w*|âyet\w*|böyle|onları|bunları)
+bağışlar	باغیشلار	C:(diledi\w*|günah\w*|allah)
+koru	قورو	C:(bizi|beni|onları|sizi|azab\w*|ateş\w*)
