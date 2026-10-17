@@ -237,7 +237,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
         o = _tur_d_ekler(wl, o)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
-    return WORD_RE.sub(lambda m: _tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), sentence)
+    return WORD_RE.sub(lambda m: _tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), sentence)
 
 
 def _he_ki(o: str, latin: str) -> str:
@@ -338,6 +338,32 @@ _UNLU_HE_ACIK = __import__("os").environ.get("OSM_UNLU_HE", "1") != "0"
 _TUR_J_ACIK = __import__("os").environ.get("OSM_TUR_J", "1") != "0"
 _KOPULA = ("dır", "dir", "dur", "dür", "tır", "tir", "tur", "tür")
 _TJ_UNLU = "aeıioöuüâîû"
+
+
+def _tur_k(o: str, latin: str) -> str:
+    """Tur K (18 Ekim, Bakara denetimi 3): kural motorunun yazdigi kelimede Hayrat ek yazimi. Hayrat'taki ve sozlukte tam kaydi olan
+    kelimeye dokunulmaz. OSM_TUR_J=0 ile birlikte kapanir."""
+    if not _TUR_J_ACIK or not o or " " in o:
+        return o
+    wl = turkish_lower(latin).replace("\u2019", "'")
+    if "'" in wl or wl in dictionary.HAYRAT_ANAHTAR or dictionary.lookup_exact(wl):
+        return o
+    # a) -dIklAr- دقلر/دكلر (Hayrat olduklarını اولدقلرینی، bulunduklarını): harcadıklarının خرجادقلرینڭ
+    if re.search(r"[dt][\u0131u]klar", wl):
+        o = o.replace("\u062f\u06cc\u0642\u0644\u0631", "\u062f\u0642\u0644\u0631", 1)
+    if re.search(r"[dt][i\u00fc]kler", wl):
+        o = o.replace("\u062f\u06cc\u0643\u0644\u0631", "\u062f\u0643\u0644\u0631", 1)
+    # b) -dIğIm- دیغم/دیكم (Hayrat olduğumuz اولدیغمز، geldiğime كلدیگمه): indirdiğime ایندیردیكمه
+    if re.search(r"[dt][\u0131iu\u00fc]\u011f[\u0131iu\u00fc]m", wl):
+        o = re.sub("([\u063a\u0643\u06af])\u06cc\u0645", r"\1" + "\u0645", o, count=1)
+    # c) unsuzden sonra iyelik -umuz/-ümüz مز (Hayrat yolumuz یولمز، rûhumuza روحمزه، suçumuz صوچمز): kulumuza قولمزه
+    if re.search(r"[^aeıioöuüâîû][u\u00fc]m[u\u00fc]z", wl):
+        o = o.replace("\u0648\u0645\u0648\u0632", "\u0645\u0632", 1)
+    # d) ğ/t ile biten kok + iyelik + ilgi -InIn: نڭ (Hayrat -ğının 96, -tının 91 yuzde: hastalığının خستهلغنڭ، hayatının حیاتنڭ)
+    if re.search(r"[\u011ft][\u0131iu\u00fc]n[\u0131iu\u00fc]n$", wl) and \
+            re.search("[^\u0647\u0648\u0627\u06cc\u200c]\u06cc\u0646\u06ad$", o):
+        o = o[:-3] + "\u0646\u06ad"
+    return o
 
 
 def _tj_fiil(r: str) -> bool:

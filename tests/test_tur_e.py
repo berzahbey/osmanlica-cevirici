@@ -18,7 +18,7 @@ DURUMLAR = [
     ("sânî", "ثانی"), ("mebde", "مبدأ"), ("müstahil", "مستحیل"), ("olmıyan", "اولمیان"),
     ("Ahmed b. Hanbel", "احمد بن حنبل"), ("Ömer radıyallahu anhu", "عمر رضی الله عنه"),
     # Tur F (Bakara okuma listesi): mastar + -nız, -ğiniz (gaf), ünsüzle biten Arapça isim + -ınız, a/e ile biten isim + -sine
-    ("almanız", "آلمه‌ڭز"), ("tutmanız", "طوتمه‌ڭز"), ("isteğinizi", "ایسته‌كڭزی"), ("belirlediğinizin", "بلیرلدیكڭزڭ"),
+    ("almanız", "آلمه‌ڭز"), ("tutmanız", "طوتمه‌ڭز"), ("isteğinizi", "ایسته‌كڭزی"), ("belirlediğinizin", "بلیرله‌دیكڭزڭ"),
     ("devletiniz", "دولتڭز"), ("yaratanınız", "یارادانڭز"), ("öfkesine", "اوفكه‌سنه"), ("perdesinden", "پرده‌سندن"),
     ("Birçoğunu", "بر چوغنی"), ("Sâbiîler", "صابئیلر"), ("Râinâ", "راعنا"),
     # Tur G (Asâ-yı Mûsâ karşılaştırması): bitişik sayılar, -iye sıfatı, -âne, -stan, elifle biten Arapça kök + ek, sözlük kayıtları
