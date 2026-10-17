@@ -1,0 +1,1204 @@
+# Tur M: hayrat_tek_supheli.tsv'deki kelimelerin karari. latince<TAB>karar<TAB>yazim<TAB>hayrat_yazimi
+# H: Hayrat yazimi alinir; D: Hayrat yanlis, dogru yazim; A: alinmaz (cevirici dogru, es sesli ya da Hayrat'in azinlik yazimi: Tur M2). hayrat_tek_uret.py bunu okur.
+akın	A		آقین آقین
+ağlaya	D	آغلایا	آغلایا آغلایا
+baktıra	D	باقدیرا	باقدیرا باقدیرا
+doya	D	طویا	طویا طویا
+döve	A		دوكه دوكه
+efvâcen	D	افواجا	افواجا افواجا
+fırıl	A		فیریل فیریل
+hafifleşe	A		خفیفلشه خفیفلشه
+hışhış	H	خیش خیش	خیش خیش
+okuna	D	اوقونا	اوقونا اوقونا
+parıl	A		پاریل پاریل
+teker	A		تكر تكر
+tez	A		تز تز
+tın	A		طین طین
+tıntın	H	طین طین	طین طین
+yapa	D	یاپا	یاپا یاپا
+yürüye	A		یورویه یورویه
+zirm	A		زرم زرم
+abdulkādirler	H	عبد القادرلر	عبد القادرلر
+abdulmetîn'e	H	عبد المتینه	عبد المتینه
+abdulmetîn'in	H	عبد المتینڭ	عبد المتینڭ
+abdülazîz'in	H	عبد العزیزڭ	عبد العزیزڭ
+abdülehad	H	عبد الاحد	عبد الاحد
+abdülgafûr	H	عبد الغفور	عبد الغفور
+abdülhamîd	H	عبد الحمید	عبد الحمید
+abdülhamîd'in	H	عبد الحمیدڭ	عبد الحمیدڭ
+abdülmuttalib	H	عبد المطّلب	عبد المطّلب
+abdülmuttalib'i	D	عبد المطّلبی	عبد المطلبی
+adlün	H	عدل	عدل
+aleyhimessalâtü	D	علیهما الصّلاة	علیهماالصّلاة
+aleyhissalatüvesselam	H	علیه الصّلاة والسّلام	علیه الصّلاة والسّلام
+ambarında	H	آنبارنده	آنبارنده
+bahçuvan	H	باغچوان	باغچوان
+bahçıvan	H	باغچوان	باغچوان
+başpapazının	H	باش پاپاسنڭ	باش پاپاسنڭ
+beygir	H	باركیر	باركیر
+binniyye	H	بالنّیّه	بالنّیّه
+bittakdîr	H	بالتّقدیر	بالتّقدیر
+dinlettirdiler	A		دیكلتدیردیلر
+dirâyetinize	A		درایتكزه
+dârusselâm	H	دارالسّلام	دارالسّلام
+dövülmeden	A		دوكولمه‌دن
+el'insaf	H	الانصاف	الانصاف
+elifiyeyi	H	الفیه‌یی	الفیه‌یی
+eliyse	D	الیسه	ألیسه
+elmasını	H	الماسنی	الماسنی
+elzemiyetini	H	الزمیتنی	الزمیتنی
+es'sâffât'daki	H	الصّافّاتده‌كی	الصّافّاتده‌كی
+evvelân	H	اوّلا	اوّلا
+ferdün	H	فرد	فرد
+fişekteki	H	فیشنكده‌كی	فیشنكده‌كی
+hakemün	H	حكم	حكم
+hakkun	H	حقّ	حقّ
+hamdosun	H	حمد اولسون	حمد اولسون
+hayyün	H	حیّ	حیّ
+hizmetindeyiz	A		خدمتنده‌یز
+hizmetkârlığında	H	خدمتكارلغنده	خدمتكارلغنده
+hizmetkârımın	H	خدمتكاریمڭ	خدمتكاریمڭ
+hizmetçimden	A		خدمتجیمدن
+hulfülva'de	H	خلف الوعده	خلف الوعده
+hükmetmemişler	A		حكم ایتمشلر
+hıdırellez	H	خضر الیاس	خضر الیاس
+idâreten	H	ادارة	ادارة
+ilcââtları	H	الجاآتلری	الجاآتلری
+ilcâından	H	الجائندن	الجائندن
+ilkāât	A		القاآت
+ilkāâtın	A		القاآتڭ
+ilkāâtına	A		القاآتنه
+ilkāâtıyla	A		القاآتیله
+ilticâgâhı	H	التجاكاهی	التجاكاهی
+iltifâtnâmelerdeki	H	التفاتنامه‌لرده‌كی	التفاتنامه‌لرده‌كی
+iltihâken	H	التحاقا	التحاقا
+iltizâmkârâne	H	التزامكارانه	التزامكارانه
+ilâhenâ	H	الهنا	الهنا
+istifadeten	H	استفادة	استفادة
+istifâzaten	H	استفاضة	استفاضة
+ithimâl	H	احتمال	احتمال
+kablelvukū'	H	قبل الوقوع	قبل الوقوع
+kahramalarından	H	قهرمانلرندن	قهرمانلرندن
+kayyûmün	H	قیّوم	قیّوم
+kayınvâlidem	D	قاین والده‌م	قائم والده‌م
+kefne	A		كون
+kinâyeten	H	كنایة	كنایة
+kitâbün	H	كتاب	كتاب
+kuddûsün	H	قدّوس	قدّوس
+mahkiyyün	H	محكیّ	محكیّ
+manisa'da	H	مغنیساده	مغنیساده
+manisa'daki	H	مغنیساده‌كی	مغنیساده‌كی
+mea'ziyâdetin	H	مع زیادة	مع زیادة
+melâiketullâh	H	ملائكة اللّه	ملائكة اللّه
+muhâtablarımsınız	H	مخاطبلرمسكز	مخاطبلرمسكز
+mukābeleten	H	مقابلة	مقابلة
+mübîn'in	A		مبین
+müdâfaâtınız	A		مدافعاتكز
+münâzaun	D	منازع	منا زع
+müstakillün	H	مستقلّ	مستقلّ
+müşâhedeten	H	مشاهدة	مشاهدة
+nakledeceğine	A		نقل ایدیله‌جكنه
+naklediniz	A		نقل ایدیكز
+neticeten	H	نتیجة	نتیجة
+papazlarına	H	پاپاسلرینه	پاپاسلرینه
+papazlarından	H	پاپاسلرندن	پاپاسلرندن
+pergel	H	پركار	پركار
+rahmetullâhi	H	رحمة اللّه	رحمة اللّه
+salâtü	D	صلاة	صلاة و
+tefennününde	A		تفنّنده
+terbiyeten	H	تربیة	تربیة
+tüfeğini	H	تفنكنی	تفنكنی
+tüfeğiyle	A		توفنكی ایله
+veiltifâtâtın	H	و التفاتاتڭ	و التفاتاتڭ
+veriyorsanız	A		ویرییورسه‌كز
+vessellâm'ın	H	والسّلامڭ	والسّلامڭ
+veşşükrülillâh	H	والشّكر للّه	والشّكر للّه
+vâhidün	H	واحد	واحد
+zapsu	H	ژاپصو	ژاپصو
+zembereği	H	زنبركی	زنبركی
+zembereğidir	H	زنبركیدر	زنبركیدر
+zembereğine	H	زنبركنه	زنبركنه
+zembereğini	H	زنبركنی	زنبركنی
+zevil'idrâk	H	ذوی الادراك	ذوی الادراك
+zevilakıl	H	ذوی العقل	ذوی العقل
+zevilefkâr	H	ذوی الافكار	ذوی الافكار
+zevilervâh	H	ذوی الارواح	ذوی الارواح
+zevilidrâk	H	ذوی الادراك	ذوی الادراك
+zeynelâbidîn	H	زین العابدین	زین العابدین
+zeynelâbidîn'e	H	زین العابدینه	زین العابدینه
+zil'ecniha	H	ذی الاجنحه	ذی الاجنحه
+zilyed	H	ذی الید	ذی الید
+zülyezen	H	ذو الیزن	ذو الیزن
+ânen	H	آنا	آنا
+çember	H	چنبر	چنبر
+çerkez	H	چركس	چركس
+şipariş	H	سپارش	سپارش
+aleviye	H	علویه	علویه
+alâyişe	H	آلایشه	آلایشه
+alîz	A		آلیز
+anlardan	H	آنلردن	آنلردن
+ayancık	H	عیانجق	عیانجق
+bakkalcık	H	بقّالجق	بقّالجق
+bastırmaya	H	باصدیرمه‌یه	باصدیرمه‌یه
+bastırılması	H	باصدیریلمه‌سی	باصدیریلمه‌سی
+bil'ayân	H	بالعیان	بالعیان
+bil'i'tirâf	H	بالاعتراف	بالاعتراف
+bil'ihtiyâr	H	بالاختیار	بالاختیار
+bil'imtisâl	H	بالامتثال	بالامتثال
+bil'intikāl	H	بالانتقال	بالانتقال
+bil'irâde	H	بالاراده	بالاراده
+bil'isti'dâd	H	بالاستعداد	بالاستعداد
+bil'izâfe	H	بالاضافه	بالاضافه
+bil'iştiyâk	H	بالاشتیاق	بالاشتیاق
+bil'îmân	H	بالایمان	بالایمان
+bilistişâre	H	بالاستشاره	بالاستشاره
+bilkabûl	H	بالقبول	بالقبول
+bilkasd	H	بالقصد	بالقصد
+bilma'nâ	H	بالمعنا	بالمعنا
+bilmutâbakat	H	بالمطابقت	بالمطابقت
+bilmüşâvere	H	بالمشاوره	بالمشاوره
+bilvücûb	H	بالوجوب	بالوجوب
+bineceğin	H	بینه‌جكڭ	بینه‌جكڭ
+binemeyiz	H	بینه‌مه‌یز	بینه‌مه‌یز
+biriktiren	H	بیریكدیرن	بیریكدیرن
+boyundadır	H	بوینده‌در	بوینده‌در
+bulüğ	H	بلوغ	بلوغ
+cemî'sinden	A		جمعیسندن
+cüz'îferdleri	H	جزؤی فردلری	جزؤی فردلری
+dahilsiniz	H	داخلسڭز	داخلسڭز
+dalkavukçuların	H	طالقاووقجیلرڭ	طالقاووقجیلرڭ
+dalma	A		طالما
+darr	D	ضرّ	دار
+darrı	H	ضرّی	ضرّی
+darıviran	H	داری ویران	داری ویران
+dayanmaması	A		طایانمامسی
+dağlamaktadır	H	داغلامقده‌در	داغلامقده‌در
+dağâtır	H	ضغاطر	ضغاطر
+derdimin	H	دردیمڭ	دردیمڭ
+düşünemedik	H	دوشونه‌مدك	دوشونه‌مدك
+edebilmemiz	H	ایده‌بیلمه‌مز	ایده‌بیلمه‌مز
+eğridir'deki	H	اكیردیرده‌كی	اكیردیرده‌كی
+gelmeyeceğinden	H	كلمیه‌جكندن	كلمیه‌جكندن
+geçemeyecek	H	كچه‌میه‌جك	كچه‌میه‌جك
+geçemiyor	H	كچه‌مییور	كچه‌مییور
+geçemiyoruz	H	كچه‌مییورز	كچه‌مییورز
+geçilmesi	A		كچیلمه‌سی
+geçilmesine	H	كچیلمه‌سنه	كچیلمه‌سنه
+geçilmiyor	A		كچیلمه‌یور
+geçinememiş	H	كچینه‌مه‌مش	كچینه‌مه‌مش
+gitmeyeceksiniz	H	كیتمیه‌جكسڭز	كیتمیه‌جكسڭز
+hasrettiğimizden	H	حصر ایتدیكمزدن	حصر ایتدیكمزدن
+haylazlığından	H	هایلازلغندن	هایلازلغندن
+hayranıyız	A		حیرانی یز
+hissedebildiği	H	حسّ ایده‌بیلدیكی	حسّ ایده‌بیلدیكی
+hissedebiliyorum	H	حس ایده‌بیلییورم	حس ایده‌بیلییورم
+hissedebilsin	H	حس ایده‌بیلسین	حس ایده‌بیلسین
+hissedemeyecek	H	حسّ ایده‌مه‌یه‌جك	حسّ ایده‌مه‌یه‌جك
+hissetmeleridir	A		حس ایتمه‌لریدر
+hissettirmeyerek	H	حسّ ایتدیرمیه‌رك	حسّ ایتدیرمیه‌رك
+hisseylediğim	H	حس ایله‌دیكم	حس ایله‌دیكم
+hâlidî'dir	H	خالدیدر	خالدیدر
+hâlik'ça	H	خالقجه	خالقجه
+hâlledebilir	H	حل ایده‌بیلیر	حل ایده‌بیلیر
+isti'dâdınız	H	استعدادیڭز	استعدادیڭز
+istid'âdlarında	H	استعدادلرنده	استعدادلرنده
+istihzârat	H	استحضارات	استحضارات
+kanadlarını	H	قنادلرینی	قنادلرینی
+kanadlarıyla	H	قنادلریله	قنادلریله
+kapadıkları	H	قپادقلری	قپادقلری
+kapadınız	H	قپادیڭز	قپادیڭز
+kapadığım	H	قپادیغم	قپادیغم
+kapaklarının	H	قپاقلرینڭ	قپاقلرینڭ
+kapamıştım	H	قپامشدم	قپامشدم
+kapanıyordu	H	قپانییوردی	قپانییوردی
+kapatabilirsen	H	قپادابیلیرسه‌ڭ	قپادابیلیرسه‌ڭ
+kapatan	H	قپاتان	قپاتان
+kapatmasını	A		قپاتمسنی
+kapayacağımız	H	قپایاجغمز	قپایاجغمز
+kapayamaz	H	قپایاماز	قپایاماز
+karna	A		قرنه
+karîham	H	قریحه‌م	قریحه‌م
+karîhamla	H	قریحه‌مله	قریحه‌مله
+katâde	H	قتاده	قتاده
+katâr	H	قطار	قطار
+katârı	H	قطاری	قطاری
+katârına	H	قطارینه	قطارینه
+katûf	H	قطوف	قطوف
+kavgalarına	A		قاوغه‌لرینه
+kavgasından	A		قاوغه‌سندن
+konuşmasından	H	قونوشمه‌سندن	قونوشمه‌سندن
+kule	H	قله	قله
+külde	A		كلّده
+kürdcülük	H	كردجیلك	كردجیلك
+kālelerini	H	قلعه‌لرینی	قلعه‌لرینی
+kılıftırlar	A		غلفدرلر
+mikroplarını	H	میقروبلرینی	میقروبلرینی
+nazmeylemiş	D	نظم ایله‌مش	نظم أیله‌مش
+nazmeyleyip	D	نظم ایله‌یوب	نظم أیله‌یوب
+nazzâm	H	نظّام	نظّام
+nazâirini	H	نظائرینی	نظائرینی
+necimlerin	H	نجملرڭ	نجملرڭ
+necimlerine	H	نجملرینه	نجملرینه
+okunmasından	H	اوقونمه‌سندن	اوقونمه‌سندن
+olmuyordum	H	اولمییوردم	اولمییوردم
+onaltısına	H	اون آلتیسنه	اون آلتیسنه
+râzık'ımızı	H	رازقمزی	رازقمزی
+selahattin	H	صلاح الدّین	صلاح الدّین
+selâhaddîn	H	صلاح الدّین	صلاح الدّین
+selâhaddîn'in	H	صلاح الدّینڭ	صلاح الدّینڭ
+selânik'ten	H	سلانیكدن	سلانیكدن
+sâikalarından	H	صاعقه‌لرندن	صاعقه‌لرندن
+sâillerin	A		سآئللرڭ
+sıkıştırdığından	A		صیغیشدیردیغندن
+takallübü	H	تقلّبی	تقلّبی
+takallüdü	H	تقلّدی	تقلّدی
+takāzâsını	H	تقاضاسنی	تقاضاسنی
+teşrîfinizdeki	A		تشریفڭزده‌كه
+varakpâreciğime	H	ورقپاره‌جكمه	ورقپاره‌جكمه
+varakpâreciğimi	H	ورقپاره‌جكمی	ورقپاره‌جكمی
+veresesindedir	H	ورثه‌سنده‌در	ورثه‌سنده‌در
+yediremediğinden	H	ییدیره‌مدیكندن	ییدیره‌مدیكندن
+yedirsin	H	ییدیرسین	ییدیرسین
+yedirsinler	H	ییدیرسینلر	ییدیرسینلر
+yenilmeyeceğini	H	یینلمه‌یه‌جكنی	یینلمه‌یه‌جكنی
+yenilmiyor	A		یینیلمه‌یور
+ırak'dan	H	عراقدن	عراقدن
+şeytanetkârâne	H	شیطنتكارانه	شیطنتكارانه
+a'lânın	D	اعلانڭ	علانڭ
+abdurrahmânlarım	H	عبد الرّحمانلرم	عبد الرّحمانلرم
+abdâlı	H	ابدالی	ابدالی
+aczimendî	H	عجزمندی	عجزمندی
+adamcağıza	H	آدمجغزه	آدمجغزه
+adamcağızın	H	آدمجغزڭ	آدمجغزڭ
+adana'ya	H	آطنه‌یه	آطنه‌یه
+adapazarı'na	H	آطه‌پازارینه	آطه‌پازارینه
+adası'nda	H	آطه‌سنده	آطه‌سنده
+adasındaki	H	آطه‌سنده‌كی	آطه‌سنده‌كی
+adetleriyle	A		عددلریله
+adilde	A		عدلده
+affınızla	H	عفویڭزله	عفویڭزله
+akarsuyun	H	آقار صویڭ	آقار صویڭ
+akmasına	H	آقمسنه	آقمسنه
+akrebidir	A		اقربیدر
+akıtmasıyla	A		آقیتمسیله
+akşehirli	H	آقشهرلی	آقشهرلی
+alamadıkları	A		آلامادقلری
+alamadığından	A		آلامادیغندن
+alamadığının	A		آلامادیغنڭ
+aleyhisselâm'dır	A		علیه
+almadığından	A		آلمادیغندن
+almama	A		آلمه‌مه
+alâk'a	H	العلقه	العلقه
+alâkadârlığınız	H	علاقه‌دارلغڭز	علاقه‌دارلغڭز
+alıncaya	H	آلینجه‌یه	آلینجه‌یه
+alınmaktır	H	آلینمقدر	آلینمقدر
+ambardaki	H	آنبارده‌كی	آنبارده‌كی
+ambardan	H	آنباردن	آنباردن
+ambardır	H	آنباردر	آنباردر
+amcamdan	H	عمجه‌مدن	عمجه‌مدن
+amcamıza	H	عمجه‌مزه	عمجه‌مزه
+amcasına	H	عمجه‌سنه	عمجه‌سنه
+amcasının	H	عمجه‌سنڭ	عمجه‌سنڭ
+anbardır	H	انباردر	انباردر
+anbarına	H	انبارینه	انبارینه
+anlamasında	H	آڭلامه‌سنده	آڭلامه‌سنده
+anlamasından	H	آڭلامه‌سندن	آڭلامه‌سندن
+anlamıyorum	A		آڭلامایورم
+anlarım	A		آنلرم
+arabıyla	H	عربیله	عربیله
+arafa	H	عرفه	عرفه
+aramadan	H	آرامادن	آرامادن
+aramasının	H	آرامه‌سنڭ	آرامه‌سنڭ
+aramasıyla	H	آرامه‌سیله	آرامه‌سیله
+aristo'dan	H	آریسطودن	آریسطودن
+armağanı	H	آرمغانی	آرمغانی
+arslanları	A		آسلانلری
+artmasıyla	H	آرتمسیله	آرتمسیله
+arttırmaktan	H	آرتیرمقدن	آرتیرمقدن
+arzeylemiştir	D	عرض ایله‌مشدر	عرض أیله‌مشدر
+arzeyleyelim	D	عرض ایله‌یه‌لم	عرض أیله‌یه‌لم
+arîzî	H	عارضی	عارضی
+arşının	H	عرشنڭ	عرشنڭ
+asilzâdelik	H	اصیلزاده‌لك	اصیلزاده‌لك
+astarını	H	آستارینی	آستارینی
+ateşböceğinden	H	آتش بوجكندن	آتش بوجكندن
+atfetmesi	A		عطف ایتمه‌سی
+atiyye	H	عطیّه	عطیّه
+atiyyeler	H	عطیه‌لر	عطیه‌لر
+atlastan	A		آطلاسدن
+atılması	H	آتیلمه‌سی	آتیلمه‌سی
+avluda	H	آولوده	آولوده
+avlumdan	H	آولیمدن	آولیمدن
+avrupalılar	H	آوروپه‌لیلر	آوروپه‌لیلر
+avrupalılara	H	آوروپه‌لیلره	آوروپه‌لیلره
+avusturalya'ya	H	آووسترالیه‌یه	آووسترالیه‌یه
+ayarlamakla	H	آیارلامقله	آیارلامقله
+aynamızdaki	H	آینه‌مزده‌كی	آینه‌مزده‌كی
+ağacınız	A		آغاجڭز
+aşkların	A		عاشقلرڭ
+bahsedilmesinden	A		بحث ایدیلمسندن
+bakarı	H	بقری	بقری
+bakarın	H	بقرڭ	بقرڭ
+bakmalıdır	H	باقمه‌لیدر	باقمه‌لیدر
+bakmamıza	H	باقمه‌مزه	باقمه‌مزه
+bakmasında	H	باقمه‌سنده	باقمه‌سنده
+baksana	H	باق سڭا	باق سڭا
+baktırmayan	H	باقدیرمایان	باقدیرمایان
+balarısına	H	بال آریسنه	بال آریسنه
+baltayı	H	بالطه‌یی	بالطه‌یی
+bankalar	H	بانقه‌لر	بانقه‌لر
+bankaları	H	بانقه‌لری	بانقه‌لری
+bankaya	H	بانقه‌یه	بانقه‌یه
+basımı	H	باصیمی	باصیمی
+basımın	H	باصیمڭ	باصیمڭ
+batmasına	H	باطمه‌سنه	باطمه‌سنه
+baytar	A		بیطر
+bağla	H	باغلا	باغلا
+bağlanmasından	H	باغلانمه‌سندن	باغلانمه‌سندن
+bağlanmasının	H	باغلانمه‌سنڭ	باغلانمه‌سنڭ
+bağlara	H	باغلره	باغلره
+bağırsakları	H	باغیرصاقلری	باغیرصاقلری
+başlamasındaki	H	باشلامه‌سنده‌كی	باشلامه‌سنده‌كی
+başlamasından	H	باشلامه‌سندن	باشلامه‌سندن
+başlamasının	H	باشلامه‌سنڭ	باشلامه‌سنڭ
+başmüdürü	H	باش مدیری	باش مدیری
+başsavcılık	H	باش صاوجیلق	باش صاوجیلق
+başucundaki	H	باش اوجنده‌كی	باش اوجنده‌كی
+başvuracağım	H	باش اوراجغم	باش اوراجغم
+başvururken	H	باش اوروركن	باش اوروركن
+bedîhiyye	H	بدیهیه	بدیهیه
+bedîhiyât	H	بدیهیات	بدیهیات
+bedîhiyâta	H	بدیهیّاته	بدیهیّاته
+bedîhiyâtı	H	بدیهیاتی	بدیهیاتی
+beklemiyorlar	H	بكله‌مییورلر	بكله‌مییورلر
+beklemiyorum	H	بكله‌مییورم	بكله‌مییورم
+bekçiler	A		بكچیلر
+bekçisisin	H	بكجیسیسڭ	بكجیسیسڭ
+benimsemediler	H	بنمسه‌مدیلر	بنمسه‌مدیلر
+berâetiniz	A		برائتڭز
+beslemesi	H	بسله‌مه‌سی	بسله‌مه‌سی
+beslemeyen	H	بسله‌مه‌ین	بسله‌مه‌ین
+beyazlanmakla	H	بیاضلانمقله	بیاضلانمقله
+beyzâda	H	بیضا ده	بیضا ده
+bezirgânlarının	H	بزركانلرینڭ	بزركانلرینڭ
+beşibirlikler	H	بشی برلكلر	بشی برلكلر
+beşkardeşler	H	بش قرداشلر	بش قرداشلر
+bi'sete	H	بعثته	بعثته
+bi'setim	H	بعثتم	بعثتم
+bi'setinden	H	بعثتندن	بعثتندن
+bilezikleri	H	بیله‌زیكلری	بیله‌زیكلری
+bilmesidir	H	بیلمه‌سیدر	بیلمه‌سیدر
+bilmiyorduk	A		بیلمه‌یوردق
+bindirsin	H	بیندیرسون	بیندیرسون
+birbirinizdeki	H	بربریڭزده‌كی	بربریڭزده‌كی
+birbirinizle	H	بربریڭزله	بربریڭزله
+birincilerdendi	H	برنجیلردندی	برنجیلردندی
+biteviye	H	بیته‌ویه	بیته‌ویه
+bolvadinli	H	بولوادینلی	بولوادینلی
+boyalarla	H	بویه‌لرله	بویه‌لرله
+boyaları	H	بویه‌لری	بویه‌لری
+boyalarıdır	H	بویه‌لریدر	بویه‌لریدر
+bozmayınız	H	بوزماییڭز	بوزماییڭز
+budalaca	H	بودلاجه	بودلاجه
+budalaların	H	بودلالرڭ	بودلالرڭ
+bugünahkâr	H	بو كناهكار	بو كناهكار
+bulundurmuyorum	H	بولوندیرمایورم	بولوندیرمایورم
+bulundurulmasını	A		بولوندیریلمسنی
+bulunmadılar	A		بولونمادیلر
+bulunmamasıyla	A		بولونمامسیله
+bulunmanızın	A		بولونمه‌كزڭ
+buluta	A		بولوطه
+buyrulduğu	H	بیورولدیغی	بیورولدیغی
+bölgelerinde	H	بولكه‌لرنده	بولكه‌لرنده
+bütçem	H	بوتچه‌م	بوتچه‌م
+bütünkusur	H	بوتون قصور	بوتون قصور
+büyükbabanızın	H	بیوك باباڭزڭ	بیوك باباڭزڭ
+büyükte	A		بویوكده
+büyümesiyle	A		بویومسیله
+büyüyünceye	H	بیویونجه‌یه	بیویونجه‌یه
+bırakmadık	A		بیراقمادق
+bırakmadığına	A		بیراقمادیغنه
+bırakmayanbir	H	بیراقمیان بر	بیراقمیان بر
+bıraktırmakla	H	بیراقدیرمقله	بیراقدیرمقله
+carlayl	H	قارلایل	قارلایل
+cetveldeki	H	جدولده‌كی	جدولده‌كی
+cetvele	H	جدوله	جدوله
+cevabınız	A		جوابڭز
+ciriti	H	جریدی	جریدی
+coşkunlukları	H	جوشغونلقلری	جوشغونلقلری
+cüz'iyetiyle	H	جزؤیتیله	جزؤیتیله
+cüz'iyâtlarına	H	جزؤیاتلرینه	جزؤیاتلرینه
+cüz'lerindendir	H	جزلرندندر	جزلرندندر
+cüz'îdirler	H	جزؤیدرلر	جزؤیدرلر
+cüz'îler	H	جزؤیلر	جزؤیلر
+cüz'îlerde	H	جزؤیلرده	جزؤیلرده
+cüz'ündeki	A		جزوئنده‌كی
+dalarlar	H	طالارلر	طالارلر
+dalkavukluğa	H	طالقاغوقلغه	طالقاغوقلغه
+dallı	H	داللی	داللی
+damağına	H	طماغنه	طماغنه
+dayanamadım	H	طایانامدم	طایانامدم
+dayanamadığım	H	طایانامدیغم	طایانامدیغم
+dayanamadığınız	H	طایانامدیغڭز	طایانامدیغڭز
+dayananlar	A		طیانانلر
+dayanmayacaktı	A		طیانمایاجقدی
+dayanıyordu	A		طیانییوردی
+dağılmasından	H	طاغیلمسندن	طاغیلمسندن
+debelenmezdi	H	دبه‌لنمزدی	دبه‌لنمزدی
+dede'nin	H	دده‌نڭ	دده‌نڭ
+dedem	H	دده‌م	دده‌م
+depreniyor	H	تبرنییور	تبرنییور
+derdimde	H	دردمده	دردمده
+derip	H	دیروب	دیروب
+dersem	H	دیرسه‌م	دیرسه‌م
+dersinizden	H	درسڭزدن	درسڭزدن
+dersinizdir	H	درسڭزدر	درسڭزدر
+dilekçesinde	H	دیلكچه‌سنده	دیلكچه‌سنده
+diliniz	A		دیلڭز
+dinlemesindeki	H	دیڭله‌مه‌سنده‌كی	دیڭله‌مه‌سنده‌كی
+diplerindeki	H	دیبلرنده‌كی	دیبلرنده‌كی
+dokunmuyorlar	A		طوقونمایورلر
+dokuzar	D	طقوزار	طقوزر
+dokuzda	D	طقوزده	طوقوزده
+dokuzuncusunu	H	طقوزنجیسنی	طقوزنجیسنی
+dolaba	H	طولابه	طولابه
+dolaptan	A		دولابدن
+dostunuz	A		دوستڭز
+duruma	H	دورومه	دورومه
+durumu	H	دورومی	دورومی
+durumumla	H	دوروممله	دوروممله
+durumumu	H	دوروممی	دوروممی
+durumuna	H	دورومنه	دورومنه
+durumunda	H	دورومنده	دورومنده
+durumuyla	H	دورومیله	دورومیله
+duruyordum	A		طورییوردم
+duruyorsun	A		طورییورسڭ
+duruyoruz	A		طورییورز
+duyur	A		طویور
+dâlldir	A		دالّدر
+döndürmesini	A		دوندیرمسنی
+dönüyordum	H	دونییوردم	دونییوردم
+döşemek	H	دوشه‌مك	دوشه‌مك
+düğün	H	دوكون	دوكون
+düşmeyesin	H	دوشمه‌یه‌سڭ	دوشمه‌یه‌سڭ
+düşmeyesiniz	H	دوشمه‌یه‌سڭز	دوشمه‌یه‌سڭز
+düşünemiyordum	A		دوشونه‌مه‌یوردم
+düşürüyorsunuz	H	دوشورییورسڭز	دوشورییورسڭز
+ecnebiyede	H	اجنبیّه‌ده	اجنبیّه‌ده
+edemeyeceklerini	H	ایده‌میه‌جكلرینی	ایده‌میه‌جكلرینی
+edemeyişi	H	ایده‌مه‌ییشی	ایده‌مه‌ییشی
+edilemeyeceğine	H	ایدیله‌مه‌یه‌جكنه	ایدیله‌مه‌یه‌جكنه
+edilemeyeceğini	H	ایدیله‌مه‌یه‌جكنی	ایدیله‌مه‌یه‌جكنی
+edilmeyecekti	H	ایدیلمیه‌جكدی	ایدیلمیه‌جكدی
+edilmeyeceğini	H	ایدیلمیه‌جكنی	ایدیلمیه‌جكنی
+edinmelerine	H	ایدینمه‌لرینه	ایدینمه‌لرینه
+edinmemiz	H	ایدینمه‌مز	ایدینمه‌مز
+edinmesi	H	ایدینمه‌سی	ایدینمه‌سی
+edinmeye	H	ایدینمه‌یه	ایدینمه‌یه
+edip'e	H	ادیبه	ادیبه
+edâtla	H	اداتله	اداتله
+edâtları	H	اداتلری	اداتلری
+efelikle	D	افه‌لكله	أفه‌لكله
+ehliyeti	H	اهلیّتی	اهلیّتی
+elbisenindir	H	البیسه‌نڭدر	البیسه‌نڭدر
+elemanları	H	اله‌مانلری	اله‌مانلری
+eliniz	A		الڭز
+eltâfı	A		الطفی
+elçimiz	H	ایلچیمز	ایلچیمز
+eniştem	H	انیشته‌م	انیشته‌م
+envârla	A		انورله
+ermelerini	H	ایرمه‌لرینی	ایرمه‌لرینی
+esîrîde	D	اثیریده	أثیریده
+etmediğimin	H	ایتمه‌دیكمڭ	ایتمه‌دیكمڭ
+etmediğinizden	H	ایتمه‌دیكڭزدن	ایتمه‌دیكڭزدن
+etmediğinizi	H	ایتمه‌دیكڭزی	ایتمه‌دیكڭزی
+etmeliyim	H	ایتمه‌لی یم	ایتمه‌لی یم
+etmesindeki	A		اتمه‌سنده‌كی
+etmeyecektim	A		ایتمكه‌جكدم
+etmiyorduk	A		ایتمه‌یوردق
+evkaftan	H	اوقافدن	اوقافدن
+eylemeyen	D	ایله‌مه‌ین	أیله‌مه‌ین
+ezilmekten	H	ازیلمكدن	ازیلمكدن
+ezilmekteyiz	H	ازیلمكده‌یز	ازیلمكده‌یز
+eş'ariyece	H	اشعریه‌جه	اشعریه‌جه
+fakirlikle	A		فقرلكله
+fantaziyeler	H	فانطازیه‌لر	فانطازیه‌لر
+faydalanır	A		فائده‌لنیر
+fenâlığınıza	H	فنالغڭزه	فنالغڭزه
+ferâhlara	A		فرحلره
+fidanı	H	فدانی	فدانی
+filizin	H	فیلیزڭ	فیلیزڭ
+filizlerini	H	فیلیزلرینی	فیلیزلرینی
+firenk	H	فرنك	فرنك
+fiyatıdır	A		فیئآتیدر
+fişeklerine	H	فیشنكلرینه	فیشنكلرینه
+fonograflar	H	فنوغرافلر	فنوغرافلر
+fuâdiye	A		فوادیه
+fırına	H	فرینه	فرینه
+gadabı	H	غضبی	غضبی
+garajının	H	غراژینڭ	غراژینڭ
+gazlı	H	غازلی	غازلی
+getirmesini	A		كتیرمسنی
+getirmeyecek	A		كتیرمیه‌جك
+gevezeliğine	H	كوزه‌لكنه	كوزه‌لكنه
+geçemedi	H	كچه‌مدی	كچه‌مدی
+geçiniz	H	كچیڭز	كچیڭز
+geçitlerin	H	كچیدلرڭ	كچیدلرڭ
+geçmesidir	H	كچمسیدر	كچمسیدر
+geçmeyecek	H	كچمیه‌جك	كچمیه‌جك
+geçmeyeceğim	H	كچمیه‌جكم	كچمیه‌جكم
+girmeyecekti	H	كیرمیه‌جكدی	كیرمیه‌جكدی
+gitmediler	H	كیتمه‌دیلر	كیتمه‌دیلر
+giyilmesinden	H	كیییلمه‌سندن	كیییلمه‌سندن
+gizlenmeyeceğim	A		كیزلنمیه‌جكم
+gönderilmesidir	A		كوندریلمسیدر
+görmeseydik	A		كورمسه‌یدك
+görmeseydim	A		كورمسه‌یدم
+görmeyesin	H	كورمه‌یه‌سڭ	كورمه‌یه‌سڭ
+görmüyormuşuz	H	كورمویورمشز	كورمویورمشز
+görülmesine	H	كورولمه‌سنه	كورولمه‌سنه
+görülmesini	H	كورولمه‌سنی	كورولمه‌سنی
+görülmeyerek	A		كورولمیه‌رك
+görülmüyorsa	A		كورولمه‌یورسه
+gösterilmesindeki	A		كوستریلمسنده‌كی
+göstermeyeyim	H	كوسترمه‌یه‌یم	كوسترمه‌یه‌یم
+gövdenin	A		كوكده‌نڭ
+gücenmesini	A		كوجنمسنی
+gümler	H	كوملر	كوملر
+gıptaya	H	غبطه‌یه	غبطه‌یه
+haczetmesine	H	حجز ایتمه‌سنه	حجز ایتمه‌سنه
+hafifi	A		حفیفی
+hafriyatsız	H	حفریاتسز	حفریاتسز
+hahambaşısı	H	خاخام باشیسی	خاخام باشیسی
+hakkari	H	حكاری	حكاری
+halam	H	خاله‌م	خاله‌م
+halep'te	H	حلبده	حلبده
+halkalarda	H	حلقه‌لرده	حلقه‌لرده
+halkalardan	H	حلقه‌لردن	حلقه‌لردن
+halkası	H	حلقه‌سی	حلقه‌سی
+halkasına	H	حلقه‌سنه	حلقه‌سنه
+halkasının	H	حلقه‌سنڭ	حلقه‌سنڭ
+halkaya	A		حلقه‌یه
+halîç'de	H	خلیجده	خلیجده
+hançeri	H	خنچری	خنچری
+hapsetmeye	A		حپس ایتمكه
+harakete	H	حركته	حركته
+harec	H	حرج	حرج
+harecdir	H	حرجدر	حرجدر
+harkının	A		خرقنڭ
+harlayıp	H	خارلایوب	خارلایوب
+hassasının	A		حصّه‌سنڭ
+hastabakıcıların	H	خسته‌باقیجیلرڭ	خسته‌باقیجیلرڭ
+hastanelerden	H	خسته‌خانه‌لردن	خسته‌خانه‌لردن
+hastanelere	H	خسته‌خانه‌لره	خسته‌خانه‌لره
+hasırdır	A		حصردر
+hatipliği	H	خطیبلكی	خطیبلكی
+hatmetmeye	A		ختم ایتمكه
+hatîâtlarından	A		خطیئآتلرندن
+hatîâtın	A		خطیئآتڭ
+havlisinde	A		حوالیسنده
+havlusu	H	خاولیسی	خاولیسی
+havlusundaki	A		حاولیسنده‌كی
+havyarından	H	خاویارندن	خاویارندن
+havâssım	H	حواسّم	حواسّم
+havâssımda	H	حواسمده	حواسمده
+havâssımız	H	حواسمز	حواسمز
+havâssını	H	حواسّنی	حواسّنی
+havâstır	A		خواصدر
+hayâlı	H	حیالی	حیالی
+hazma	H	هضمه	هضمه
+haçlar	H	خاچلر	خاچلر
+heybede	H	هكبه‌ده	هكبه‌ده
+heybeye	H	هكبه‌یه	هكبه‌یه
+hilekârâne	H	حیله‌كارانه	حیله‌كارانه
+hillettir	H	خلّتدر	خلّتدر
+hissetin	A		خسّتڭ
+hissetten	A		خسّتدن
+hissettir	A		خستدر
+hizlândır	H	خذلاندر	خذلاندر
+homa'daki	A		حومه‌ده‌كی
+homa'nın	A		خومه‌نڭ
+hoplayıp	H	خوپلایوب	خوپلایوب
+hortlağa	H	خورتلاغه	خورتلاغه
+hoşgörüp	H	خوش كوروب	خوش كوروب
+huveyn	A		حوین
+huzû'	H	خضوع	خضوع
+hâcer	H	هاجر	هاجر
+hâcer'in	H	هاجرڭ	هاجرڭ
+hâcerler	H	هاجرلر	هاجرلر
+hâfız'dır	A		خافظدر
+hâfız'lar	A		خافظلر
+hâile	H	هائله	هائله
+hâleler	H	هاله‌لر	هاله‌لر
+hâlesi	H	هاله‌سی	هاله‌سی
+hâliniz	A		حالڭز
+hâsseten	H	خاصّة	خاصّة
+hâssın	H	خاصّڭ	خاصّڭ
+hâtıb'ı	A		خاطبی
+hücresi	A		حجیره‌سی
+hüdâdır	H	هدادر	هدادر
+hükmetmesi	A		حكم ایتمه‌سی
+hülyasıyla	A		خلیاسیله
+hürrem	H	خرّم	خرّم
+hırpaladı	H	خیرپالادی	خیرپالادی
+hırpalayacak	H	خیرپه‌لایاجق	خیرپه‌لایاجق
+hırpalayan	H	خیرپالایان	خیرپالایان
+hısası	D	حصصی	حصص
+hızlandıkça	H	خیزلاندقجه	خیزلاندقجه
+hızlanıyor	H	خیزلانییور	خیزلانییور
+hışıltılarınız	H	خیشیلتیلریڭز	خیشیلتیلریڭز
+i'tilâfçı	H	ائتلافجی	ائتلافجی
+i'tilâsını	H	اعتلاسنی	اعتلاسنی
+ihdâsını	A		اهداسنی
+ihfâda	H	اخفاده	اخفاده
+ihtisâsımı	A		احتساسمی
+iktisâtçı	H	اقتصادجی	اقتصادجی
+ilama'da	H	ایلاماده	ایلاماده
+ilamalı	H	ایلامالی	ایلامالی
+ilerletti	H	ایلریلتدی	ایلریلتدی
+ilişmesiyle	A		ایلیشمسیله
+ilişmiyorsun	A		ایلیشمه‌یورسڭ
+ilmihâli	H	علم حالی	علم حالی
+iltifâtınız	A		التفاتڭز
+ilâma'ya	H	ایلامه‌یه	ایلامه‌یه
+imparatorluğu'nun	H	ایمپاراطورلغنڭ	ایمپاراطورلغنڭ
+imzâlayan	H	امضالایان	امضالایان
+imârete	A		امارته
+imârettir	A		امارتدر
+in'ikâsla	H	انعكاسله	انعكاسله
+in'ikâslarıdır	H	انعكاسلریدر	انعكاسلریدر
+in'ikâsât	H	انعكاسات	انعكاسات
+in'ikâsâtından	H	انعكاساتندن	انعكاساتندن
+in'ikâsında	H	انعكاسنده	انعكاسنده
+in'ikâsının	H	انعكاسنڭ	انعكاسنڭ
+incelerek	A		اینجله‌یه‌رك
+indimde	H	عندمده	عندمده
+inmesidir	H	اینمه‌سیدر	اینمه‌سیدر
+ispanya'da	H	ایسپانیه‌ده	ایسپانیه‌ده
+istemesinler	A		ایسته‌مه‌سونلر
+istenilmişti	H	ایستنیلمشدی	ایستنیلمشدی
+isti'lâya	H	استیلایه	استیلایه
+istimâı	H	استماعی	استماعی
+istimâına	H	استماعنه	استماعنه
+istimâında	H	استماعنده	استماعنده
+isyankârdan	H	عصیانكاردن	عصیانكاردن
+isyankârların	H	عصیانكارلرڭ	عصیانكارلرڭ
+isyankârâne	H	عصیانكارانه	عصیانكارانه
+izinde	A		ایزنده
+izmir'in	H	ایزمیرڭ	ایزمیرڭ
+içimde	H	ایچمده	ایچمده
+içime	H	ایچمه	ایچمه
+içirmesine	H	ایچیرمه‌سنه	ایچیرمه‌سنه
+işiniz	A		ایشڭز
+işitebilirsin	A		ایشیده‌بیلیرسڭ
+işitenlerden	A		ایشیدنلردن
+işitenlere	A		ایشیدنلره
+işitiyordu	A		ایشیدییوردی
+işitiyorduk	A		ایشیدییوردق
+işletirse	A		ایشله‌دیرسه
+kabalaşan	H	قابه‌لاشان	قابه‌لاشان
+kabarcık	H	قبارجق	قبارجق
+kabarıyor	H	قبارییور	قبارییور
+kabine	H	قابینه	قابینه
+kabinenin	H	قابینه‌نڭ	قابینه‌نڭ
+kadir'ini	H	قدرینی	قدرینی
+kahramanlığınızı	H	قهرمانلغڭزی	قهرمانلغڭزی
+kalabalığı	H	غلبه‌لغی	غلبه‌لغی
+kaldırılmasıyla	A		قالدیریلمسیله
+kalmasında	H	قالمسنده	قالمسنده
+kalmayasın	H	قالمایاسڭ	قالمایاسڭ
+kalmayız	A		قالمایز
+kamaştırıyorlar	H	قماشدیرییورلر	قماشدیرییورلر
+kanalı'na	H	قنالنه	قنالنه
+kanalıyla	H	قنالیله	قنالیله
+kanatlanmak	A		قناتلانمق
+kanatlarınız	A		قناتلریڭز
+kanatçıklarla	A		قناتجقلرله
+kandım	H	قاندم	قاندم
+kapadık	H	قپادق	قپادق
+kapakları	H	قپاقلری	قپاقلری
+kapandığı	H	قپاندیغی	قپاندیغی
+kapanmasından	H	قپانمه‌سندن	قپانمه‌سندن
+kapatmaktır	A		قاپاتمقدر
+kapattılar	A		قاپاتدیلر
+kapatıldı	A		قاپاتیلدی
+kapçıktaki	H	قاپجقده‌كی	قاپجقده‌كی
+kapıyorlar	A		قاپایورلر
+kardeşliğimizi	H	قرداشلكمزی	قرداشلكمزی
+kardeşliğinin	H	قرداشلكنڭ	قرداشلكنڭ
+kardeşliğinize	H	قرداشلغڭزه	قرداشلغڭزه
+kardeşliğinizi	H	قرداشلغڭزی	قرداشلغڭزی
+kargaşalık	H	قارغشه‌لق	قارغشه‌لق
+karne	A		قارنه
+karnı	H	قارنی	قارنی
+karnın	H	قارنڭ	قارنڭ
+karnına	H	قارننه	قارننه
+karnını	H	قارننی	قارننی
+karındaşları	H	قرینداشلری	قرینداشلری
+karınları	H	قارینلری	قارینلری
+karışamıyoruz	A		قاریشامایورز
+karışmadığımın	A		قاریشمادیغمڭ
+karışmasında	H	قاریشمه‌سنده	قاریشمه‌سنده
+karışı	A		قارشو
+karşılamakla	A		قارشولامقله
+karşılamaktır	A		قارشولامقدر
+karşılarlar	A		قارشولارلر
+karşılaştığım	A		قارشولاشدیغم
+karşılaştığıma	A		قارشولاشدیغمه
+karşılaşıyorlar	A		قارشولاشییورلر
+karşısındakine	A		قارشیسنده‌كینه
+kasatura	H	قصاتوره	قصاتوره
+kasaturayı	H	قصاتوره‌یی	قصاتوره‌یی
+kasten	H	قصدا	قصدا
+kat'etse	H	قطع ایتسه	قطع ایتسه
+katiller	A		قتللر
+katliamlara	H	قتل عاملره	قتل عاملره
+katliamları	H	قتل عاملری	قتل عاملری
+katmerlisidir	H	قتمرلیسیدر	قتمرلیسیدر
+katı'dan	H	قطعدن	قطعدن
+kavgası	A		غاوغه‌سی
+kavgasız	A		غاوغه‌سز
+kaybedersin	A		غیب ایدرسڭ
+kaybetmeden	H	غائب ایتمدن	غائب ایتمدن
+kaybetmesi	H	غائب ایتمه‌سی	غائب ایتمه‌سی
+kaybetmeyerek	H	غائب ایتمیه‌رك	غائب ایتمیه‌رك
+kaybetmiyor	H	غائب ایتمییور	غائب ایتمییور
+kayboluncaya	H	غائب اولنجه‌یه	غائب اولنجه‌یه
+kaydetmediği	A		قید ایتمه‌دیكی
+kaydetmeye	A		قید ایتمكه
+kazakları	H	قزاقلری	قزاقلری
+kazanacağının	A		قازاناجغنڭ
+kazanacağınızı	A		قازاناجغڭزی
+kazandık	A		قازاندق
+kazandığınızdan	A		قازاندیغڭزدن
+kazanmasını	A		قازانمسنی
+kazanılmadan	H	قزانیلمدن	قزانیلمدن
+kazanırsın	A		قازانیرسڭ
+kaziyede	H	قضیه‌ده	قضیه‌ده
+kaziyeden	H	قضیه‌دن	قضیه‌دن
+kaziyeleri	H	قضیه‌لری	قضیه‌لری
+kaziyelerin	H	قضیه‌لرڭ	قضیه‌لرڭ
+kaziyesi	H	قضیه‌سی	قضیه‌سی
+kaziyesince	H	قضیه‌سنجه	قضیه‌سنجه
+kaziyeye	H	قضیه‌یه	قضیه‌یه
+kelimetullâhın	H	كلمة اللّهڭ	كلمة اللّهڭ
+kesilmesidir	A		كسیلمسیدر
+kesilmeyecektir	H	كسیلمیه‌جكدر	كسیلمیه‌جكدر
+keyfiylerinin	A		كیفلرینڭ
+keçeci	H	كچه‌جی	كچه‌جی
+kilisesi	H	كلیساسی	كلیساسی
+kilisesi'ne	H	كلیساسنه	كلیساسنه
+kocakarıyı	H	قوجه قاری یی	قوجه قاری یی
+konferanslar	H	قونفه‌رانسلر	قونفه‌رانسلر
+konferansı'na	H	قونفه‌رانسنه	قونفه‌رانسنه
+konferansı'nın	H	قونفه‌رانسنڭ	قونفه‌رانسنڭ
+konferansın	H	قونفه‌رانسڭ	قونفه‌رانسڭ
+konuşmayınız	H	قونوشماییڭز	قونوشماییڭز
+konuşmuyordu	A		قونوشمایوردی
+kopmasında	H	قوپمه‌سنده	قوپمه‌سنده
+kovacak	H	قوغاجق	قوغاجق
+kuburdaki	H	قبورده‌كی	قبورده‌كی
+kulesi	H	قله‌سی	قله‌سی
+kullanmasıdır	A		قوللانمه‌سیدر
+kullanmasına	H	قوللانمه‌سنه	قوللانمه‌سنه
+kulüpleri	H	قولوپلری	قولوپلری
+kurcalayan	H	قورجه‌لایان	قورجه‌لایان
+kurmaya	H	قورمه‌یه	قورمه‌یه
+kursu	A		قورسی
+kursunun	A		قورسنڭ
+kurtların	H	قوردلرڭ	قوردلرڭ
+kurtuba	H	قرطبه	قرطبه
+köyünüz	A		كویڭز
+köyünüze	A		كویڭزه
+külliyemizi	H	كلّیه‌مزی	كلّیه‌مزی
+kürd'e	H	كرده	كرده
+kürdce'dir	A		كردچه‌در
+kürdcedir	A		كوردجه‌در
+kürde	H	كرده	كرده
+küre'ye	A		كوره‌یه
+küçüklüğümüze	A		كوچوكلكمزه
+kılıf	A		غلیف
+kılıçlarından	A		قیلیجلرندن
+kıraağaç	H	قره آغاچ	قره آغاچ
+kırbacıyla	H	قیرباجیله	قیرباجیله
+kırmadığım	A		قیرمادیغم
+kırmasıdır	H	قیرمسیدر	قیرمسیدر
+kırılmasından	H	قیریلمه‌سندن	قیریلمه‌سندن
+kısalmasındaki	H	قیصالمه‌سنده‌كی	قیصالمه‌سنده‌كی
+kısasta	A		قصصده
+kıvılcımlarıyla	H	قیویلجیملریله	قیویلجیملریله
+kıyılanmış	H	قییلانمش	قییلانمش
+lehte	H	لهده	لهده
+levâzımâtınız	A		لوازماتڭز
+lügatce	H	لغتجه	لغتجه
+lügatların	H	لغتلرڭ	لغتلرڭ
+lügatlerin	H	لغتلرڭ	لغتلرڭ
+lügatta	H	لغتده	لغتده
+lügatte	D	لغتده	لغاتده
+lügatçedir	H	لغتچه‌در	لغتچه‌در
+lügatçeye	H	لغتچه‌یه	لغتچه‌یه
+lügatın	D	لغتڭ	لغاتڭ
+lügatından	H	لغتندن	لغتندن
+magrib'de	H	مغربده	مغربده
+mahâllin	A		محلڭ
+maiyetindeki	H	معیّتنده‌كی	معیّتنده‌كی
+manastırlı	H	مناسترلی	مناسترلی
+manisa	H	مغنیسا	مغنیسا
+masuracı	H	ماصوره‌جی	ماصوره‌جی
+mazarrâta	A		مضرّته
+mağazada	H	مغازه‌ده	مغازه‌ده
+mağazalarda	H	مغازه‌لرده	مغازه‌لرده
+mağazamın	H	مغازه‌مڭ	مغازه‌مڭ
+mağazayı	H	مغازه‌یی	مغازه‌یی
+medhetmeleriyle	H	مدح ایتملریله	مدح ایتملریله
+mefharetle	H	مفخرتله	مفخرتله
+memnûiyeti	H	ممنوعیّتی	ممنوعیّتی
+mensubiyetine	A		منسوبیننه
+mesalâ	H	مثلا	مثلا
+meslektaşlarımın	H	مسلكداشلریمڭ	مسلكداشلریمڭ
+mesîlinde	H	مسیلنده	مسیلنده
+metindeki	H	متنده‌كی	متنده‌كی
+metinleri	H	متنلری	متنلری
+meâbın	A		مئابڭ
+meşegâha	H	میشه‌كاهه	میشه‌كاهه
+meşelik	H	میشه‌لك	میشه‌لك
+meşâbihleriyle	H	مصابیحلریله	مصابیحلریله
+mihenkleri	H	محكلری	محكلری
+mihenktirler	D	محكدرلر	مهنكدرلر
+mikroplardan	H	میقروپلردن	میقروپلردن
+mikroplarına	H	میقروپلرینه	میقروپلرینه
+millettaşını	H	ملّتداشنی	ملّتداشنی
+mudil	A		مضل
+mudill	D	مضلّ	مضل
+muhallâtta	H	محلاتده	محلاتده
+muhassise	H	مخصّصه	مخصّصه
+muhassisi	H	مخصّصی	مخصّصی
+mukavvesiyetiyle	H	مقوّسیتیله	مقوّسیتیله
+musaffî	H	مصفّی	مصفّی
+musahhih	H	مصحّح	مصحّح
+musallî	H	مصلّی	مصلّی
+mutasavvıfa	H	متصوّفه	متصوّفه
+mutasavvıfanın	H	متصوّفه‌نڭ	متصوّفه‌نڭ
+mutasavvıfînin	H	متصوّفینڭ	متصوّفینڭ
+mutasavvıfın	H	متصوّفڭ	متصوّفڭ
+muvâsalatımın	H	مواصلتمڭ	مواصلتمڭ
+muğalatalara	H	مغلطه‌لره	مغلطه‌لره
+mânii	H	مانعی	مانعی
+mâzîyen	H	ماضیا	ماضیا
+mübeyyizi	H	مبیّضی	مبیّضی
+mübâhâta	H	مباهاته	مباهاته
+mübâhâte	H	مباهاته	مباهاته
+mükrimlere	H	مكرملره	مكرملره
+mültezimleri	H	ملتزملری	ملتزملری
+münhaniyedir	H	منحنیّه‌در	منحنیّه‌در
+münâsebetiniz	A		مناسبتڭز
+münâsebâtdâr	A		مناسبتدار
+mürtebit	H	مرتبط	مرتبط
+mürtet	H	مرتد	مرتد
+müstahzarâtından	H	مستحضراتندن	مستحضراتندن
+müsterham	H	مسترحم	مسترحم
+müsâdim	H	مصادم	مصادم
+müteallakı	H	متعلّقی	متعلّقی
+müvekkillerim	H	موكّللرم	موكّللرم
+müvezzi'lik	H	موزّعلك	موزّعلك
+müvezzii	H	موزّعی	موزّعی
+müzeye	H	موزه‌یه	موزه‌یه
+müzâhirdir	H	مظاهردر	مظاهردر
+müşkülât	H	مشكلات	مشكلات
+mıhlanmış	H	میخلانمش	میخلانمش
+mıntıkalara	H	منطقه‌لره	منطقه‌لره
+mıntıkası	H	منطقه‌سی	منطقه‌سی
+nabızları	H	نبضلری	نبضلری
+nakletmeye	A		نقل ایتمكه
+nakletmişim	H	نقل ایتمشم	نقل ایتمشم
+nalınlı	H	نعلینلی	نعلینلی
+nazarınızda	A		نظریكزده
+necim	H	نجم	نجم
+necimler	H	نجملر	نجملر
+nesihten	H	نسخدن	نسخدن
+neylerden	H	نیلردن	نیلردن
+numaradan	H	نومرودن	نومرودن
+numarasını	H	نومروسنی	نومروسنی
+nâsihidir	A		ناسخیدر
+oduna	A		اودینه
+okumamasını	H	اوقومامسنی	اوقومامسنی
+okumayınız	H	اوقوماییڭز	اوقوماییڭز
+okunmasıdır	A		اوقونمه‌سیدر
+okuyucuların	H	اوقویوجیلرڭ	اوقویوجیلرڭ
+okuyucularına	H	اوقویوجیلرینه	اوقویوجیلرینه
+okşamaya	A		اوقشامه‌یه
+okşamış	A		اوقشامش
+olamadığınız	H	اولامدیغڭز	اولامدیغڭز
+olmadınız	A		اولمادیڭز
+olmadığımıza	H	اولمدیغمزه	اولمدیغمزه
+olmamalarına	H	اولمامه‌لرینه	اولمامه‌لرینه
+olmamasıyla	A		اولمامه‌سیله
+olmamayı	H	اولمامغی	اولمامغی
+oluşuma	A		اولوشمه
+otobüslerin	H	اوطوبوسلرڭ	اوطوبوسلرڭ
+oturuyorlar	H	اوتورییورلر	اوتورییورلر
+oturuyorlarmış	H	اوتورییورلرمش	اوتورییورلرمش
+pabuçlar	H	پاپوجلر	پاپوجلر
+palaska	H	پالاصقه	پالاصقه
+pantolonu	H	پانطالونی	پانطالونی
+parlamayacaktı	H	پارلامیاجقدی	پارلامیاجقدی
+parçalanmasına	H	پارچه‌لانمه‌سنه	پارچه‌لانمه‌سنه
+parçalanmasından	H	پارچه‌لانمه‌سندن	پارچه‌لانمه‌سندن
+paslandıran	H	پاسلاندیران	پاسلاندیران
+patlıcanları	H	بادلیجانلری	بادلیجانلری
+paytonla	H	پایطونله	پایطونله
+pençeleri	H	پنچه‌لری	پنچه‌لری
+pençelerine	H	پنچه‌لرینه	پنچه‌لرینه
+pençeleşmek	H	پنچه‌لشمك	پنچه‌لشمك
+pençenin	H	پنچه‌نڭ	پنچه‌نڭ
+postuna	H	پوستنه	پوستنه
+prensipleriyle	H	پرنسیبلریله	پرنسیبلریله
+profesörler	H	پروفه‌سورلر	پروفه‌سورلر
+purotlar	H	پروتلر	پروتلر
+purotluk	H	پروتلق	پروتلق
+pusulası	A		پوصوله‌سی
+putperestliğe	H	پوتپرستلكه	پوتپرستلكه
+putperestliği	H	پوتپرستلكی	پوتپرستلكی
+putperestliğinden	H	پوتپرستلكندن	پوتپرستلكندن
+reddetmeye	A		رد ایتمكه
+reddetsin	A		رد ایتسون
+rezeleyi	H	رذله‌یی	رذله‌یی
+rub'unun	H	ربعنڭ	ربعنڭ
+rûhunun	A		روهنڭ
+sa'dır	A		صاعدر
+sabanlar	H	صاپانلر	صاپانلر
+sabanı	H	صبانی	صبانی
+sadırda	H	صدرده	صدرده
+sadırlara	H	صدرلره	صدرلره
+sahiv	H	صحو	صحو
+sahursuz	H	سحورسز	سحورسز
+sahuru	H	سحوری	سحوری
+sahâbiye	H	صحابیه	صحابیه
+sakomun	A		ساقومڭ
+saltanatınız	A		سلطنتڭز
+sandalye	H	صاندالیه	صاندالیه
+sandalyede	H	صاندالیه‌ده	صاندالیه‌ده
+sandalyesinden	H	صاندالیه‌سندن	صاندالیه‌سندن
+sandıkla	A		صندیقله
+sandıklarda	A		صندیقلرده
+sandıktaki	A		صندیقده‌كی
+sandıktan	A		صندیقدن
+santim	H	سانتیم	سانتیم
+santrafüj	H	سانترافوژ	سانترافوژ
+sarayınız	A		سرایڭز
+sarfetmeye	A		صرف ایتمكه
+sarmalarına	H	صارمه‌لرینه	صارمه‌لرینه
+sarması	H	صارمه‌سی	صارمه‌سی
+sarmaya	H	صارمه‌یه	صارمه‌یه
+sarılmasının	H	صاریلمه‌سنڭ	صاریلمه‌سنڭ
+satırlı	A		ساطرلی
+saymıyorsunuz	H	صایمییورسڭز	صایمییورسڭز
+sayılmasıyla	A		صاییلمسیله
+semerci	H	سمرجی	سمرجی
+senâmı	H	ثنامی	ثنامی
+senânın	H	ثنانڭ	ثنانڭ
+serinledi	H	سرینله‌دی	سرینله‌دی
+serâya	H	ثرایه	ثرایه
+sevdirmeyenlere	H	سودیرمه‌ینلره	سودیرمه‌ینلره
+sevketmiyor	A		سوق ایتمه‌یور
+seyreylediğimiz	H	سیر ایله‌دیكمز	سیر ایله‌دیكمز
+seyreyleyenin	D	سیر ایله‌ینڭ	سیر أیله‌ینڭ
+seyyiâtlarına	A		سیّئآتلرینه
+seyyiâtlarının	A		سیّاتلرینڭ
+sibirya'ya	H	سبریه‌یه	سبریه‌یه
+sigortası	A		سیغورطه‌سی
+silme	H	سیلمه	سیلمه
+silmeye	H	سیلمكه	سیلمكه
+silsin	H	سیلسین	سیلسین
+siyahlandıra	D	سیاهلاندیرا	سیاهلاندیرا سیاهلاندیرا
+siyahlanır	H	سیاهلانیر	سیاهلانیر
+sloganı	H	صلوغانی	صلوغانی
+sorumlulukları	H	صوروملیلقلری	صوروملیلقلری
+sosyalistlikse	H	صوسیالیستلكسه	صوسیالیستلكسه
+sosyalistliktir	H	صوسیالیستلكدر	صوسیالیستلكدر
+soyadını	H	صوی آدینی	صوی آدینی
+soğukkanlılığımı	H	صوغوق قانلیلغمی	صوغوق قانلیلغمی
+sulhperverlik	H	صلح پرورلك	صلح پرورلك
+sun'una	H	صنعنه	صنعنه
+sun'uyla	H	صنعیله	صنعیله
+suratına	H	صورتنه	صورتنه
+suâl'in	A		سؤآلڭ
+suâlci	A		سؤآلجی
+sâikalara	H	صاعقه‌لره	صاعقه‌لره
+sâikalarla	H	صاعقه‌لرله	صاعقه‌لرله
+sâikavârî	H	صاعقه واری	صاعقه واری
+söndürmeyecektir	A		سوندیرمیه‌جكدر
+söndürüyorlar	H	سویوندیرییورلر	سویوندیرییورلر
+söndüğünden	A		سویوندیكنده
+sönmeyecektir	H	سونمیه‌جكدر	سونمیه‌جكدر
+sönmeyesin	H	سونمه‌یه‌سڭ	سونمه‌یه‌سڭ
+sönmüştür	H	سویونمشدر	سویونمشدر
+söyleşmek	H	سویلشمك	سویلشمك
+söyleşmem	H	سویلشمم	سویلشمم
+sümbülün	H	سنبلڭ	سنبلڭ
+süpürülmüş	H	سوپرولمش	سوپرولمش
+sütüm	A		سودم
+sütünü	A		سودینی
+sıhhatinize	A		صحّتكزه
+sıktı	H	صیقدی	صیقدی
+sıktılar	H	صیقدیلر	صیقدیلر
+ta'nın	A		تانڭ
+taahhütlü	H	تعهّدلی	تعهّدلی
+taattuf	H	تعطّف	تعطّف
+tab'edip	H	طبع ایدوب	طبع ایدوب
+tab'tan	H	طبعدن	طبعدن
+tabancası	H	طبانجه‌سی	طبانجه‌سی
+tabancasını	H	طبانجه‌سنی	طبانجه‌سنی
+tabancayı	H	طبانجه‌یی	طبانجه‌یی
+tabanını	H	طاباننی	طاباننی
+taberânî	H	طبرانی	طبرانی
+taberî	H	طبری	طبری
+taharrüf	H	تحرّف	تحرّف
+tahazzün	D	تحزّن	تخزن
+takkeyi	H	طاقیه‌یی	طاقیه‌یی
+taktikle	H	تاقتیكله	تاقتیكله
+talebesin	A		طالبسڭ
+talebinizi	H	طلبه‌ڭزی	طلبه‌ڭزی
+tallâhi	H	تاللّه	تاللّه
+tapanlar	H	طاپانلر	طاپانلر
+tapanların	H	طاپانلرڭ	طاپانلرڭ
+tarak	H	طراق	طراق
+taramak	H	طرامق	طرامق
+tarağa	H	طراغه	طراغه
+tarağı	H	طراغی	طراغی
+tasarısı	H	طاساریسی	طاساریسی
+tasaykul	H	تصیقل	تصیقل
+tavanına	H	طواننه	طواننه
+tavuklara	A		طاؤقلره
+tavusuna	A		طاؤسنه
+tayyetmemden	A		طیّ ایتمه‌مدن
+taşlarlar	H	طاشلارلر	طاشلارلر
+taştı	H	طاشدی	طاشدی
+taşımıyorlar	H	طاشیمییورلر	طاشیمییورلر
+te'sîriniz	H	تأثیریڭز	تأثیریڭز
+temmuzda	H	تمموزده	تمموزده
+temzîcin	H	تمزیجڭ	تمزیجڭ
+temzîcine	H	تمزیجنه	تمزیجنه
+tesliyetbahş	H	تسلیتبخش	تسلیتبخش
+testide	A		دستیده
+tezkirelerini	H	تذكره‌لرینی	تذكره‌لرینی
+titremesiyle	H	تیتره‌مه‌سیله	تیتره‌مه‌سیله
+tokadıdır	A		طوقاتیدر
+tulum	H	طولوم	طولوم
+tulumbacıklardan	H	طلومبه‌جقلردن	طلومبه‌جقلردن
+tulumundan	A		طلومندن
+tutmadığından	A		طوتمادیغندن
+türkçe'sidir	H	توركجه‌سیدر	توركجه‌سیدر
+türkçesini	A		توركچه‌سنی
+türkçesinin	A		توركچه‌سنڭ
+türkçeye	A		توركچه‌یه
+türlüdür	A		دورلودر
+unutulmasıdır	H	اونوتولمسیدر	اونوتولمسیدر
+uydurmalar	H	اویدورمه‌لر	اویدورمه‌لر
+uzatılması	H	اوزاتیلمه‌سی	اوزاتیلمه‌سی
+uçtur	H	اوجدر	اوجدر
+uğramasının	H	اوغرامه‌سنڭ	اوغرامه‌سنڭ
+uşak'ta	H	عشاقده	عشاقده
+uşak'tan	H	عشّاقدن	عشّاقدن
+uşaklı	H	عشاقلی	عشاقلی
+vakfetmişim	H	وقف ایتمشم	وقف ایتمشم
+vartaları	H	وارطه‌لری	وارطه‌لری
+velkalem	H	والقلم	والقلم
+velkelâm	H	والكلام	والكلام
+vereselerdir	H	ورثه‌لردر	ورثه‌لردر
+veresenin	H	ورثه‌نڭ	ورثه‌نڭ
+veresesinden	H	ورثه‌سندن	ورثه‌سندن
+veresesine	H	ورثه‌سنه	ورثه‌سنه
+vermeseydi	A		ویرمسه‌یدی
+vermeyeceklerdir	H	ویرمیه‌جكلردر	ویرمیه‌جكلردر
+viyana	H	ویانه	ویانه
+vurmasınlar	A		وورماسینلر
+vursak	A		وورسه‌ق
+vurulmaz	A		وورولماز
+vururlar	A		وورورلر
+vuruyorsunuz	A		وورویورسڭز
+yamalayan	H	یامه‌لایان	یامه‌لایان
+yamalı	A		یامه‌لی
+yapmasından	H	یاپمه‌سندن	یاپمه‌سندن
+yapılmasından	A		یاپیلمسندن
+yaramadığımı	H	یارامدیغمی	یارامدیغمی
+yaratmasında	H	یاراتمه‌سنده	یاراتمه‌سنده
+yaratıcımızın	A		یاراتیجیمزڭ
+yaratılmakta	H	یارادیلمقده	یارادیلمقده
+yaratılsa	H	یارادیلسه	یارادیلسه
+yaratılıp	H	یارادیلوب	یارادیلوب
+yaratılırsa	H	یارادیلیرسه	یارادیلیرسه
+yayılmasıyla	A		یاییلمسیله
+yazmasının	A		یازمسنڭ
+yaşamamızı	H	یاشامه‌مزی	یاشامه‌مزی
+yedime	H	یدیمه	یدیمه
+yedimize	H	یدیمزه	یدیمزه
+yedin	H	ییدڭ	ییدڭ
+yelkovanı	H	یل قوغانی	یل قوغانی
+yemişlerle	H	یمیشلرله	یمیشلرله
+yeriz	H	ییرز	ییرز
+yetmediğinden	H	یتمه‌دیكندن	یتمه‌دیكندن
+yiyecekleri	H	ییه‌جكلری	ییه‌جكلری
+yolunuz	A		یولڭز
+yolunuza	A		یولڭزه
+yuhanna	H	یوحنّا	یوحنّا
+yularla	H	یولارله	یولارله
+yuları	H	یولاری	یولاری
+yırtılması	H	ییرتیلمسی	ییرتیلمسی
+zellâka	H	ذلّاقه	ذلّاقه
+zevâhirdeki	H	ظواهرده‌كی	ظواهرده‌كی
+zihniyetini	H	ذهنیتنی	ذهنیتنی
+âhirihîdir	A		الخرهدر
+âlihelerdir	H	آلهه‌لردر	آلهه‌لردر
+âlihelerinizden	H	الهه‌لریڭزدن	الهه‌لریڭزدن
+âmir'i	H	عامری	عامری
+âsiyâne	H	عاصیانه	عاصیانه
+çalışmamalı	H	چالیشماملی	چالیشماملی
+çalışmamanız	H	چالیشمامه‌ڭز	چالیشمامه‌ڭز
+çalışmıyorsun	H	چالیشمییورسڭ	چالیشمییورسڭ
+çankırı'da	H	چانقیریده	چانقیریده
+çankırı'dan	H	چانقیریدن	چانقیریدن
+çarşısıdır	A		چارشیسیدر
+çağrılmıştık	H	چاغیریلمشدق	چاغیریلمشدق
+çekemedi	H	چكه‌مدی	چكه‌مدی
+çekemeyerek	H	چكه‌مه‌یه‌رك	چكه‌مه‌یه‌رك
+çekmeyecek	H	چكمیه‌جك	چكمیه‌جك
+çekmeyeceksin	H	چكمیه‌جكسڭ	چكمیه‌جكسڭ
+çekmiyorum	A		چكمه‌یورم
+çektirilen	H	چكدیریلن	چكدیریلن
+çektirilse	H	چكدیریلسه	چكدیریلسه
+çevirilmesi	H	چوریلمه‌سی	چوریلمه‌سی
+çevirmesini	A		چویرمسنی
+çeyizler	H	جهیزلر	جهیزلر
+çiftçilerden	A		چیفتچیلردن
+çimenler	A		چیمنلر
+çimento	H	چیمنطو	چیمنطو
+çingeneler	H	چنكانه‌لر	چنكانه‌لر
+çingeneleri	H	چنكانه‌لری	چنكانه‌لری
+çingenelik	H	چنكانه‌لك	چنكانه‌لك
+çingeneliğe	H	چنكانه‌لكه	چنكانه‌لكه
+çirkâbdan	H	چركابدن	چركابدن
+çirkâbına	H	چركابنه	چركابنه
+çocuğumu	A		چوجوغمی
+çuvâldan	H	چووالدن	چووالدن
+çıkamıyorum	H	چیقامییورم	چیقامییورم
+çıkarsınız	A		چیقارسكز
+çıkmadığımdan	H	چیقمدیغمدن	چیقمدیغمدن
+çıkmıyoruz	H	چیقمییورز	چیقمییورز
+çırakları	H	چراقلری	چراقلری
+çırağından	A		چیراغندن
+öldürmeyecek	A		ئولدیرمیه‌جك
+özledim	H	اوزله‌دم	اوزله‌دم
+özler	A		أوزلر
+özümüze	H	اوزیمزه	اوزیمزه
+özünden	A		أوزندن
+ürkenler	H	اوركنلر	اوركنلر
+üçünüz	A		اوچڭز
+ıslahlarınıza	A		اصلاحلریكزه
+ısırmasından	H	ایصیرمه‌سندن	ایصیرمه‌سندن
+ısıtmaya	H	ایصیتمغه	ایصیتمغه
+şadırvanında	H	شادرواننده	شادرواننده
+şalvârımı	H	شالواریمی	شالواریمی
+şaşırmıyorlar	H	شاشیرمییورلر	شاشیرمییورلر
+şirbînî	H	شیربینی	شیربینی
+şükretmeyenleri	H	شكر ایتمه‌ینلری	شكر ایتمه‌ینلری

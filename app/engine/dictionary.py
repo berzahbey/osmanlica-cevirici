@@ -232,12 +232,15 @@ for _k, _v in list(DICTIONARY.items()):
 
 # Tur L: Hayrat'ta 1 kez geçen / sözlüğe girmemiş kelimeler ayrı tutulur: yalnız kelimenin TAMAMI eşleşince kullanılır,
 # kök olarak (ek ayırmada, türetmede) kullanılmaz (aşır عشر kaydı aşırı'yı bozmasın). Hayrat kelimesi gibi korunur.
+import unicodedata as _unicodedata_tek
 HAYRAT_TEK = {}
 if HAYRAT_TEK_FILE.exists() and _os.environ.get("OSM_HAYRAT_TEK", "1") != "0":
     with open(HAYRAT_TEK_FILE, "r", encoding="utf-8") as _f:
         for _row in csv.reader(_f, delimiter="\t"):
             if len(_row) >= 3 and not _row[0].startswith("#") and _row[1].strip():
                 _a = turkish_lower(_row[0].strip())
+                # Tur M: metin uzun ünlü işaretini (ā ī ū) şapkaya çevirir (kādir -> kâdir): anahtar da çevrilir
+                _a = _unicodedata_tek.normalize("NFC", _a).translate(str.maketrans({"\u0101": "\u00e2", "\u012b": "\u00ee", "\u016b": "\u00fb"}))
                 if _a not in DICTIONARY:
                     HAYRAT_TEK[_a] = _row[1].strip().replace("\u064a", "\u06cc").replace("\u06a9", "\u0643")
                     HAYRAT_ANAHTAR.add(_a)

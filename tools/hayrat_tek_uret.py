@@ -160,6 +160,29 @@ for k, c in say.items():
 
 cikan = collections.Counter()
 yaz, supheli = [], []
+# Tur M: supheli kelimelerin karari (tools/hayrat_tek_karar.tsv): H Hayrat yazimi, D dogru yazim, A alinmaz
+KARAR = {}
+_kd = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hayrat_tek_karar.tsv")
+if os.path.exists(_kd):
+    for _s in open(_kd, encoding="utf-8"):
+        _p = _s.rstrip("\n").split("\t")
+        if len(_p) >= 3 and not _s.startswith("#"):
+            KARAR[_p[0]] = (_p[1], _p[2])
+KAYNAK = {}
+
+
+def suphe(k, o, top, simdi, neden):
+    if k in KARAR:
+        c, yz = KARAR[k]
+        if c in ("H", "D") and yz:
+            yaz.append((k, yz, top))
+            KAYNAK[k] = "hayrat" if c == "H" else "denetim"
+        else:
+            cikan["denetimde alinmadi (Tur M)"] += 1
+        return
+    supheli.append((k, o, top, simdi, neden))
+
+
 for k, o, top in aday:
     simdi = tt(k).strip()
     if kiyas(simdi) == kiyas(o):
@@ -176,25 +199,25 @@ for k, o, top in aday:
         continue
     kk = kok_cevirici(k)
     if kk and not kiyas(o).startswith(kk[:-1]):
-        supheli.append((k, o, top, simdi, "kokun cevirici yazimiyla celisiyor (kitapta tutarsizlik olur)"))
+        suphe(k, o, top, simdi, "kokun cevirici yazimiyla celisiyor (kitapta tutarsizlik olur)")
         continue
     if " " in o and len(set(o.split())) < len(o.split()):
-        supheli.append((k, o, top, simdi, "Osmanlicada ayni kelime tekrar"))
+        suphe(k, o, top, simdi, "Osmanlicada ayni kelime tekrar")
         continue
     if kiyas(o).startswith("\u0626\u0648") and kiyas(simdi).startswith("\u0627\u0648") and kiyas(o)[2:] == kiyas(simdi)[2:]:
         cikan["yalniz basta hemze (ئو/او)"] += 1
         continue
     if not harf_uyumlu(k, o):
-        supheli.append((k, o, top, simdi, "harf uyumu yok"))
+        suphe(k, o, top, simdi, "harf uyumu yok")
         continue
     if not kok_tutarli(k, o, SIK):
-        supheli.append((k, o, top, simdi, "kokun Hayrat yazimiyla celisiyor"))
+        suphe(k, o, top, simdi, "kokun Hayrat yazimiyla celisiyor")
         continue
     yaz.append((k, o, top))
 with open(CIKTI, "w", encoding="utf-8") as f:
     f.write("# Tur L: Hayrat'ta az gecen ya da sozluge girmemis kelimeler (tools/hayrat_tek_uret.py). Hayrat kelimesi gibi korunur.\n")
     for k, o, top in sorted(yaz):
-        f.write(f"{k}\t{o}\thayrat\t{top}\n")
+        f.write(f"{k}\t{o}\t{KAYNAK.get(k, 'hayrat')}\t{top}\n")
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "hayrat_tek_supheli.tsv"), "w", encoding="utf-8") as f:
     f.write("latince\thayrat\tcevirici_bugun\tsayi\tsebep\n")
     for k, o, top, simdi, neden in sorted(supheli, key=lambda x: (x[4], x[0])):

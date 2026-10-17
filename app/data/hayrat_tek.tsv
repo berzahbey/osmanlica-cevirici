@@ -1,6 +1,7 @@
 # Tur L: Hayrat'ta az gecen ya da sozluge girmemis kelimeler (tools/hayrat_tek_uret.py). Hayrat kelimesi gibi korunur.
 a'lâdadır	اعلاده‌در	hayrat	1
 a'lâdır	اعلادر	hayrat	1
+a'lânın	اعلانڭ	denetim	1
 a'lâya	اعلایه	hayrat	1
 a'mâlin	اعمالڭ	hayrat	1
 a'râbînin	اعرابینڭ	hayrat	1
@@ -10,16 +11,35 @@ a'sârın	اعصارڭ	hayrat	2
 a'zamiyet	اعظمیت	hayrat	1
 a'şak	اعشاق	hayrat	1
 abduh'un	عبده ڭ	hayrat	1
+abdulkādirler	عبد القادرلر	hayrat	1
+abdulmetîn'e	عبد المتینه	hayrat	1
+abdulmetîn'in	عبد المتینڭ	hayrat	1
 abdurrahmanım	عبد الرّحمانم	hayrat	1
 abdurrahmânla	عبد الرّحمانله	hayrat	1
+abdurrahmânlarım	عبد الرّحمانلرم	hayrat	1
 abdurrrahman'ın	عبد الرّحمنڭ	hayrat	1
+abdâlı	ابدالی	hayrat	1
+abdülazîz'in	عبد العزیزڭ	hayrat	1
+abdülehad	عبد الاحد	hayrat	1
+abdülgafûr	عبد الغفور	hayrat	1
+abdülhamîd	عبد الحمید	hayrat	1
+abdülhamîd'in	عبد الحمیدڭ	hayrat	1
 abdüllatîf	عبد اللطیف	hayrat	1
+abdülmuttalib	عبد المطّلب	hayrat	1
+abdülmuttalib'i	عبد المطّلبی	denetim	1
 abdürrahîm	عبد الرّحیم	hayrat	1
 abâmın	عبامڭ	hayrat	1
+aczimendî	عجزمندی	hayrat	1
 acımadı	آجیمادی	hayrat	1
 acımadım	آجیمدم	hayrat	1
 acımalarıyla	آجیمه‌لریله	hayrat	1
 adamcağız	آدمجغز	hayrat	1
+adamcağıza	آدمجغزه	hayrat	1
+adamcağızın	آدمجغزڭ	hayrat	1
+adana'ya	آطنه‌یه	hayrat	1
+adapazarı'na	آطه‌پازارینه	hayrat	1
+adası'nda	آطه‌سنده	hayrat	1
+adasındaki	آطه‌سنده‌كی	hayrat	1
 adbâ	عضبا	hayrat	1
 addedeceğimize	عد ایده‌جكمزه	hayrat	1
 addederim	عد ایدرم	hayrat	1
@@ -30,6 +50,7 @@ addeylerler	عد أیلرلر	hayrat	1
 adedçe	عددجه	hayrat	1
 ademdi	عدمدی	hayrat	1
 ademiyât	عدمیات	hayrat	1
+adlün	عدل	hayrat	1
 adâletkârâne	عدالتكارانه	hayrat	1
 adında	آدنده	hayrat	1
 affedilmesine	عفو ایدیلمه‌سنه	hayrat	1
@@ -37,6 +58,7 @@ afflarınıza	عفولریڭزه	hayrat	1
 affımız	عفویمز	hayrat	1
 affın	عفوڭ	hayrat	1
 affındır	عفوڭدر	hayrat	1
+affınızla	عفویڭزله	hayrat	1
 afyonvâlîsi	آفیون والیسی	hayrat	1
 agel	عكل	hayrat	1
 ahmağın	احمقڭ	hayrat	1
@@ -44,10 +66,12 @@ ahseniyet	احسنیّت	hayrat	1
 ahvâlen	احوالا	hayrat	1
 ahza	اخذه	hayrat	1
 akarsu	آقار صو	hayrat	1
+akarsuyun	آقار صویڭ	hayrat	1
 akliyât	عقلیات	hayrat	1
 akliyâtlarıyla	عقلیاتلریله	hayrat	1
 akliyâtı	عقلیاتی	hayrat	1
 akliyâtını	عقلیاتنی	hayrat	1
+akmasına	آقمسنه	hayrat	1
 akrabamızdan	اقربامزدن	hayrat	1
 akrebiyetini	اقربیّتنی	hayrat	1
 akseylemiş	عكس أیله‌مش	hayrat	1
@@ -66,6 +90,7 @@ akılsızlığımdan	عقلسزلغمدن	hayrat	1
 akılsızlığıyla	عقلسزلغیله	hayrat	1
 akıtmaklar	آقیتمقلر	hayrat	1
 akşamüstü	آقشام اوستی	hayrat	1
+akşehirli	آقشهرلی	hayrat	1
 alabileceğimizi	آلابیله‌جكمزی	hayrat	1
 alacaklarmış	آلاجقلرمش	hayrat	1
 alamadığını	آلامدیغنی	hayrat	1
@@ -78,7 +103,10 @@ aldatmalarıyla	آلداتمه‌لریله	hayrat	1
 aldırma	آلدیرما	hayrat	1
 aldırmamasıyla	آلدیرمامسیله	hayrat	1
 aldırmıyorsunuz	آلدیرمییورسڭز	hayrat	1
+aleviye	علویه	hayrat	1
+aleyhimessalâtü	علیهما الصّلاة	denetim	1
 aleyhindeyim	علیهنده‌یم	hayrat	1
+aleyhissalatüvesselam	علیه الصّلاة والسّلام	hayrat	1
 aleyhissselâm'ın	علیه السّلامڭ	hayrat	1
 aleyküm	علیكم	hayrat	1
 aliköy'de	علی كویده	hayrat	1
@@ -89,22 +117,37 @@ almamalıdırlar	آلماملیدرلر	hayrat	1
 almamaya	آلمامغه	hayrat	1
 alnımda	آلنمده	hayrat	1
 alo	علو	hayrat	1
+alâk'a	العلقه	hayrat	1
 alâkadârdım	علاقه‌داردم	hayrat	1
+alâkadârlığınız	علاقه‌دارلغڭز	hayrat	1
 alâkadârsa	علاقه‌دارسه	hayrat	1
 alâkalandıran	علاقه‌لاندیران	hayrat	1
+alâyişe	آلایشه	hayrat	1
 alîm'in	علیمڭ	hayrat	1
 alîmin	علیمڭ	hayrat	1
 alıkoyuyor	آلیقویویور	hayrat	1
 alınamadığından	آلینامدیغندن	hayrat	1
+alıncaya	آلینجه‌یه	hayrat	1
 alınlarına	آلینلرینه	hayrat	1
 alınmadan	آلینمادن	hayrat	1
+alınmaktır	آلینمقدر	hayrat	1
 alışamadım	آلیشامدم	hayrat	1
+ambardaki	آنبارده‌كی	hayrat	1
+ambardan	آنباردن	hayrat	1
+ambardır	آنباردر	hayrat	1
+ambarında	آنبارنده	hayrat	1
+amcamdan	عمجه‌مدن	hayrat	1
+amcamıza	عمجه‌مزه	hayrat	1
+amcasına	عمجه‌سنه	hayrat	1
+amcasının	عمجه‌سنڭ	hayrat	1
 amcazâdesi	عمجه‌زاده‌سی	hayrat	1
 amelenin	عمله‌نڭ	hayrat	1
 amr'a	عمره	hayrat	1
 amr'ın	عمرڭ	hayrat	1
 amâme	عمامه	hayrat	1
 anahtarı'nda	آناختارنده	hayrat	1
+anbardır	انباردر	hayrat	1
+anbarına	انبارینه	hayrat	1
 anbeân	آن بآن	hayrat	1
 ankebûtî	عنكبوتی	hayrat	1
 anlamadan	آڭلامدن	hayrat	1
@@ -114,6 +157,9 @@ anlamadığın	آڭلامدیغڭ	hayrat	1
 anlamalarıdır	آڭلامه‌لریدر	hayrat	1
 anlamalıyız	آڭلاملی یز	hayrat	1
 anlamamazlıktandır	آڭلامامازلقدندر	hayrat	1
+anlamasında	آڭلامه‌سنده	hayrat	1
+anlamasından	آڭلامه‌سندن	hayrat	1
+anlardan	آنلردن	hayrat	1
 anlatmamı	آڭلاتمه‌می	hayrat	1
 anlatılması	آڭلاتیلمه‌سی	hayrat	1
 anlayabildimse	آڭلایابیلدمسه	hayrat	1
@@ -128,8 +174,13 @@ antere	عنتره	hayrat	1
 arabamızın	آرابه‌مزڭ	hayrat	1
 arabcılık	عربجیلق	hayrat	1
 arabîbir	عربی بر	hayrat	1
+arabıyla	عربیله	hayrat	1
+arafa	عرفه	hayrat	1
+aramadan	آرامادن	hayrat	1
 aramadığımı	آرامدیغمی	hayrat	1
 aramaklığınız	آرامقلغڭز	hayrat	1
+aramasının	آرامه‌سنڭ	hayrat	1
+aramasıyla	آرامه‌سیله	hayrat	1
 aramayız	آرامایز	hayrat	1
 aramıyor	آرامییور	hayrat	1
 aramıyorsun	آرامییورسڭ	hayrat	1
@@ -137,17 +188,23 @@ aramıyorum	آرامییورم	hayrat	1
 arattırması	آراتدیرمه‌سی	hayrat	1
 araştırması	آراشدیرمسی	hayrat	1
 arefesindeyiz	عرفه‌سنده‌یز	hayrat	1
+aristo'dan	آریسطودن	hayrat	1
 arkadaşlarımsınız	آرقداشلرمسڭز	hayrat	1
 arkadaştı	آرقداشدی	hayrat	1
 arklardan	آریقلردن	hayrat	1
 arkları	آرقلری	hayrat	1
+armağanı	آرمغانی	hayrat	1
 artemit'te	آرته‌میتده	hayrat	1
+artmasıyla	آرتمسیله	hayrat	1
+arttırmaktan	آرتیرمقدن	hayrat	1
 arttırmaya	آرتدیرمه‌یه	hayrat	1
 arttırırlar	آرتیریرلر	hayrat	1
 artırır	آرتیریر	hayrat	1
 arzdafesâd	ارضده فساد	hayrat	1
 arzedeyimki	عرض ایده‌یمكه	hayrat	1
+arzeylemiştir	عرض ایله‌مشدر	denetim	1
 arzeyleriz	عرض أیلرز	hayrat	1
+arzeyleyelim	عرض ایله‌یه‌لم	denetim	1
 arzun	آرزوڭ	hayrat	1
 arîfi	عریفی	hayrat	1
 arîfleri	عریفلری	hayrat	1
@@ -157,11 +214,14 @@ arîzacığı	عریضه‌جغی	hayrat	1
 arîzalarımdaki	عریضه‌لرمده‌كی	hayrat	1
 arîzama	عریضه‌مه	hayrat	1
 arîzamdan	عریضه‌مدن	hayrat	1
+arîzî	عارضی	hayrat	1
 arıyorken	آرایوركن	hayrat	1
 arığa	آریغه	hayrat	1
+arşının	عرشنڭ	hayrat	1
 asabiyeten	عصبیّتا	hayrat	1
 asansör	آسانسور	hayrat	1
 ashâbîn	اصحابین	hayrat	1
+asilzâdelik	اصیلزاده‌لك	hayrat	1
 askerdi	عسكردی	hayrat	1
 askeriyiz	عسكری یز	hayrat	1
 askerlerdeniz	عسكرلردنز	hayrat	1
@@ -169,8 +229,12 @@ asliyet	اصلیّت	hayrat	1
 asliyetidir	اصلیّتیدر	hayrat	1
 asmanın	آصمه‌نڭ	hayrat	1
 asması	آصمه‌سی	hayrat	1
+astarını	آستارینی	hayrat	1
+ateşböceğinden	آتش بوجكندن	hayrat	1
 ateşlendir	آتشلندیر	hayrat	1
 atfedilmesi	عطف ایدیلمه‌سی	hayrat	1
+atiyye	عطیّه	hayrat	1
+atiyyeler	عطیه‌لر	hayrat	1
 atiyyelerini	عطیّه‌لرینی	hayrat	1
 atla	آتلا	hayrat	1
 atlamaya	آتلامغه	hayrat	1
@@ -181,12 +245,20 @@ atmıyorlar	آتمییورلر	hayrat	1
 atsın	آتسین	hayrat	1
 attırılmaya	آتدیریلمه‌یه	hayrat	1
 atânın	عطانڭ	hayrat	1
+atılması	آتیلمه‌سی	hayrat	1
 avaneleriyle	عونه‌لریله	hayrat	1
 avlayamadık	آولایامدق	hayrat	1
 avlayamadım	آولایامدم	hayrat	1
+avluda	آولوده	hayrat	1
+avlumdan	آولیمدن	hayrat	1
 avrupalaşmak	آوروپه‌لاشمق	hayrat	1
+avrupalılar	آوروپه‌لیلر	hayrat	1
+avrupalılara	آوروپه‌لیلره	hayrat	1
 avukatınız	آووقاتڭز	hayrat	1
+avusturalya'ya	آووسترالیه‌یه	hayrat	1
 avâmî	عوامی	hayrat	1
+ayancık	عیانجق	hayrat	1
+ayarlamakla	آیارلامقله	hayrat	1
 ayasofi	آیاصوفی	hayrat	1
 ayn'ı	عینی	hayrat	1
 aynacık	آیینه‌جك	hayrat	1
@@ -195,6 +267,7 @@ aynacıklarında	آیینه‌جكلرنده	hayrat	1
 aynacıkta	آیینه‌جكده	hayrat	1
 aynadârlığıdır	آیینه‌دارلغیدر	hayrat	1
 aynalık	آیینه‌لك	hayrat	1
+aynamızdaki	آینه‌مزده‌كی	hayrat	1
 aynıbu	عین بو	hayrat	1
 aynıları	عینیلری	hayrat	1
 ayranım	آیرانم	hayrat	1
@@ -231,6 +304,7 @@ ağlamaktayım	آغلامقده‌یم	hayrat	1
 ağlamamızı	آغلامه‌مزی	hayrat	1
 ağlamayı	آغلامغی	hayrat	1
 ağlattırıcı	آغلاتدیریجی	hayrat	1
+ağlaya	آغلایا	denetim	1
 ağmaz	اغمض	hayrat	1
 ağrımaya	آغریمغه	hayrat	1
 ağrıtmadan	آغریتمادن	hayrat	1
@@ -254,6 +328,8 @@ bahsettiğimize	بحث ایتدیكمزه	hayrat	1
 bahseyledi	بحث أیله‌دی	hayrat	1
 bahâdâr	بهادار	hayrat	1
 bahâiye	بهائیه	hayrat	1
+bahçuvan	باغچوان	hayrat	1
+bahçıvan	باغچوان	hayrat	1
 bahşederdiki	بخش ایدردیكه	hayrat	1
 bahşedip	بخش ایدوب	hayrat	1
 bahşeyle	بخش ایله	hayrat	1
@@ -264,29 +340,48 @@ bahşeyler	بخش أیلر	hayrat	1
 bakamayız	باقامایز	hayrat	1
 bakanlığı'nca	باقانلغنجه	hayrat	1
 bakanı'na	باقاننه	hayrat	1
+bakarı	بقری	hayrat	1
+bakarın	بقرڭ	hayrat	1
 bakdık	باقدق	hayrat	1
 bakdığını	باقدیغنی	hayrat	1
+bakkalcık	بقّالجق	hayrat	1
 bakmadığımızdan	باقمدیغمزدن	hayrat	1
 bakmaktayım	باقمقده‌یم	hayrat	1
+bakmalıdır	باقمه‌لیدر	hayrat	1
 bakmamaktayız	باقمامقده‌یز	hayrat	1
+bakmamıza	باقمه‌مزه	hayrat	1
+bakmasında	باقمه‌سنده	hayrat	1
 bakmıyordum	باقمییوردم	hayrat	1
 bakmıyorsunuz	باقمییورسڭز	hayrat	1
+baksana	باق سڭا	hayrat	1
+baktıra	باقدیرا	denetim	1
 baktırabilir	باقدیرابیلیر	hayrat	1
 baktırmak	باقدیرمق	hayrat	1
 baktırmalı	باقدیرملی	hayrat	1
 baktırmamak	باقدیرمامق	hayrat	1
+baktırmayan	باقدیرمایان	hayrat	1
 baktırmayınız	باقدیرماییڭز	hayrat	1
 baktırmaz	باقدیرماز	hayrat	1
 baktırılmasın	باقدیریلماسین	hayrat	1
 bakü'nün	باكونڭ	hayrat	1
 bakışta	باقیشده	hayrat	1
+balarısına	بال آریسنه	hayrat	1
 balta	بالطه	hayrat	1
+baltayı	بالطه‌یی	hayrat	1
 banka	بانقه	hayrat	1
+bankalar	بانقه‌لر	hayrat	1
 bankalardan	بانقه‌لردن	hayrat	1
+bankaları	بانقه‌لری	hayrat	1
+bankaya	بانقه‌یه	hayrat	1
 barlalısıddîksüleymân'ın	بارله‌لی صدّیق سلیمانڭ	hayrat	1
 barlalısıddîksüleymân'ındır	بارله‌لی صدّیق سلیمانڭدر	hayrat	1
 basmaya	باصمه‌یه	hayrat	1
+bastırmaya	باصدیرمه‌یه	hayrat	1
+bastırılması	باصدیریلمه‌سی	hayrat	1
+basımı	باصیمی	hayrat	1
+basımın	باصیمڭ	hayrat	1
 bathâ'nın	بطحانڭ	hayrat	1
+batmasına	باطمه‌سنه	hayrat	1
 battım	باتدم	hayrat	1
 batum	باطوم	hayrat	1
 batâlet	بطالت	hayrat	1
@@ -294,8 +389,13 @@ baygınlığından	بایغینلغندن	hayrat	1
 bayraktârı	بایراقداری	hayrat	1
 bazının	بعضینڭ	hayrat	1
 baûdadan	بعوضه‌دن	hayrat	1
+bağla	باغلا	hayrat	1
 bağlamaya	باغلامغه	hayrat	1
+bağlanmasından	باغلانمه‌سندن	hayrat	1
+bağlanmasının	باغلانمه‌سنڭ	hayrat	1
+bağlara	باغلره	hayrat	1
 bağlıyım	باغلی یم	hayrat	1
+bağırsakları	باغیرصاقلری	hayrat	1
 bağışlamalısınız	باغیشلامه‌لیسڭز	hayrat	1
 bağışlamayı	باغیشلامه‌یه	hayrat	1
 başbakanlık'a	باش باقانلغه	hayrat	1
@@ -304,26 +404,41 @@ başkalaşmış	باشقه‌لاشمش	hayrat	1
 başkalaşır	باشقه‌لاشیر	hayrat	1
 başkitabet	باش كتابت	hayrat	1
 başkâtib	باش كاتب	hayrat	1
+başlamasındaki	باشلامه‌سنده‌كی	hayrat	1
+başlamasından	باشلامه‌سندن	hayrat	1
+başlamasının	باشلامه‌سنڭ	hayrat	1
 başlamaya	باشلامغه	hayrat	1
 başlamışdık	باشلامشدق	hayrat	1
 başmurahhası	باش مرخّصی	hayrat	1
 başmurahhası'nın	باش مرخّصنڭ	hayrat	1
+başmüdürü	باش مدیری	hayrat	1
 başmüftü	باش مفتی	hayrat	1
+başpapazının	باش پاپاسنڭ	hayrat	1
 başrolü	باش رولی	hayrat	1
+başsavcılık	باش صاوجیلق	hayrat	1
 baştansavma	باشدن صاومه	hayrat	1
+başucundaki	باش اوجنده‌كی	hayrat	1
+başvuracağım	باش اوراجغم	hayrat	1
+başvururken	باش اوروركن	hayrat	1
 bedbahtlığımı	بدبختلغمی	hayrat	1
 bedduâma	بد دعامه	hayrat	1
 bedâyiine	بدایعنه	hayrat	1
 bedî'liğine	بدیعلكنه	hayrat	1
+bedîhiyye	بدیهیه	hayrat	1
+bedîhiyât	بدیهیات	hayrat	1
+bedîhiyâta	بدیهیّاته	hayrat	1
 bedîhiyâtları	بدیهیّاتلری	hayrat	1
 bedîhiyâtta	بدیهیاتده	hayrat	1
 bedîhiyâttan	بدیهیاتدن	hayrat	1
 bedîhiyâttandır	بدیهیّاتدندر	hayrat	1
+bedîhiyâtı	بدیهیاتی	hayrat	1
 bedîhiyâtına	بدیهیّاتنه	hayrat	1
 bedîiyât	بدیعیات	hayrat	1
 bedîiyâtın	بدیعیاتڭ	hayrat	1
 behâiye	بهائیه	hayrat	1
 behçetin	بهجتڭ	hayrat	1
+beklemiyorlar	بكله‌مییورلر	hayrat	1
+beklemiyorum	بكله‌مییورم	hayrat	1
 beklenilemez	بكلنیله‌مز	hayrat	1
 bekleniyor	بكلنییور	hayrat	1
 bekleniyordu	بكلنییوردی	hayrat	1
@@ -333,9 +448,11 @@ bekliyorken	بكله‌یوركن	hayrat	1
 bektaşî	بكتاشی	hayrat	1
 bektâşîdir	بكتاشیدر	hayrat	1
 bektâşîlikten	بكتاشیلكدن	hayrat	1
+bekçisisin	بكجیسیسڭ	hayrat	1
 bel'ederdi	بلع ایدردی	hayrat	1
 belediyesi	بلدیه‌سی	hayrat	1
 belâbil	بلابیل	hayrat	1
+benimsemediler	بنمسه‌مدیلر	hayrat	1
 benimsemek	بنیمسه‌مك	hayrat	1
 benimsemektedir	بنمسه‌مكده‌در	hayrat	1
 benlikse	بنلكسه	hayrat	1
@@ -355,28 +472,49 @@ berâattir	براعتدر	hayrat	1
 berâatımızı	براتمزی	hayrat	1
 berâberime	برابریمه	hayrat	1
 berâkallâh	بارك للّه	hayrat	1
+beslemesi	بسله‌مه‌سی	hayrat	1
+beslemeyen	بسله‌مه‌ین	hayrat	1
 beslenmesi	بسلنمه‌سی	hayrat	1
 beslenmiyorlar	بسلنمه‌یورلر	hayrat	1
 besmeleyle	بسمله ایله	hayrat	1
 besâtet	بساطت	hayrat	1
 besâteti	بساطتی	hayrat	1
 besâtı	بساطتی	hayrat	1
+beyazlanmakla	بیاضلانمقله	hayrat	1
 beyazlığı	بیاضلغی	hayrat	1
 beyefendimi	بك افندیمی	hayrat	1
+beygir	باركیر	hayrat	1
 beytiyesine	بیتیه‌سنه	hayrat	1
 beytullâh'ın	بیت اللّهڭ	hayrat	1
+beyzâda	بیضا ده	hayrat	1
 beyânetmesi	بیان ایتمه‌سی	hayrat	1
 bezeyip	بزه‌یوب	hayrat	1
+bezirgânlarının	بزركانلرینڭ	hayrat	1
 bezlettiği	بذل ایتدیكی	hayrat	1
 beğenmeyerek	بكنمیه‌رك	hayrat	1
+beşibirlikler	بشی برلكلر	hayrat	1
 beşiğimdir	بشیكمدر	hayrat	1
+beşkardeşler	بش قرداشلر	hayrat	1
 beşâretkâr	بشارتكار	hayrat	1
 beşâretkârâne	بشارتكارانه	hayrat	1
+bi'sete	بعثته	hayrat	1
+bi'setim	بعثتم	hayrat	1
+bi'setinden	بعثتندن	hayrat	1
 biaynihî	بعینه	hayrat	1
 bid'atkârâne	بدعتكارانه	hayrat	1
 bigayrihî	بغیره	hayrat	1
 bihamdihî	بحمده	hayrat	1
 bikāı	بقاعی	hayrat	1
+bil'ayân	بالعیان	hayrat	1
+bil'i'tirâf	بالاعتراف	hayrat	1
+bil'ihtiyâr	بالاختیار	hayrat	1
+bil'imtisâl	بالامتثال	hayrat	1
+bil'intikāl	بالانتقال	hayrat	1
+bil'irâde	بالاراده	hayrat	1
+bil'isti'dâd	بالاستعداد	hayrat	1
+bil'izâfe	بالاضافه	hayrat	1
+bil'iştiyâk	بالاشتیاق	hayrat	1
+bil'îmân	بالایمان	hayrat	1
 bildirirken	بیلدیرركن	hayrat	1
 bildirmeksizin	بیلدیرمكسزین	hayrat	1
 bildirmemizi	بیلدیرمه‌مزی	hayrat	1
@@ -390,9 +528,14 @@ bilemediğinden	بیله‌مدیكندن	hayrat	1
 bilememekle	بیله‌مه‌مكله	hayrat	1
 bilemiyordum	بیله‌مییوردم	hayrat	1
 bilenlerdenim	بیلنلردنم	hayrat	1
+bilezikleri	بیله‌زیكلری	hayrat	1
 bileziği	بیله‌زیكی	hayrat	1
 bileziğini	بیله‌زیكنی	hayrat	1
 bilinemiyor	بیلینه‌مییور	hayrat	1
+bilistişâre	بالاستشاره	hayrat	1
+bilkabûl	بالقبول	hayrat	1
+bilkasd	بالقصد	hayrat	1
+bilma'nâ	بالمعنا	hayrat	1
 bilmecbûriyeameliyat	بالمجبوریه عملیات	hayrat	1
 bilmece	بیلمه‌جه	hayrat	1
 bilmekliğimiz	بیلمكلكمز	hayrat	1
@@ -402,15 +545,27 @@ bilmemesinin	بیلمه‌مه‌سنڭ	hayrat	1
 bilmemişiz	بیلمه‌مشز	hayrat	1
 bilmemiştiler	بیلمه‌مشدیلر	hayrat	1
 bilmesen	بیلمه‌سه‌ڭ	hayrat	1
+bilmesidir	بیلمه‌سیدر	hayrat	1
 bilmezsek	بیلمزسه‌ك	hayrat	1
+bilmutâbakat	بالمطابقت	hayrat	1
+bilmüşâvere	بالمشاوره	hayrat	1
+bilvücûb	بالوجوب	hayrat	1
+bindirsin	بیندیرسون	hayrat	1
+bineceğin	بینه‌جكڭ	hayrat	1
+binemeyiz	بینه‌مه‌یز	hayrat	1
+binniyye	بالنّیّه	hayrat	1
 biraderime	برادریمه	hayrat	1
+birbirinizdeki	بربریڭزده‌كی	hayrat	1
+birbirinizle	بربریڭزله	hayrat	1
 birdeniki	بردن ایكی	hayrat	1
 birerleriniz	بررلریڭز	hayrat	1
 birerlerinizin	بررلریڭزڭ	hayrat	1
 birgün	بركون	hayrat	1
 biribirini	بری برینی	hayrat	1
 biribirinize	بری بریڭزه	hayrat	1
+biriktiren	بیریكدیرن	hayrat	1
 biriktirilen	بریكدیریلن	hayrat	1
+birincilerdendi	برنجیلردندی	hayrat	1
 birisiydi	بریسیدی	hayrat	1
 biriz	برز	hayrat	1
 birleşemiyor	برلشه‌مییور	hayrat	1
@@ -425,28 +580,39 @@ bismillâh'daki	بسم اللّه ده‌كی	hayrat	1
 bitamam	بتمام	hayrat	1
 bitevfikillâh	بتوفق اللّه	hayrat	1
 bitevfîkihî	بتوفیقه	hayrat	1
+biteviye	بیته‌ویه	hayrat	1
 bitiremeyecektir	بیتیره‌مه‌یه‌جكدر	hayrat	1
 bitiremeyeceğim	بیتیره‌میه‌جكم	hayrat	1
 bitirmesin	بیتیرمه‌سون	hayrat	1
 bitirmeye	بیتیرمه‌یه	hayrat	1
+bittakdîr	بالتّقدیر	hayrat	1
 bizâtihâ	بذاتها	hayrat	1
 biçmeye	بیچمه‌یه	hayrat	1
 bişr'in	بشرڭ	hayrat	1
+bolvadinli	بولوادینلی	hayrat	1
 bolşevizmde	بولشویزیمده	hayrat	1
 borçluyuz	بورچلی یز	hayrat	1
 boyalanır	بویه‌لانیر	hayrat	1
+boyalarla	بویه‌لرله	hayrat	1
+boyaları	بویه‌لری	hayrat	1
+boyalarıdır	بویه‌لریدر	hayrat	1
 boyası	بویاسی	hayrat	1
 boynumda	بوینمده	hayrat	1
 boynuzludan	بوینوزلیدن	hayrat	1
 boyumdan	بویمدن	hayrat	1
+boyundadır	بوینده‌در	hayrat	1
 bozdurmazlar	بوزدیرمازلر	hayrat	1
 bozdurur	بوزدیریر	hayrat	1
 bozmamaya	بوزمامغه	hayrat	1
+bozmayınız	بوزماییڭز	hayrat	1
 bozuşmaya	بوزوشمه‌یه	hayrat	1
 boğazlarcasına	بوغازلارجه‌سنه	hayrat	1
 boğdurmaktır	بوغدیرمقدر	hayrat	1
 boşalttıktan	بوشالتدقدن	hayrat	1
 buda'nın	بودانڭ	hayrat	1
+budalaca	بودلاجه	hayrat	1
+budalaların	بودلالرڭ	hayrat	1
+bugünahkâr	بو كناهكار	hayrat	1
 bulabileceğimizi	بولابیله‌جكمزی	hayrat	1
 bulandırıcı	بولاندیریجی	hayrat	1
 bulaşma	بولاشما	hayrat	1
@@ -461,6 +627,7 @@ bulmamı	بولمه‌می	hayrat	1
 bulmayı	بولمغی	hayrat	1
 bulmuyorum	بولمییورم	hayrat	1
 bulucu	بولوجی	hayrat	1
+bulundurmuyorum	بولوندیرمایورم	hayrat	1
 bulundurmuşum	بولوندیرمشم	hayrat	1
 bulundurulacak	بولوندیریلاجق	hayrat	1
 bulundurulacağını	بولوندیریلاجغنی	hayrat	1
@@ -476,11 +643,13 @@ bulunmuyorsa	بولونمییورسه	hayrat	1
 bulununcaya	بولوننجه‌یه	hayrat	1
 bulunuşunuz	بولونوشڭز	hayrat	1
 buluştuğumuz	بولوشدیغمز	hayrat	1
+bulüğ	بلوغ	hayrat	1
 buradayım	بوراده‌یم	hayrat	1
 burnuna	بورننه	hayrat	1
 burâk'dı	براقدی	hayrat	1
 burâk'tı	براقدی	hayrat	1
 butevkîfimizin	بو توقیفمزڭ	hayrat	1
+buyrulduğu	بیورولدیغی	hayrat	1
 buyurmaklığınızı	بویورمقلغڭزی	hayrat	1
 buyurmalarıyla	بویورمه‌لریله	hayrat	1
 buyurmuşsa	بویورمشسه	hayrat	1
@@ -489,25 +658,32 @@ bârekallaâh	بارك اللّه	hayrat	1
 bâğistandaki	باغستانده‌كی	hayrat	1
 bâşid	باشیت	hayrat	1
 bîçâreliğimle	بیچاره‌لكمله	hayrat	1
+bölgelerinde	بولكه‌لرنده	hayrat	1
 bölünmesi	بولونمه‌سی	hayrat	1
 bûdeîler	بوده‌ئیلر	hayrat	1
 büktürmüyor	بوكدیرمییور	hayrat	1
 büreyde	بریده	hayrat	1
 bütçe	بوتچه	hayrat	1
+bütçem	بوتچه‌م	hayrat	1
+bütünkusur	بوتون قصور	hayrat	1
 bütünmuhakkikler	بتون محقّقلر	hayrat	1
 bütüno	بتون او	hayrat	1
+büyükbabanızın	بیوك باباڭزڭ	hayrat	1
 büyüttürür	بویوتدیرر	hayrat	1
 büyütüldükten	بیوتولدكدن	hayrat	1
+büyüyünceye	بیویونجه‌یه	hayrat	1
 büyüğüm	بیوكم	hayrat	1
 bırakamadım	بیراقامدم	hayrat	1
 bırakmalıyız	بیراقملی یز	hayrat	1
 bırakmamalıdır	بیراقماملیدر	hayrat	1
 bırakmamalıyız	بیراقماملی یز	hayrat	1
 bırakmaması	بیراقمامسی	hayrat	1
+bırakmayanbir	بیراقمیان بر	hayrat	1
 bırakmayı	بیراقمغی	hayrat	1
 bırakmıyorsunuz	بیراقمییورسڭز	hayrat	1
 bıraktın	بیراقدڭ	hayrat	1
 bıraktırdı	بیراقدیردی	hayrat	1
+bıraktırmakla	بیراقدیرمقله	hayrat	1
 bıraktırmaz	بیراقدیرماز	hayrat	1
 bıraktırır	بیراقدیرر	hayrat	1
 bırakılmamaklığımı	بیراقیلمامقلغمی	hayrat	1
@@ -518,6 +694,7 @@ canavarcıklara	جاناورجقلره	hayrat	1
 canavarlaşmış	جاناورلاشمش	hayrat	1
 canavarvâri	جاناور واری	hayrat	1
 cansiperâne	جانسپارانه	hayrat	1
+carlayl	قارلایل	hayrat	1
 cebime	جیبمه	hayrat	1
 ceblerini	جیبلرینی	hayrat	1
 cebânete	جبانته	hayrat	1
@@ -545,6 +722,8 @@ cerhedemedim	جرح ایده‌مه‌دم	hayrat	1
 cerhedememişler	جرح ایده‌مه‌مشلر	hayrat	1
 cerrahîsine	جرّاحیسنه	hayrat	1
 cerîhadâr	جریحه‌دار	hayrat	1
+cetveldeki	جدولده‌كی	hayrat	1
+cetvele	جدوله	hayrat	1
 cevherleriniidrâk	جوهرلرینی ادراك	hayrat	1
 cez'	جزع	hayrat	1
 cez'a	جزعه	hayrat	1
@@ -561,44 +740,71 @@ cibâlîbaba	جبالی بابا	hayrat	1
 cildlenmesi	جلدلنمه‌سی	hayrat	1
 ciltçiye	جلدجی یه	hayrat	1
 cilveciğini	جلوه‌جكنی	hayrat	1
+ciriti	جریدی	hayrat	1
 cizl	جذل	hayrat	1
 cizre	جزره	hayrat	1
 cizre'de	جزره‌ده	hayrat	1
+coşkunlukları	جوشغونلقلری	hayrat	1
 cumhurbaşkanlığı	جمهور باشقانلغی	hayrat	1
 câilin	جاعلڭ	hayrat	1
 câsiye	جاثیة	hayrat	1
 câvâ'yı	جاوایی	hayrat	1
 cümlecikler	جمله‌جكلر	hayrat	1
 cünüb	جنب	hayrat	1
+cüz'iyetiyle	جزؤیتیله	hayrat	1
+cüz'iyâtlarına	جزؤیاتلرینه	hayrat	1
+cüz'lerindendir	جزلرندندر	hayrat	1
 cüz'lükten	جزئلكدن	hayrat	1
+cüz'îdirler	جزؤیدرلر	hayrat	1
+cüz'îferdleri	جزؤی فردلری	hayrat	1
+cüz'îler	جزؤیلر	hayrat	1
+cüz'îlerde	جزؤیلرده	hayrat	1
 cüzde	جزؤده	hayrat	1
 da'vâcılarımız	دعواجیلریمز	hayrat	1
 dagetirdiği	ده‌كتیردیكی	hayrat	1
+dahilsiniz	داخلسڭز	hayrat	1
+dalarlar	طالارلر	hayrat	1
+dalkavukluğa	طالقاغوقلغه	hayrat	1
+dalkavukçuların	طالقاووقجیلرڭ	hayrat	1
 dallarındasiyah	داللرنده سیاه	hayrat	1
+dallı	داللی	hayrat	1
 damarındançok	طمارندن چوق	hayrat	1
+damağına	طماغنه	hayrat	1
 damlacıklar	طامله‌جقلر	hayrat	1
 damlamasına	طاملامسنه	hayrat	1
 damlatırlar	طاملاتیرلر	hayrat	1
 danzig'den	دانزیك دن	hayrat	1
+darr	ضرّ	denetim	1
+darrı	ضرّی	hayrat	1
 darılma	طاریلما	hayrat	1
+darıviran	داری ویران	hayrat	1
 davranma	طاورانما	hayrat	1
 davudvârî	داود واری	hayrat	1
+dayanamadım	طایانامدم	hayrat	1
+dayanamadığım	طایانامدیغم	hayrat	1
+dayanamadığınız	طایانامدیغڭز	hayrat	1
 dayanamamışlar	طیانامامشلر	hayrat	1
 dayanmazlarsa	طیانمازلرسه	hayrat	1
 dayım	داییم	hayrat	1
 dayımın	داییمڭ	hayrat	1
 dağcığın	طاغجغڭ	hayrat	1
 dağdağalıdır	دغدغه‌لیدر	hayrat	1
+dağlamaktadır	داغلامقده‌در	hayrat	1
+dağâtır	ضغاطر	hayrat	1
 dağı'ndaki	طاغنده‌كی	hayrat	1
 dağı'ndan	طاغندن	hayrat	1
 dağılma	طاغیلما	hayrat	1
 dağılmadan	طاغیلمدن	hayrat	1
 dağılmamasına	طاغیلمامسنه	hayrat	1
+dağılmasından	طاغیلمسندن	hayrat	1
 dağıt	طاغیت	hayrat	1
 dağıttırılmazlar	طاغیتدیریلمازلر	hayrat	1
 dağıtıcıdır	طاغیتیجیدر	hayrat	1
 deavât	دعوات	hayrat	1
+debelenmezdi	دبه‌لنمزدی	hayrat	1
 deccâlı'nı	دجّالنی	hayrat	1
+dede'nin	دده‌نڭ	hayrat	1
+dedem	دده‌م	hayrat	1
 dediki	دیدیكه	hayrat	1
 dedikoduları	دیدی قودیلری	hayrat	1
 dediyse	دیدیسه	hayrat	1
@@ -641,13 +847,20 @@ denmeyip	دینمه‌یوب	hayrat	1
 denmez	دینمز	hayrat	1
 denmiştir	دینمشدر	hayrat	1
 denâetkârâne	دنائتكارانه	hayrat	1
+depreniyor	تبرنییور	hayrat	1
 deprenmeyecek	دپرنمیه‌جك	hayrat	1
 deprettirir	تپرتدیرر	hayrat	1
 depreşmemeleri	تپرشمه‌مه‌لری	hayrat	1
 dercedilmesini	درج ایدیلمه‌سنی	hayrat	1
+derdimde	دردمده	hayrat	1
+derdimin	دردیمڭ	hayrat	1
+derip	دیروب	hayrat	1
 derlerken	دیرلركن	hayrat	1
 derlerse	دیرلرسه	hayrat	1
 dermeye	دیرمكه	hayrat	1
+dersem	دیرسه‌م	hayrat	1
+dersinizden	درسڭزدن	hayrat	1
+dersinizdir	درسڭزدر	hayrat	1
 desîsekârâne	دسیسه‌كارانه	hayrat	1
 devamıyladır	دوامیله‌در	hayrat	1
 devirici	دویریجی	hayrat	1
@@ -676,6 +889,7 @@ değiştirirseniz	دكیشدیررسه‌ڭز	hayrat	1
 deşti	دشدی	hayrat	1
 dikmesinin	دیكمه‌سنڭ	hayrat	1
 diktirir	دیكدیرر	hayrat	1
+dilekçesinde	دیلكچه‌سنده	hayrat	1
 dilemekteyim	دیله‌مكده‌یم	hayrat	1
 dilemeye	دیله‌مكه	hayrat	1
 dileyelim	دیله‌یه‌لم	hayrat	1
@@ -684,8 +898,10 @@ dinlememeye	دیڭله‌مه‌مه‌یه	hayrat	1
 dinlememişti	دیڭله‌مه‌مشدی	hayrat	1
 dinlemeseler	دیڭله‌مه‌سه‌لر	hayrat	1
 dinlemesin	دیڭله‌مسین	hayrat	1
+dinlemesindeki	دیڭله‌مه‌سنده‌كی	hayrat	1
 dinleyemediklerine	دیڭله‌یه‌مدكلرینه	hayrat	1
 dinleyememişlerdi	دیڭله‌یه‌مه‌مشلردی	hayrat	1
+diplerindeki	دیبلرنده‌كی	hayrat	1
 dirilmemizde	دیریلمه‌مزده	hayrat	1
 diriltilmesi	دیریلتیلمه‌سی	hayrat	1
 diyarbekir	دیاربكر	hayrat	1
@@ -714,12 +930,17 @@ dokunduruluyor	طوقوندیریلییور	hayrat	1
 dokunduruyordu	طوقوندیرییوردی	hayrat	1
 dokunduruyorsunuz	طوقوندیرییورسڭز	hayrat	1
 dokunmaması	طوقونمامسی	hayrat	1
+dokuzar	طقوزار	denetim	1
+dokuzda	طقوزده	denetim	1
+dokuzuncusunu	طقوزنجیسنی	hayrat	1
+dolaba	طولابه	hayrat	1
 dolaştırır	طولاشدیریر	hayrat	1
 doldurulan	طولدیریلان	hayrat	1
 doldurulur	طولدیریلیر	hayrat	1
 doldururken	طولدیرركن	hayrat	1
 doluyum	طولویم	hayrat	1
 donatır	طوناتیر	hayrat	1
+doya	طویا	denetim	1
 doyamadığımız	طویامدیغمز	hayrat	1
 doyum	طویوم	hayrat	1
 doyuramıyor	طویورامییور	hayrat	1
@@ -739,8 +960,15 @@ durgun	طورغون	hayrat	1
 durmadığıma	طورمدیغمه	hayrat	1
 durmamalıdır	طورمامه‌لیدر	hayrat	1
 durmamızda	طورمه‌مزده	hayrat	1
+duruma	دورومه	hayrat	1
 durumlardan	دوروملردن	hayrat	1
-durumundayım	طورومنده‌یم	hayrat	1
+durumu	دورومی	hayrat	1
+durumumla	دوروممله	hayrat	1
+durumumu	دوروممی	hayrat	1
+durumuna	دورومنه	hayrat	1
+durumunda	دورومنده	hayrat	1
+durumundayım	دورومنده‌یم	denetim	1
+durumuyla	دورومیله	hayrat	1
 duruşmaya	طوروشمه‌یه	hayrat	1
 duyarak	دویارق	hayrat	1
 duyduklarımı	دویدقلریمی	hayrat	1
@@ -756,6 +984,7 @@ dâimleştirecek	دائملشدیره‌جك	hayrat	1
 dâiresindeyim	دائره‌سنده‌یم	hayrat	1
 dâiresindeyiz	دائره‌سنده‌یز	hayrat	1
 dâiyâne	داعیانه	hayrat	1
+dârusselâm	دارالسّلام	hayrat	1
 dâğlatma	داغلاتما	hayrat	1
 dîndaşlarımıza	دینداشلریمزه	hayrat	1
 döktürsün	دوكدیرسون	hayrat	1
@@ -771,6 +1000,8 @@ dönmemeksizin	دونمه‌مكسزین	hayrat	1
 dönmemeye	دونمه‌مه‌یه	hayrat	1
 dönmesine	دونمسنه	hayrat	1
 dönümünde	دونومنده	hayrat	1
+dönüyordum	دونییوردم	hayrat	1
+döşemek	دوشه‌مك	hayrat	1
 düdüklerini	دودوكلرینی	hayrat	1
 dühûlüne	دخولنه	hayrat	1
 dükkanımıza	دكّانمزه	hayrat	1
@@ -783,13 +1014,18 @@ düzeltemedim	دوزلته‌مدم	hayrat	1
 düzeltmeye	دوزلتمه‌یه	hayrat	1
 düğelek	دوكه لك	hayrat	1
 düğmeye	دوكمه‌یه	hayrat	1
+düğün	دوكون	hayrat	1
 düşmanlığımız	دوشمانلغمز	hayrat	1
 düşmeden	دوشمدن	hayrat	1
+düşmeyesin	دوشمه‌یه‌سڭ	hayrat	1
+düşmeyesiniz	دوشمه‌یه‌سڭز	hayrat	1
 düşmüşüz	دوشمشز	hayrat	1
 düştüklere	دوشدكلری	hayrat	1
+düşünemedik	دوشونه‌مدك	hayrat	1
 düşünmeliyim	دوشونملی یم	hayrat	1
 düşürtmesin	دوشورتمسون	hayrat	1
 düşürülüyormuş	دوشوریلییورمش	hayrat	1
+düşürüyorsunuz	دوشورییورسڭز	hayrat	1
 dıhye	دحیه	hayrat	5
 dımâr	ضمار	hayrat	1
 eb'addı	أبعددی	hayrat	1
@@ -798,7 +1034,9 @@ ebedîleşir	أبدیلشیر	hayrat	1
 ebüzziyâ	ابو الضّیا	hayrat	1
 ecirdir	أجیردر	hayrat	1
 ecliyet	اجلیت	hayrat	1
+ecnebiyede	اجنبیّه‌ده	hayrat	1
 eczâhâneki	اجزاخانه‌كه	hayrat	1
+edebilmemiz	ایده‌بیلمه‌مز	hayrat	1
 edecekmiş	ایده‌جكمش	hayrat	1
 ededursunlar	ایده طورسونلر	hayrat	1
 edegelen	ایده‌كلن	hayrat	1
@@ -807,6 +1045,8 @@ edememek	ایده‌مه‌مك	hayrat	1
 edememekteki	ایده‌مه‌مكده‌كی	hayrat	1
 edememekten	ایده‌مه‌مكدن	hayrat	1
 edememelerine	ایده‌مه‌مه‌لرینه	hayrat	1
+edemeyeceklerini	ایده‌میه‌جكلرینی	hayrat	1
+edemeyişi	ایده‌مه‌ییشی	hayrat	1
 edemiyorsunuz	ایده‌مییورسڭز	hayrat	1
 edenadam	ایدن آدم	hayrat	1
 edenlerdeniz	ایدنلردنز	hayrat	1
@@ -814,13 +1054,22 @@ edersek	ایدرسه‌ك	hayrat	1
 edeydi	ایده‌یدی	hayrat	1
 edilemediği	ایدیله‌مدیكی	hayrat	1
 edilememesi	ایدیله‌مه‌مسی	hayrat	1
+edilemeyeceğine	ایدیله‌مه‌یه‌جكنه	hayrat	1
+edilemeyeceğini	ایدیله‌مه‌یه‌جكنی	hayrat	1
 edilemeyiz	ایدیله‌مه‌ییز	hayrat	1
 edilemiyordu	ایدیله‌مییوردی	hayrat	1
 edilinceye	ایدیلنجه‌یه	hayrat	1
 edilmekliğimizi	ایدیلمكلكمزی	hayrat	1
 edilmekteyim	ایدیلمكده‌یم	hayrat	1
 edilmemizi	ایدیلمه‌مزی	hayrat	1
+edilmeyecekti	ایدیلمیه‌جكدی	hayrat	1
+edilmeyeceğini	ایدیلمیه‌جكنی	hayrat	1
 edinememiştim	ایدینه‌مه‌مشدم	hayrat	1
+edinmelerine	ایدینمه‌لرینه	hayrat	1
+edinmemiz	ایدینمه‌مز	hayrat	1
+edinmesi	ایدینمه‌سی	hayrat	1
+edinmeye	ایدینمه‌یه	hayrat	1
+edip'e	ادیبه	hayrat	1
 edipkendini	ایدوب كندینی	hayrat	1
 ediriz	ایدرز	hayrat	1
 edirne	ادرنه	hayrat	1
@@ -829,27 +1078,40 @@ ediyormuşuz	ایدییورمشز	hayrat	1
 edişini	ایدیشنی	hayrat	1
 edremit	ادرمید	hayrat	1
 edâen	اداء	hayrat	1
+edâtla	اداتله	hayrat	1
+edâtları	اداتلری	hayrat	1
 edâtların	اداتلرڭ	hayrat	1
 edâtın	اداتڭ	hayrat	1
 edâtından	اداتندن	hayrat	1
 edâtını	اداتنی	hayrat	1
 efdâl	افضال	hayrat	1
+efelikle	افه‌لكله	denetim	1
 efesi'nin	أفه‌سنڭ	hayrat	1
 efkârımın	افكاریمڭ	hayrat	1
 eflâni'deki	افلانیده‌كی	hayrat	1
+efvâcen	افواجا	denetim	1
 ehaff	اخفّ	hayrat	1
 ehavâtının	اخواتنڭ	hayrat	1
 ehemiyetli	اهمیتلی	hayrat	1
 ehemmiyetkârâne	اهمیتكارانه	hayrat	1
 ehemmiyetsizliğime	اهمیتسزلكمه	hayrat	1
 ehlime	اهلمه	hayrat	1
+ehliyeti	اهلیّتی	hayrat	1
 ehliyiz	اهلی یز	hayrat	1
 ehvenüşşerri	اهون الشری	hayrat	1
 eklediğimden	اكله‌دیكمدن	hayrat	1
 eklemiştir	اكله‌مشدر	hayrat	1
 ekvânî	اكوانی	hayrat	1
 ekvânîdir	اكوانیدر	hayrat	1
+el'insaf	الانصاف	hayrat	1
+elbisenindir	البیسه‌نڭدر	hayrat	1
+elemanları	اله‌مانلری	hayrat	1
+elifiyeyi	الفیه‌یی	hayrat	1
+eliyse	الیسه	denetim	1
 ellinci	اللنجی	hayrat	1
+elmasını	الماسنی	hayrat	1
+elzemiyetini	الزمیتنی	hayrat	1
+elçimiz	ایلچیمز	hayrat	1
 emekdârı	أمكداری	hayrat	1
 emelindeydim	املنده‌یدم	hayrat	1
 emperyalizmine	امپریالیزمنه	hayrat	1
@@ -868,6 +1130,7 @@ enemle	أنامله	hayrat	1
 enesini	أناسنی	hayrat	1
 enfâ'	انفع	hayrat	1
 engin	أڭكین	hayrat	1
+eniştem	انیشته‌م	hayrat	1
 ennursi	النّورسی	hayrat	1
 erbaiyet	اربعیت	hayrat	1
 erdiği	ایردیكی	hayrat	1
@@ -879,8 +1142,10 @@ erişemediğim	ایریشه‌مدیكم	hayrat	1
 erişilmesi	ایریشیلمه‌سی	hayrat	1
 erkeğiz	ارككز	hayrat	1
 ermekte	ایرمكده	hayrat	1
+ermelerini	ایرمه‌لرینی	hayrat	1
 ermemizi	ایرمه‌مزی	hayrat	1
 es'adekallâh	اسعدك الله	hayrat	1
+es'sâffât'daki	الصّافّاتده‌كی	hayrat	1
 esaslarımüsbettir	اساسلری مثبتدر	hayrat	1
 esbâbbir	اسباب بر	hayrat	1
 eserimin	اثریمڭ	hayrat	1
@@ -895,12 +1160,17 @@ estaîzübillah	استعیذ باللّه	hayrat	1
 esti	أسدی	hayrat	1
 esâreten	اسارتا	hayrat	1
 esâsiye	اساسیه	hayrat	1
+esîrîde	اثیریده	denetim	1
 et'ımeye	اطعمه‌یه	hayrat	1
 etbâımızı	اتباعمزی	hayrat	1
 ethem	ادهم	hayrat	1
 etmedikçe	ایتمدكجه	hayrat	1
+etmediğimin	ایتمه‌دیكمڭ	hayrat	1
+etmediğinizden	ایتمه‌دیكڭزدن	hayrat	1
+etmediğinizi	ایتمه‌دیكڭزی	hayrat	1
 etmeklâzım	ایتمك لازم	hayrat	1
 etmektense	ایتمكدنسه	hayrat	1
+etmeliyim	ایتمه‌لی یم	hayrat	1
 etmemekteyim	ایتمه‌مكده‌یم	hayrat	1
 etmemişse	ایتمه‌مشسه	hayrat	1
 etmemle	ایتمه‌مله	hayrat	1
@@ -923,22 +1193,29 @@ ettirmiyorlar	ایتدیرمییورلر	hayrat	1
 etttikleri	ایتدكلری	hayrat	1
 evhâmlandırılan	اوهاملاندیریلان	hayrat	1
 evhâmsâz	اوهام ساز	hayrat	1
+evkaftan	اوقافدن	hayrat	1
 evliyâullâhtır	اولیاء اللّهدر	hayrat	1
 evrâdımı	أورادیمی	hayrat	1
+evvelân	اوّلا	hayrat	1
 evâmirime	اوامریمه	hayrat	1
 eylemekteyim	أیله‌مكده‌یم	hayrat	1
+eylemeyen	ایله‌مه‌ین	denetim	1
 eyniyeye	اینیه‌یه	hayrat	1
 ezdirirse	ازدیررسه	hayrat	1
 ezdirmeye	ازدیرمه‌یه	hayrat	1
 ezeceklerini	ازه‌جكلرینی	hayrat	1
 ezelen	ازلا	hayrat	1
 ezherî	ازهری	hayrat	1
+ezilmekten	ازیلمكدن	hayrat	1
+ezilmekteyiz	ازیلمكده‌یز	hayrat	1
 eûzü	اعوذ	hayrat	1
 eğledim	اكله‌دم	hayrat	1
 eğlenceperest	اكلنجه پرست	hayrat	1
 eğmemeleriyle	اكمه‌ملریله	hayrat	1
 eğmeyecektin	اكمه‌یه‌جكدڭ	hayrat	1
 eğmiyorlar	اكمییورلر	hayrat	1
+eğridir'deki	اكیردیرده‌كی	hayrat	1
+eş'ariyece	اشعریه‌جه	hayrat	1
 eşeff	أشف	hayrat	1
 eşlik	اشلك	hayrat	1
 eşneidir	أشنعیدر	hayrat	1
@@ -949,6 +1226,7 @@ fahmlaşmış	فحملشمش	hayrat	1
 fahmolmuş	فحم اولمش	hayrat	1
 fakrıma	فقریمه	hayrat	1
 fakırlarıyla	فقرلریله	hayrat	1
+fantaziyeler	فانطازیه‌لر	hayrat	1
 fantaziyeleridir	فانتازیه‌لریدر	hayrat	1
 faraklît	فارقلیط	hayrat	1
 faraz	فرض	hayrat	1
@@ -968,9 +1246,11 @@ fehmettiğime	فهم ایتدیكمه	hayrat	1
 felekiyât	فلكیّات	hayrat	1
 felsefiyyun	فلسفیّون	hayrat	1
 fenâlığına	فنالغنه	hayrat	1
+fenâlığınıza	فنالغڭزه	hayrat	1
 fer'an	فرعا	hayrat	1
 ferahnâkız	فرحناكز	hayrat	1
 ferdiyetmakamının	فردیّت مقامنڭ	hayrat	1
+ferdün	فرد	hayrat	1
 ferâgatkârâne	فراغتكارانه	hayrat	1
 ferâhlandırdı	فرحلاندیردی	hayrat	1
 ferâhlanıyordu	فرحلانییوردی	hayrat	1
@@ -986,6 +1266,7 @@ feyzâ	فیضا	hayrat	1
 feyzâsıyla	فیضاسیله	hayrat	1
 feyâsubhânallâh	فیا سبحان اللّه	hayrat	1
 fidancıkları	فیدانجقلری	hayrat	1
+fidanı	فدانی	hayrat	1
 fidanın	فیدانڭ	hayrat	1
 fihristciği	فهرستجكی	hayrat	1
 fihristevârî	فهرسته‌واری	hayrat	1
@@ -996,14 +1277,20 @@ fiiliyim	فعلی یم	hayrat	1
 fikreyle	فكر أیله	hayrat	1
 fikrindeyiz	فكرنده‌یز	hayrat	1
 fikriydi	فكریدی	hayrat	1
+filizin	فیلیزڭ	hayrat	1
+filizlerini	فیلیزلرینی	hayrat	1
 firavuncuklara	فرعونجقلره	hayrat	1
 firavunluğu	فرعونلغی	hayrat	1
 firavunluğunun	فرعونلغنڭ	hayrat	1
 firengistan	فرنكستان	hayrat	1
 firengistanda	فرنكستانده	hayrat	1
+firenk	فرنك	hayrat	1
 firâsetki	فراستكه	hayrat	1
 fitnekâr	فتنه‌كار	hayrat	1
 fiytından	فیئاتندن	hayrat	1
+fişeklerine	فیشنكلرینه	hayrat	1
+fişekteki	فیشنكده‌كی	hayrat	1
+fonograflar	فنوغرافلر	hayrat	1
 frengistandan	فرنكستاندن	hayrat	1
 frengistanın	فرنكستانڭ	hayrat	1
 frenkçiliğe	فرنكجیلكه	hayrat	1
@@ -1025,14 +1312,17 @@ fırancala	فرانجاله	hayrat	1
 fırkacılık	فرقه‌جیلق	hayrat	1
 fırkacılıkla	فرقه‌جیلقله	hayrat	1
 fırçasıyla	فیرچه‌سیله	hayrat	1
+fırına	فرینه	hayrat	1
 fırıncılara	فرونجیلره	hayrat	1
 fırında	فیرینده	hayrat	1
 gabîleşir	غبیلشیر	hayrat	1
 gabîleşmesine	غبیلشمه‌سنه	hayrat	1
 gabît	غبیط	hayrat	1
+gadabı	غضبی	hayrat	1
 gafın	قافڭ	hayrat	1
 gaga	غاغا	hayrat	1
 gamdan	غمدن	hayrat	1
+garajının	غراژینڭ	hayrat	1
 garazkârlığı	غرضكارلغی	hayrat	1
 garazî	غرضی	hayrat	1
 garblılaşmaya	غربلیلاشمه‌یه	hayrat	1
@@ -1044,6 +1334,7 @@ garîbüzzamânı	غریب الزمانی	hayrat	1
 gavsiyet	غوثیّت	hayrat	1
 gavurluk	كاوورلق	hayrat	1
 gaziantep	غازی عینتاب	hayrat	1
+gazlı	غازلی	hayrat	1
 geciktirmeden	كیجیكدیرمدن	hayrat	1
 geciktirmedi	كجیكدیرمدی	hayrat	1
 geciktirmek	كجیكدیرمك	hayrat	1
@@ -1066,6 +1357,7 @@ gelinlik	كلینلك	hayrat	1
 gelmemesinden	كلمه‌مسندن	hayrat	1
 gelmemin	كلمه‌مڭ	hayrat	1
 gelmesen	كلمه‌سه‌ڭ	hayrat	1
+gelmeyeceğinden	كلمیه‌جكندن	hayrat	1
 gelmeyenlere	كلمه‌ینلری	hayrat	1
 gelseveya	كلسه و یا	hayrat	1
 gemlemiş	كمله‌مش	hayrat	1
@@ -1085,15 +1377,27 @@ getirilmemelidir	كتیریلمه‌ملیدر	hayrat	1
 getirinceye	كتیرنجه‌یه	hayrat	1
 geven	كوان	hayrat	1
 gevezeliğin	كوه‌زه‌لكڭ	hayrat	1
+gevezeliğine	كوزه‌لكنه	hayrat	1
 geylânî	كیلانی	hayrat	3
 geylânî'den	كیلانیدن	hayrat	1
 geylânî'nin	كیلانینڭ	hayrat	1
 gezdir	كزدیر	hayrat	1
 gezdirmesiyle	كزدیرمه‌سیله	hayrat	1
 geçce	كیچجه	hayrat	1
+geçemedi	كچه‌مدی	hayrat	1
+geçemeyecek	كچه‌میه‌جك	hayrat	1
+geçemiyor	كچه‌مییور	hayrat	1
+geçemiyoruz	كچه‌مییورز	hayrat	1
+geçilmesine	كچیلمه‌سنه	hayrat	1
+geçinememiş	كچینه‌مه‌مش	hayrat	1
+geçiniz	كچیڭز	hayrat	1
 geçirmemizi	كچیرمه‌مزی	hayrat	1
 geçirmeyi	كچیرمكی	hayrat	1
+geçitlerin	كچیدلرڭ	hayrat	1
 geçmemişse	كچمه‌مشسه	hayrat	1
+geçmesidir	كچمسیدر	hayrat	1
+geçmeyecek	كچمیه‌جك	hayrat	1
+geçmeyeceğim	كچمیه‌جكم	hayrat	1
 geçtiğimi	كچدیكمی	hayrat	1
 gidebilmesi	كیده‌بیلمه‌سی	hayrat	1
 gidemedim	كیده‌مدم	hayrat	1
@@ -1116,12 +1420,16 @@ giriştim	كیریشدم	hayrat	1
 girmektense	كیرمكدنسه	hayrat	1
 girmem	كیرمه‌م	hayrat	1
 girmemeye	كیرمه‌مكه	hayrat	1
+girmeyecekti	كیرمیه‌جكدی	hayrat	1
 girmiyorlar	كیرمییورلر	hayrat	1
+gitmediler	كیتمه‌دیلر	hayrat	1
 gitmelidir	كیتملیدر	hayrat	1
 gitmelidirler	كیتملیدرلر	hayrat	1
 gitmemeye	كیتمه‌مكه	hayrat	1
+gitmeyeceksiniz	كیتمیه‌جكسڭز	hayrat	1
 giydirirse	كییدیررسه	hayrat	1
 giyilmemesi	كییلمه‌مه‌سی	hayrat	1
+giyilmesinden	كیییلمه‌سندن	hayrat	1
 giyinişleri	كییینیشلری	hayrat	1
 giyinişleriyle	كییینیشلریله	hayrat	1
 giyinmelerini	كییینمه‌لرینی	hayrat	1
@@ -1158,11 +1466,15 @@ görememişler	كوره‌مه‌مشلر	hayrat	1
 görememiştir	كوره‌مه‌مشدر	hayrat	1
 görmekliğimizi	كورمكلكمزی	hayrat	1
 görmekteyiz	كورمكده‌یز	hayrat	1
+görmeyesin	كورمه‌یه‌سڭ	hayrat	1
 görmeyiz	كورمه‌یز	hayrat	1
 görmezsek	كورمزسه‌ك	hayrat	1
+görmüyormuşuz	كورمویورمشز	hayrat	1
 görmüşem	كورمشه‌م	hayrat	1
 görmüşlerse	كورمشلرسه	hayrat	1
 görücü	كوروجی	hayrat	1
+görülmesine	كورولمه‌سنه	hayrat	1
+görülmesini	كورولمه‌سنی	hayrat	1
 görüşemedik	كوروشه‌مدك	hayrat	1
 görüşemeyenlerin	كوروشه‌مه‌ینلرڭ	hayrat	1
 görüştürsünler	كوروشدیرسونلر	hayrat	1
@@ -1176,6 +1488,7 @@ gösterilememiştir	كوستریله‌مه‌مشدر	hayrat	1
 gösterilmemesini	كوستریلمه‌مسنی	hayrat	1
 göstermelidir	كوسترملیدر	hayrat	1
 göstermemeleriyle	كوسترمه‌ملریله	hayrat	1
+göstermeyeyim	كوسترمه‌یه‌یم	hayrat	1
 göstermeyi	كوسترمكی	hayrat	1
 götürdüğüne	كوتوردیكنه	hayrat	1
 götüremeyeceği	كوتوره‌میه‌جكی	hayrat	1
@@ -1197,6 +1510,7 @@ gülmesinden	كولمسندن	hayrat	1
 gülmesine	كولمه‌سنه	hayrat	1
 gülmeyi	كولمكی	hayrat	1
 gülyağlarına	كل یاغلرینه	hayrat	1
+gümler	كوملر	hayrat	1
 günbir	كون بر	hayrat	1
 gündoğudaki	كون طوغوده‌كی	hayrat	1
 gündoğudan	كون طوغودن	hayrat	1
@@ -1213,21 +1527,28 @@ gārib	غارب	hayrat	1
 gārâtgîr	غاراتكیر	hayrat	1
 gārâtkâr	غاراتكار	hayrat	1
 gıpta	غبطه	hayrat	1
+gıptaya	غبطه‌یه	hayrat	1
 habennekalar	هبنّقه‌لر	hayrat	1
 habîsât	خبیثات	hayrat	1
 habîsâta	خبیثاته	hayrat	1
 habîsâtı	خبیثاتی	hayrat	1
 hacceden	حج ایدن	hayrat	1
 hacimleri	حجملری	hayrat	1
+haczetmesine	حجز ایتمه‌سنه	hayrat	1
 haddime	حدّیمه	hayrat	1
 haddinin	حدّینڭ	hayrat	1
 hadîsiyeti	حدیثیّتی	hayrat	1
 hadımköyü'nde	خادم كوینده	hayrat	1
 hadımköyü'ne	خادم كوینه	hayrat	1
 hafazanallâhu	حفظنا اللّه	hayrat	1
+hafriyatsız	حفریاتسز	hayrat	1
 hafîflemesi	خفیفله‌مسی	hayrat	1
 hafızama	حافظه‌مه	hayrat	1
 hahambaşı	خاخام باشی	hayrat	1
+hahambaşısı	خاخام باشیسی	hayrat	1
+hakemün	حكم	hayrat	1
+hakkari	حكاری	hayrat	1
+hakkun	حقّ	hayrat	1
 hakkıyet	حقّیت	hayrat	1
 hakkıyeti	حقّیتی	hayrat	1
 hakkıyetini	حقّیتنی	hayrat	1
@@ -1238,9 +1559,16 @@ hakîkatperverlikte	حقیقتپرورلكده	hayrat	1
 hakîmin	حكیمڭ	hayrat	1
 hakîmiyetin	حكیمیّتڭ	hayrat	1
 hakîmiyetini	حكیمیتنی	hayrat	1
+halam	خاله‌م	hayrat	1
 halazâdesi	خاله زاده‌سی	hayrat	1
 haldeyim	حالده‌یم	hayrat	1
 haldeyiz	حالده‌یز	hayrat	1
+halep'te	حلبده	hayrat	1
+halkalarda	حلقه‌لرده	hayrat	1
+halkalardan	حلقه‌لردن	hayrat	1
+halkası	حلقه‌سی	hayrat	1
+halkasına	حلقه‌سنه	hayrat	1
+halkasının	حلقه‌سنڭ	hayrat	1
 halkedebilir	خلق ایده‌بیلیر	hayrat	1
 halketmesin	خلق ایتمسین	hayrat	1
 halketmişim	خلق ایتمشم	hayrat	1
@@ -1251,51 +1579,73 @@ halkında	خلقنده	hayrat	1
 halledilmesini	حل ایدیلمه‌سنی	hayrat	1
 halâskârdı	خلاصكاردی	hayrat	1
 halîme	حلیمه	hayrat	1
+halîç'de	خلیجده	hayrat	1
 hamam	حمام	hayrat	1
 hamdet	حمد ایت	hayrat	1
 hamdeyle	حمد أیله	hayrat	1
+hamdosun	حمد اولسون	hayrat	1
 hamiyetkârlığın	حمیتكارلغڭ	hayrat	1
 hamleden	حمل ایدن	hayrat	1
 hanefîleştirdikten	حنفیلشدیردكدن	hayrat	1
+hançeri	خنچری	hayrat	1
 hançerinle	خنچرڭله	hayrat	1
 hapseden	حپس ایدن	hayrat	1
+harakete	حركته	hayrat	1
 harakânî'nin	خرقانینڭ	hayrat	1
 haramiyeti	حرامیتی	hayrat	1
 haramiyetini	حرامیتنی	hayrat	1
 harcirâh	خرج راه	hayrat	1
+harec	حرج	hayrat	1
+harecdir	حرجدر	hayrat	1
 harekelemelere	حركه‌له‌مه‌لره	hayrat	1
 harfiyüzer	حرفی یوزر	hayrat	1
 haritacıkta	خریطه‌جقده	hayrat	1
 harketmişler	خرق ایتمشلر	hayrat	1
+harlayıp	خارلایوب	hayrat	1
 harâbiyetin	خرابیتڭ	hayrat	1
 harîskâr	حریصكار	hayrat	1
 harîsâne	حریصانه	hayrat	1
 hasanfeyzî	حسن فیضی؇	hayrat	1
 hasredilmesinden	حصر ایدیلمسندن	hayrat	1
+hasrettiğimizden	حصر ایتدیكمزدن	hayrat	1
+hastabakıcıların	خسته‌باقیجیلرڭ	hayrat	1
+hastanelerden	خسته‌خانه‌لردن	hayrat	1
+hastanelere	خسته‌خانه‌لره	hayrat	1
 hasımdı	خصمدی	hayrat	1
 hatfedecek	خطف ایده‌جك	hayrat	1
+hatipliği	خطیبلكی	hayrat	1
 hatmedip	ختم ایدوب	hayrat	1
 hatâiyâtın	خطائیاتڭ	hayrat	1
 hatîbbağı	خطیب باغی	hayrat	1
 hatîbiyim	خطیبی یم	hayrat	1
 hatîp	خطیب	hayrat	1
+havlusu	خاولیسی	hayrat	1
 havuzcuğuna	حوضجغنه	hayrat	1
+havyarından	خاویارندن	hayrat	1
 havâicini	حوائجنی	hayrat	1
 havâsları	خواصلری	hayrat	1
 havâslarının	خواصلرینڭ	hayrat	1
+havâssım	حواسّم	hayrat	1
+havâssımda	حواسمده	hayrat	1
+havâssımız	حواسمز	hayrat	1
+havâssını	حواسّنی	hayrat	1
 havâstaki	خواصده‌كی	hayrat	1
 havâtif	هواتف	hayrat	1
 hayaletten	خیالاتدن	hayrat	1
 hayatkârâne	حیاتكارانه	hayrat	1
 haydarpaşa'dan	حیدر پاشادن	hayrat	1
+haylazlığından	هایلازلغندن	hayrat	1
 hayretteyiz	حیرتده‌یز	hayrat	1
 hayrânlığın	حیرانلغڭ	hayrat	1
 hayrânlığının	حیرانلغنڭ	hayrat	1
 hayvancık	حیوانجق	hayrat	1
 hayvancığı	حیوانجغی	hayrat	1
 hayvancığın	حیوانجغڭ	hayrat	1
+hayyün	حیّ	hayrat	1
 hayâlimizce	خیالمزجه	hayrat	1
 hayâliyyûn	خیالیّون	hayrat	1
+hayâlı	حیالی	hayrat	1
+hazma	هضمه	hayrat	1
 hazmedebilir	هضم ایده‌بیلیر	hayrat	1
 hazmedemiyordum	هضم ایده‌مییوردم	hayrat	1
 hazâkat	حذاقت	hayrat	1
@@ -1309,6 +1659,7 @@ hazırlasın	حاضرلاسون	hayrat	1
 hazırlıyordu	حاضرلایوردی	hayrat	1
 hazırlıyorduk	حاضرلایوردق	hayrat	1
 hazırlıyorlar	حاضرلایورلر	hayrat	1
+haçlar	خاچلر	hayrat	1
 haşret	حشر ایت	hayrat	1
 haşreylesin	حشر أیله‌سین	hayrat	1
 hebenneka	هبنّقه	hayrat	1
@@ -1325,13 +1676,17 @@ herşeyin	هر شیئڭ	hayrat	1
 heveslenmeye	هوسلنمه‌یه	hayrat	1
 hevâiye	هوائیه	hayrat	1
 hey'âtının	هیئاتنڭ	hayrat	1
+heybede	هكبه‌ده	hayrat	1
 heybelerinizde	هكبه‌لریڭزده	hayrat	1
+heybeye	هكبه‌یه	hayrat	1
 hezeyanvârî	هذیان واری	hayrat	1
 hezliyât	هزلیّات	hayrat	1
 heşâş	هشاش	hayrat	1
 hikemiyât	حكمیّات	hayrat	1
 hikmetfeşân	حكمت فشان	hayrat	1
 hilekâr	حیله‌كار	hayrat	1
+hilekârâne	حیله‌كارانه	hayrat	1
+hillettir	خلّتدر	hayrat	1
 hilmiyetle	حلمیتله	hayrat	1
 hilâfât	خلافات	hayrat	1
 hilâfî	خلافی	hayrat	1
@@ -1343,19 +1698,31 @@ hindçe	هندجه	hayrat	1
 hindî	هندی	hayrat	1
 hisediyoruz	حس ایدییورز	hayrat	1
 hisettim	حس ایتدم	hayrat	1
+hissedebildiği	حسّ ایده‌بیلدیكی	hayrat	1
+hissedebiliyorum	حس ایده‌بیلییورم	hayrat	1
+hissedebilsin	حس ایده‌بیلسین	hayrat	1
+hissedemeyecek	حسّ ایده‌مه‌یه‌جك	hayrat	1
 hissetmekteyim	حسّ ایتمكده‌یم	hayrat	1
 hissetmişim	حس ایتمشم	hayrat	1
+hissettirmeyerek	حسّ ایتدیرمیه‌رك	hayrat	1
 hissettiğimdir	حس ایتدیكمدر	hayrat	1
 hissettiğimi	حسّ ایتدیكمی	hayrat	1
+hisseylediğim	حس ایله‌دیكم	hayrat	1
 hisârmış	حصارمش	hayrat	1
 hitâbiyât	خطابیات	hayrat	1
 hiyânet	خیانت	hayrat	1
+hizlândır	خذلاندر	hayrat	1
+hizmetkârlığında	خدمتكارلغنده	hayrat	1
+hizmetkârımın	خدمتكاریمڭ	hayrat	1
 hocaoğlu	خواجه اوغلی	hayrat	1
 hodendiş	خوداندیش	hayrat	1
 hodfurûşluğumu	خودفروشلغمی	hayrat	1
 hodfürûşâne	خودفروشانه	hayrat	1
 hodgâmî	خودكامی	hayrat	1
 hodserâne	خودسرانه	hayrat	1
+hoplayıp	خوپلایوب	hayrat	1
+hortlağa	خورتلاغه	hayrat	1
+hoşgörüp	خوش كوروب	hayrat	1
 hoşlanmıyorum	خوشلانمییورم	hayrat	1
 hoşnût	خوشنود	hayrat	1
 hristiyaniyete	خریستیانیته	hayrat	1
@@ -1368,6 +1735,7 @@ hudâperest	خدا پرست	hayrat	1
 hudâperesttirler	خدا پرستدرلر	hayrat	1
 hudâı	خداعی	hayrat	1
 hulfetmek	خلف ایتمك	hayrat	1
+hulfülva'de	خلف الوعده	hayrat	1
 hunâfir	خنافر	hayrat	1
 hurmeti	حرمتی	hayrat	1
 hurmetinde	حرمتنده	hayrat	1
@@ -1386,8 +1754,12 @@ husûsiyâtı	خصوصیّاتی	hayrat	1
 hutebânın	خطبانڭ	hayrat	1
 hutebâya	خطبایه	hayrat	1
 huzeyme'yi	خزیمه‌یی	hayrat	1
+huzû'	خضوع	hayrat	3
 huzûrkârâne	حضوركارانه	hayrat	1
 huzûrî	حضوری	hayrat	1
+hâcer	هاجر	hayrat	1
+hâcer'in	هاجرڭ	hayrat	1
+hâcerler	هاجرلر	hayrat	1
 hâcerleri	هاجرلری	hayrat	1
 hâcının	حاجینڭ	hayrat	1
 hâdimiyim	خادمی یم	hayrat	1
@@ -1397,12 +1769,18 @@ hâfızam	حافظه‌م	hayrat	1
 hâfızlığına	حافظلغنه	hayrat	1
 hâfıztevfîk	حافظ توفیق	hayrat	1
 hâfızımız	حافظمز	hayrat	1
+hâile	هائله	hayrat	1
 hâkim'in	حاكمڭ	hayrat	1
 hâkime	حاكمه	hayrat	1
 hâkimiyetiyle	حاكمیتی ایله	hayrat	1
 hâldaş	حالداش	hayrat	1
 hâldâşım	حالداشم	hayrat	1
+hâleler	هاله‌لر	hayrat	1
+hâlesi	هاله‌سی	hayrat	1
+hâlidî'dir	خالدیدر	hayrat	1
+hâlik'ça	خالقجه	hayrat	1
 hâlisen	خالصا	hayrat	1
+hâlledebilir	حل ایده‌بیلیر	hayrat	1
 hâlliler	حاللیلر	hayrat	1
 hâmilen	حاملا	hayrat	1
 hânedânımız	خاندانمز	hayrat	1
@@ -1417,6 +1795,8 @@ hârıktır	خارقدر	hayrat	1
 hâssasına	خاصّه‌سنه	hayrat	1
 hâssasından	خاصّه‌سندن	hayrat	1
 hâssasının	خاصّه‌سنڭ	hayrat	1
+hâsseten	خاصّة	hayrat	1
+hâssın	خاصّڭ	hayrat	1
 hâtemiyetine	خاتمیّتنه	hayrat	1
 hâtemiyim	خاتمی یم	hayrat	1
 hâtırlamaktır	خاطرلامقدر	hayrat	1
@@ -1436,6 +1816,7 @@ hücrâ	هجرا	hayrat	1
 hücrâya	هجرایه	hayrat	1
 hücümât	هجمات	hayrat	1
 hüdâdadır	هداده‌در	hayrat	1
+hüdâdır	هدادر	hayrat	1
 hüdûs	حدوث	hayrat	1
 hüdûsa	حدوثه	hayrat	1
 hükmedebiliyor	حكم ایده‌بیلییور	hayrat	1
@@ -1448,19 +1829,29 @@ hülyalarını	خولیالرینی	hayrat	1
 hülyâlarda	خلیالرده	hayrat	1
 hürmetnâmemizi	حرمتنامه‌مزی	hayrat	1
 hürmetnâmesi	حرمتنامه‌سی	hayrat	1
+hürrem	خرّم	hayrat	1
 hüsünlü	حسنلی	hayrat	1
 hüsünperver	حسنپرور	hayrat	1
+hıdırellez	خضر الیاس	hayrat	1
 hıfzî	حفظی	hayrat	1
 hıfzî'nın	حفظینڭ	hayrat	1
 hınzırlaşır	خنزیرلاشیر	hayrat	1
+hırpaladı	خیرپالادی	hayrat	1
+hırpalayacak	خیرپه‌لایاجق	hayrat	1
 hırpalayacaklardı	خیرپالایاجقلردی	hayrat	1
+hırpalayan	خیرپالایان	hayrat	1
 hırsızlamışlar	خیرسزلامشلر	hayrat	1
 hırsızlıyordu	خیرسزلایوردی	hayrat	1
 hırsızlığın	خیرسزلغڭ	hayrat	1
+hısası	حصصی	denetim	1
 hıyârcık	خیارجق	hayrat	1
 hızla	خیزله	hayrat	1
+hızlandıkça	خیزلاندقجه	hayrat	1
+hızlanıyor	خیزلانییور	hayrat	1
 hızır'ına	خضرینه	hayrat	1
 hızır'ınız	خضریڭز	hayrat	1
+hışhış	خیش خیش	hayrat	1
+hışıltılarınız	خیشیلتیلریڭز	hayrat	1
 i'câzdaki	اعجازده‌كی	hayrat	1
 i'câzdır	اعجازدر	hayrat	3
 i'lâncılıktır	اعلانجیلقدر	hayrat	1
@@ -1470,6 +1861,8 @@ i'tikādıma	اعتقادیمه	hayrat	1
 i'tikādımızda	اعتقادیمزده	hayrat	1
 i'tikādımızı	اعتقادیمزی	hayrat	1
 i'tikādının	اعتقادینڭ	hayrat	1
+i'tilâfçı	ائتلافجی	hayrat	1
+i'tilâsını	اعتلاسنی	hayrat	1
 i'timâdıma	اعتمادیمه	hayrat	1
 i'timâdının	اعتمادینڭ	hayrat	1
 ibdâî	ابداعی	hayrat	1
@@ -1493,10 +1886,12 @@ ictimâiyâtın	اجتماعیاتڭ	hayrat	1
 idareme	اداره‌مه	hayrat	1
 iddianemesine	ادعانامه‌سنه	hayrat	1
 idiğini	ایدیكنی	hayrat	1
+idâreten	ادارة	hayrat	1
 ifadâtının	افاداتنڭ	hayrat	1
 ifrâtperverânelerin	افراطپرورانه‌لرڭ	hayrat	1
 iftihârkârâne	افتخاركارانه	hayrat	1
 iftirânâmesine	افترانامه‌سنه	hayrat	1
+ihfâda	اخفاده	hayrat	1
 ihtilâtât	اختلاطات	hayrat	1
 ihtimâlen	احتمالا	hayrat	1
 ihtimâmât	اهتمامات	hayrat	1
@@ -1522,13 +1917,19 @@ ikiydi	ایكیدی	hayrat	1
 iknâen	اقناعا	hayrat	1
 iknâiyâtta	اقناعیاتده	hayrat	1
 iktidarlarınca	اقتدارلرنجه	hayrat	1
+iktisâtçı	اقتصادجی	hayrat	1
 ikāzât	ایقاظات	hayrat	1
 ilac	علاچ	hayrat	1
+ilama'da	ایلاماده	hayrat	1
+ilamalı	ایلامالی	hayrat	1
 ilaçlı	علاچلی	hayrat	1
+ilcââtları	الجاآتلری	hayrat	1
+ilcâından	الجائندن	hayrat	1
 ilebaktığı	ایله باقدیغی	hayrat	1
 ilerileme	ایلریله‌مه	hayrat	1
 ilerilesen	ایلرله‌سه‌ڭ	hayrat	1
 ilerlemeye	ایلرله‌مكه	hayrat	1
+ilerletti	ایلریلتدی	hayrat	1
 ilimvehikmetle	علم و حكمتله	hayrat	1
 ilini	ایلنی	hayrat	1
 ilişemedim	ایلیشه‌مدم	hayrat	1
@@ -1539,11 +1940,26 @@ ilişmemişiz	ایلیشمه‌مشز	hayrat	1
 ilişmese	ایلیشمه‌سه	hayrat	1
 iliştirmiyor	ایلیشدیرمه‌یور	hayrat	1
 ilkbahar	ایلك بهار	hayrat	1
+ilmihâli	علم حالی	hayrat	1
+ilticâgâhı	التجاكاهی	hayrat	1
+iltifâtnâmelerdeki	التفاتنامه‌لرده‌كی	hayrat	1
+iltihâken	التحاقا	hayrat	1
+iltizâmkârâne	التزامكارانه	hayrat	1
+ilâhenâ	الهنا	hayrat	1
+ilâma'ya	ایلامه‌یه	hayrat	1
 im'ânla	امعانله	hayrat	1
 imlâlı	املالی	hayrat	1
 imlâsına	املاسنه	hayrat	1
 imlâsında	املاسنده	hayrat	1
 imlâsını	املاسنی	hayrat	1
+imparatorluğu'nun	ایمپاراطورلغنڭ	hayrat	1
+imzâlayan	امضالایان	hayrat	1
+in'ikâsla	انعكاسله	hayrat	1
+in'ikâslarıdır	انعكاسلریدر	hayrat	1
+in'ikâsât	انعكاسات	hayrat	1
+in'ikâsâtından	انعكاساتندن	hayrat	1
+in'ikâsında	انعكاسنده	hayrat	1
+in'ikâsının	انعكاسنڭ	hayrat	1
 inananlardanım	اینانانلردنم	hayrat	1
 inanmıyorsan	اینانمایورسه‌ڭ	hayrat	1
 inanmıyoruz	اینانمییورز	hayrat	1
@@ -1551,6 +1967,7 @@ incelenmesinden	اینجه‌لنمه‌سندن	hayrat	1
 inceleşmesi	اینجه‌لشمه‌سی	hayrat	1
 inceliyor	اینجه‌لییور	hayrat	1
 incizâbî	انجذابی	hayrat	1
+indimde	عندمده	hayrat	1
 indirirse	ایندیررسه	hayrat	1
 indirmesi	ایندیرمه‌سی	hayrat	1
 indirmeyecek	ایندیرمیه‌جك	hayrat	1
@@ -1562,6 +1979,7 @@ inliyorsun	ایڭله‌یورسڭ	hayrat	1
 inmedi	اینمه‌دی	hayrat	1
 inmedikçe	اینمدكجه	hayrat	1
 inmeli	اینملی	hayrat	1
+inmesidir	اینمه‌سیدر	hayrat	1
 insanlığınız	انسانلغڭز	hayrat	1
 insanoğlu	انسان اوغلی	hayrat	1
 insanoğullarıyla	انسان اوغوللریله	hayrat	1
@@ -1589,6 +2007,7 @@ islâmköy'ünü	اسلام كوینی	hayrat	1
 islâmköy'ünün	اسلام كوینڭ	hayrat	1
 ismetsiz	عصمتسز	hayrat	1
 ismiye	اسمیه	hayrat	1
+ispanya'da	ایسپانیه‌ده	hayrat	1
 ispanya'ya	اسپانیه‌یه	hayrat	1
 ispanyol	اسپانیول	hayrat	1
 isrâîliyyâtı	اسرائیلیاتی	hayrat	1
@@ -1598,6 +2017,7 @@ istemeyeceksiniz	ایسته‌مه‌یه‌جكسڭز	hayrat	1
 istemeyeceğini	ایسته‌مه‌یه‌جكنی	hayrat	1
 istenilmesi	ایسته‌نیلمه‌سی	hayrat	1
 istenilmesiyle	ایستنیلمسیله	hayrat	1
+istenilmişti	ایستنیلمشدی	hayrat	1
 istersek	ایسترسه‌ك	hayrat	1
 istetiyor	ایستتییور	hayrat	1
 isteyelim	ایسته‌یه‌لم	hayrat	1
@@ -1605,18 +2025,27 @@ isteyinceye	ایسته‌ینجه‌یه	hayrat	1
 isteği	ایستكی	hayrat	1
 isti'dâden	استعدادا	hayrat	1
 isti'dâdımız	استعدادیمز	hayrat	1
+isti'dâdınız	استعدادیڭز	hayrat	1
+isti'lâya	استیلایه	hayrat	1
 istibdâtla	استبدادله	hayrat	1
 istibkā	استبقا	hayrat	1
 istid'âda	استدعاده	hayrat	1
+istid'âdlarında	استعدادلرنده	hayrat	1
+istifadeten	استفادة	hayrat	1
+istifâzaten	استفاضة	hayrat	1
 istigāseme	استغاثه‌مه	hayrat	1
 istihzâen	استهزاء	hayrat	1
 istihzâkârane	استهزاكارانه	hayrat	1
+istihzârat	استحضارات	hayrat	1
 istikametkârâne	استقامتكارانه	hayrat	1
 istikbâlen	استقبالا	hayrat	1
 istikbâllinde	استقبالنده	hayrat	1
 istilâsındaki	استیلاسنده‌كی	hayrat	1
 istimdâdgâhı	استمدادكاهی	hayrat	1
 istimâ'larından	استماعلرندن	hayrat	1
+istimâı	استماعی	hayrat	1
+istimâına	استماعنه	hayrat	1
+istimâında	استماعنده	hayrat	1
 istinbâtâtına	استنباطاتنه	hayrat	1
 istirahatgâhıdır	استراحتكاهیدر	hayrat	1
 istirhâmkârane	استرحامكارانه	hayrat	1
@@ -1628,19 +2057,27 @@ istiyorken	ایسته‌یوركن	hayrat	1
 istiğrâbkârâne	استغرابكارانه	hayrat	1
 istiğrâbınız	استغرابڭز	hayrat	1
 istişârem	استشاره‌م	hayrat	1
+isyankârdan	عصیانكاردن	hayrat	1
+isyankârların	عصیانكارلرڭ	hayrat	1
+isyankârâne	عصیانكارانه	hayrat	1
 itfâiye	اطفائیه	hayrat	1
 itfâiyenin	اطفائیه‌نڭ	hayrat	1
+ithimâl	احتمال	hayrat	1
 ithâmnâmedeki	اتهامنامه‌ده‌كی	hayrat	1
 ittifâkkârane	اتّفاقكارانه	hayrat	1
 ittihât	اتّحاد	hayrat	1
 ittikāları	اتّقالری	hayrat	1
 iydinizi	عیدیڭزی	hayrat	1
 izinnâmesi	اذن نامه‌سی	hayrat	1
+izmir'in	ایزمیرڭ	hayrat	1
 iznen	اذنا	hayrat	1
 izâfeten	اضافتا	hayrat	1
 içelim	ایچه‌لم	hayrat	1
 içim	ایچم	hayrat	1
+içimde	ایچمده	hayrat	1
+içime	ایچمه	hayrat	1
 içindeyken	ایچنده ایكن	hayrat	1
+içirmesine	ایچیرمه‌سنه	hayrat	1
 içirsin	ایچیرسین	hayrat	1
 içişleri	ایچ ایشلری	hayrat	1
 içmemizin	ایچمه‌مزڭ	hayrat	1
@@ -1665,17 +2102,27 @@ işliyormuşuz	ایشله‌یورمشز	hayrat	1
 iştigalâttan	اشتغالاتدن	hayrat	1
 iştiyâkan	اشتیاقا	hayrat	1
 jurnalciliğini	ژورنالجیلكنی	hayrat	1
+kabalaşan	قابه‌لاشان	hayrat	1
+kabarcık	قبارجق	hayrat	1
+kabarıyor	قبارییور	hayrat	1
+kabine	قابینه	hayrat	1
+kabinenin	قابینه‌نڭ	hayrat	1
+kablelvukū'	قبل الوقوع	hayrat	4
 kabukçuğunu	قابوقجغنی	hayrat	1
+kadir'ini	قدرینی	hayrat	1
 kadıncığın	قادینجغڭ	hayrat	1
 kaf'a	قفه	hayrat	1
 kaf'ın	كافڭ	hayrat	1
 kafamıza	قفامزه	hayrat	1
+kahramalarından	قهرمانلرندن	hayrat	1
 kahramancıklığıyla	قهرمانجقلغیله	hayrat	1
 kahramanlığından	قهرمانلغندن	hayrat	1
+kahramanlığınızı	قهرمانلغڭزی	hayrat	1
 kahriyyât	قهریات	hayrat	1
 kahyası	كهیاسی	hayrat	1
 kal'adayım	قلعه‌ده‌یم	hayrat	1
 kal'asındayız	قلعه‌سنده‌ییز	hayrat	1
+kalabalığı	غلبه‌لغی	hayrat	1
 kalboluyor	قلب اولویور	hayrat	1
 kaldıramadım	قالدیرامدم	hayrat	1
 kaldıramadığını	قالدیرامدیغنی	hayrat	1
@@ -1695,32 +2142,55 @@ kalmamaklığımızı	قا لمامقلغمزی	hayrat	1
 kalmamasına	قالمامسنه	hayrat	1
 kalmamasını	قالمامسنی	hayrat	1
 kalmamaya	قالمامغه	hayrat	1
+kalmasında	قالمسنده	hayrat	1
+kalmayasın	قالمایاسڭ	hayrat	1
 kalmıyorsunuz	قالمییورسڭز	hayrat	1
 kalmıyoruz	قالمییورز	hayrat	1
 kalsaydılar	قالسه ایدیلر	hayrat	1
 kalışına	قالیشنه	hayrat	1
+kamaştırıyorlar	قماشدیرییورلر	hayrat	1
 kamerse	قمرسه	hayrat	1
 kamçılamasıdır	قامچیلامسیدر	hayrat	1
 kamçılıyor	قامچیلایور	hayrat	1
 kamıştandır	قامیشدندر	hayrat	1
+kanadlarını	قنادلرینی	hayrat	1
+kanadlarıyla	قنادلریله	hayrat	1
+kanalı'na	قنالنه	hayrat	1
+kanalıyla	قنالیله	hayrat	1
 kanatlarla	قناتلرله	hayrat	1
 kancasıyla	قانجه‌سیله	hayrat	1
+kandım	قاندم	hayrat	1
 kandıramıyacakları	قاندیرامایاجقلری	hayrat	1
 kanuniyet	قانونیت	hayrat	1
 kanunperestliğini	قانونپرستلكنی	hayrat	1
+kapadık	قپادق	hayrat	1
+kapadıkları	قپادقلری	hayrat	1
+kapadınız	قپادیڭز	hayrat	1
+kapadığım	قپادیغم	hayrat	1
+kapakları	قپاقلری	hayrat	1
+kapaklarının	قپاقلرینڭ	hayrat	1
+kapamıştım	قپامشدم	hayrat	1
+kapandığı	قپاندیغی	hayrat	1
 kapanmaması	قاپانمامسی	hayrat	1
+kapanmasından	قپانمه‌سندن	hayrat	1
 kapanıncaya	قاپاننجه‌یه	hayrat	1
 kapanırdı	قپانیردی	hayrat	1
 kapanırsa	قپانیرسه	hayrat	1
+kapanıyordu	قپانییوردی	hayrat	1
 kapat	قاپات	hayrat	1
 kapatabilir	قاپاتابیلیر	hayrat	1
+kapatabilirsen	قپادابیلیرسه‌ڭ	hayrat	1
+kapatan	قپاتان	hayrat	1
+kapayacağımız	قپایاجغمز	hayrat	1
 kapayamadığınız	قاپایامدیغڭز	hayrat	1
+kapayamaz	قپایاماز	hayrat	1
 kaptın	قاپدڭ	hayrat	1
 kaptıracak	قاپدیراجق	hayrat	1
 kaptırma	قاپدیرما	hayrat	1
 kaptırmak	قاپدیرمق	hayrat	1
 kaptırmakla	قاپدیرمقله	hayrat	1
 kaptırmaz	قاپدیرماز	hayrat	1
+kapçıktaki	قاپجقده‌كی	hayrat	1
 kapılı	قاپیلی	hayrat	1
 kapılıyormuşuz	قاپیلییورمشز	hayrat	1
 kapımın	قاپومڭ	hayrat	1
@@ -1731,10 +2201,24 @@ karargâhtaki	قراركاهده‌كی	hayrat	1
 kardeşlikleri	قرداشلكلری	hayrat	1
 kardeşliğe	قرداشلكه	hayrat	1
 kardeşliğimin	قرداشلغمڭ	hayrat	1
+kardeşliğimizi	قرداشلكمزی	hayrat	1
 kardeşliğinde	قرداشلغنده	hayrat	1
+kardeşliğinin	قرداشلكنڭ	hayrat	1
+kardeşliğinize	قرداشلغڭزه	hayrat	1
+kardeşliğinizi	قرداشلغڭزی	hayrat	1
 kardeşsiniz	قرداشسڭز	hayrat	1
+kargaşalık	قارغشه‌لق	hayrat	1
+karnı	قارنی	hayrat	1
+karnın	قارنڭ	hayrat	1
+karnına	قارننه	hayrat	1
+karnını	قارننی	hayrat	1
 kartopu	قار طوپی	hayrat	1
+karîham	قریحه‌م	hayrat	1
+karîhamla	قریحه‌مله	hayrat	1
+karındaşları	قرینداشلری	hayrat	1
+karınları	قارینلری	hayrat	1
 karışa	قاریشا	hayrat	1
+karışmasında	قاریشمه‌سنده	hayrat	1
 karıştırmanın	قاریشدیرمه‌نڭ	hayrat	1
 karıştırmasıyla	قاریشدیرمه‌سیله	hayrat	1
 karıştırılmadan	قاریشدیریلمدن	hayrat	1
@@ -1751,13 +2235,17 @@ karşılayacaklardır	قارشولایاجقلردر	hayrat	1
 karşılayacakları	قارشولایاجقلری	hayrat	1
 karşılayacaktır	قارشیلایاجقدر	hayrat	1
 kasalarımıza	قاصه‌لریمزه	hayrat	1
+kasatura	قصاتوره	hayrat	1
+kasaturayı	قصاتوره‌یی	hayrat	1
 kasdederim	قصد ایدرم	hayrat	1
 kastamonu'yanefyettiler	قسطمونی یه نفی ایتدیلر	hayrat	1
+kasten	قصدا	hayrat	1
 kasîdecik	قصیده‌جك	hayrat	1
 kasîdeciğini	قصیده‌جكنی	hayrat	1
 kasîdehân	قصیده خوان	hayrat	1
 kat'ederse	قطع ایدرسه	hayrat	1
 kat'etmesini	قطع ایتمه‌سنی	hayrat	1
+kat'etse	قطع ایتسه	hayrat	1
 kat'ileşmek	قطعیلشمك	hayrat	1
 kat'îbir	قطعی بر	hayrat	1
 kat'îlemiştir	قطع أیله‌مشدر	hayrat	1
@@ -1765,7 +2253,16 @@ kat'îleşeceğine	قطعیلشه‌جكنه	hayrat	1
 kat'îleşti	قطعیلشدی	hayrat	1
 katleden	قتل ایدن	hayrat	1
 katliam	قتل عام	hayrat	1
+katliamlara	قتل عاملره	hayrat	1
+katliamları	قتل عاملری	hayrat	1
 katmasına	قاتمه‌سنه	hayrat	1
+katmerlisidir	قتمرلیسیدر	hayrat	1
+katâde	قتاده	hayrat	1
+katâr	قطار	hayrat	1
+katârı	قطاری	hayrat	1
+katârına	قطارینه	hayrat	1
+katûf	قطوف	hayrat	1
+katı'dan	قطعدن	hayrat	1
 katı'na	قاتنه	hayrat	1
 katılabilmemiz	قاتیلابیلمه‌مز	hayrat	1
 kavrayamadığındandır	قاورایامدیغندندر	hayrat	1
@@ -1781,8 +2278,13 @@ kayb	غیب	hayrat	1
 kaybedeceksiniz	غائب ایده‌جكسڭز	hayrat	1
 kaybedilse	غائب ایدیلسه	hayrat	1
 kaybediyorsunuz	غائب ایدییورسڭز	hayrat	1
+kaybetmeden	غائب ایتمدن	hayrat	1
+kaybetmesi	غائب ایتمه‌سی	hayrat	1
 kaybetmesiyle	غائب ایتمه‌سیله	hayrat	1
+kaybetmeyerek	غائب ایتمیه‌رك	hayrat	1
+kaybetmiyor	غائب ایتمییور	hayrat	1
 kaybettiklerinden	غائب ایتدكلرندن	hayrat	1
+kayboluncaya	غائب اولنجه‌یه	hayrat	1
 kaydedebilirsin	قید ایده‌بیلیرسڭ	hayrat	1
 kaydedilmesini	قید ایدیلمه‌سنی	hayrat	1
 kaydetmemeleriyle	قید ایتمه‌مه‌لریله	hayrat	1
@@ -1790,10 +2292,13 @@ kaydî	قید	hayrat	1
 kayettikten	قی ایتدكدن	hayrat	1
 kaygısındadırlar	قایغیسنده‌درلر	hayrat	1
 kayser	قیصر	hayrat	1
+kayyûmün	قیّوم	hayrat	1
 kayyını	قیّنی	hayrat	1
 kayıb	غائب	hayrat	1
 kayıdsızlığınızdan	قیدسزلغڭزدن	hayrat	1
+kayınvâlidem	قاین والده‌م	denetim	1
 kayınvâlidesiyle	قاین والده‌سیله	hayrat	1
+kazakları	قزاقلری	hayrat	1
 kazanabilsin	قازانابیلسین	hayrat	1
 kazanacaklar	قازاناجقلر	hayrat	1
 kazanacaksın	قازاناجقسڭ	hayrat	1
@@ -1805,9 +2310,17 @@ kazanlar	قازانلر	hayrat	1
 kazanmadığından	قازانمادیغندن	hayrat	1
 kazanmamaları	قازانمامه‌لری	hayrat	1
 kazanmamızı	قازانمه‌مزی	hayrat	1
+kazanılmadan	قزانیلمدن	hayrat	1
 kazanılsın	قازانیلسین	hayrat	1
 kazdır	قازدیر	hayrat	1
+kaziyede	قضیه‌ده	hayrat	1
+kaziyeden	قضیه‌دن	hayrat	1
+kaziyeleri	قضیه‌لری	hayrat	1
+kaziyelerin	قضیه‌لرڭ	hayrat	1
+kaziyesi	قضیه‌سی	hayrat	1
+kaziyesince	قضیه‌سنجه	hayrat	1
 kaziyesindeki	قضیّه‌سنده‌كی	hayrat	1
+kaziyeye	قضیه‌یه	hayrat	1
 kaçamayacak	قاچامیاجق	hayrat	1
 kaçma	قاچما	hayrat	1
 kaçmamalarıyla	قاچماملریله	hayrat	1
@@ -1818,6 +2331,7 @@ kaçırırsın	قاچیریرسڭ	hayrat	1
 kaş'ta	قاشده	hayrat	1
 kehkeşân'daki	كهكشانده‌كی	hayrat	1
 kehânetfurûşlar	كهانتفروشلر	hayrat	1
+kelimetullâhın	كلمة اللّهڭ	hayrat	1
 kelimeyle	كلمه ایله	hayrat	1
 kelâmımdaki	كلاممده‌كی	hayrat	1
 kemmen	كمّا	hayrat	1
@@ -1838,16 +2352,20 @@ kesbetsek	كسب ایتسه‌ك	hayrat	1
 kesbettiğimizden	كسب ایتدیكمزدن	hayrat	1
 kesersek	كسرسه‌ك	hayrat	1
 kesilmemesini	كسیلمه‌مه‌سنی	hayrat	1
+kesilmeyecektir	كسیلمیه‌جكدر	hayrat	1
 kesmediğim	كسمه‌دیكم	hayrat	1
 kestirilmediği	كسدیریلمدیكی	hayrat	1
 kestiğimi	كسدیكمی	hayrat	1
 kesîrlerin	كثیرلرڭ	hayrat	1
 keyfen	كیفا	hayrat	1
+keçeci	كچه‌جی	hayrat	1
 keşfedebildiğini	كشف ایده‌بیلدیكنی	hayrat	1
 keşfedebilirler	كشف ایده‌بیلیرلر	hayrat	1
 kifâyetimizin	كفایتمزڭ	hayrat	1
 kifâyetsizliğimden	كفایتسزلكمدن	hayrat	1
 kilidimi	كلیدیمی	hayrat	1
+kilisesi	كلیساسی	hayrat	1
+kilisesi'ne	كلیساسنه	hayrat	1
 kilitliyorum	كلیدله‌یورم	hayrat	1
 kimselerdik	كیمسه‌لردك	hayrat	1
 kimsemiz	كیمسه‌مز	hayrat	1
@@ -1855,11 +2373,14 @@ kimsesizliğime	كیمسه‌سزلكمه	hayrat	1
 kindâr	كینه‌دار	hayrat	1
 kinin	كینین	hayrat	1
 kinâyet	كنایت	hayrat	1
+kinâyeten	كنایة	hayrat	1
 kinâyetten	كنایتدن	hayrat	1
 kinâyât	كنایات	hayrat	1
 kiraladığım	كرالادیغم	hayrat	1
+kitâbün	كتاب	hayrat	1
 kişnemeyi	كیشنه‌مه‌یی	hayrat	1
 kocakarı	قوجه‌قاری	hayrat	1
+kocakarıyı	قوجه قاری یی	hayrat	1
 kokmasıyla	قوقمسیله	hayrat	1
 kokucuk	قوقوجق	hayrat	1
 kolaylaştırıvermesi	قولایلاشدیریویرمه‌سی	hayrat	1
@@ -1870,18 +2391,25 @@ koltuğumun	قولتوغمڭ	hayrat	1
 koltuğuna	قولتوغنه	hayrat	1
 komünizim	قومونیزم	hayrat	1
 konduramaz	قوندیراماز	hayrat	1
+konferanslar	قونفه‌رانسلر	hayrat	1
+konferansı'na	قونفه‌رانسنه	hayrat	1
+konferansı'nın	قونفه‌رانسنڭ	hayrat	1
+konferansın	قونفه‌رانسڭ	hayrat	1
 konmasından	قونمه‌سندن	hayrat	1
 konuşamadığım	قونوشامدیغم	hayrat	1
 konuşamadığımdan	قونوشامدیغمدن	hayrat	1
 konuşmadığımın	قونوشمدیغمڭ	hayrat	1
 konuşmama	قونوشمه‌مه	hayrat	1
 konuşmamla	قونوشمه‌مله	hayrat	1
+konuşmasından	قونوشمه‌سندن	hayrat	1
+konuşmayınız	قونوشماییڭز	hayrat	1
 konuştun	قونوشدڭ	hayrat	1
 konuşturmasıdır	قونوشدیرمسیدر	hayrat	1
 konuşturulmuş	قونوشدیریلمش	hayrat	1
 konuşuyormuşum	قونوشویورمشم	hayrat	1
 koparmasından	قوپارمه‌سندن	hayrat	1
 kopmamasına	قوپمامسنه	hayrat	1
+kopmasında	قوپمه‌سنده	hayrat	1
 korkmadın	قورقمادڭ	hayrat	1
 korkmalısınız	قورقملیسڭز	hayrat	1
 korkmuyorsan	قورقمییورسه‌ڭ	hayrat	1
@@ -1891,6 +2419,7 @@ korkutması	قورقوتمسی	hayrat	1
 korkutmuyor	قورقوتمییور	hayrat	1
 kosova'da	قوصوه‌ده	hayrat	1
 kosova'ya	قوصوه‌یه	hayrat	1
+kovacak	قوغاجق	hayrat	1
 kovanına	قوواننه	hayrat	1
 kovmak	قوغمق	hayrat	1
 koyduracağım	قویدیراجغم	hayrat	1
@@ -1911,21 +2440,31 @@ koşturulmuş	قوشدیریلمش	hayrat	1
 koşturulur	قوشدیریلیر	hayrat	1
 koşuyormuşum	قوشویورمشم	hayrat	1
 kriz	قریز	hayrat	1
+kuburdaki	قبورده‌كی	hayrat	1
+kuddûsün	قدّوس	hayrat	1
 kudretteyim	قدرتده‌یم	hayrat	1
+kule	قله	hayrat	1
 kulelerdeki	قوله‌لرده‌كی	hayrat	1
+kulesi	قله‌سی	hayrat	1
 kuleönülü	قوله اوڭیلی	hayrat	1
+kullanmasına	قوللانمه‌سنه	hayrat	1
 kuluncum	قولونجم	hayrat	1
 kulunuz	قولڭز	hayrat	1
 kuluyuz	قولی یز	hayrat	1
+kulüpleri	قولوپلری	hayrat	1
 kumandancıklara	قوماندانجقلره	hayrat	1
 kundakçının	قونداقجینڭ	hayrat	1
 kurbanıyım	قربانی یم	hayrat	1
 kurbetle	قربتله	hayrat	1
+kurcalayan	قورجه‌لایان	hayrat	1
+kurmaya	قورمه‌یه	hayrat	1
 kurtaramadığım	قورتارامدیغم	hayrat	1
 kurtarılmamızı	قورتاریلمه‌مزی	hayrat	1
 kurtarılması	قورتاریلمه‌سی	hayrat	1
+kurtların	قوردلرڭ	hayrat	1
 kurtlaşmış	قوردلاشمش	hayrat	1
 kurtludur	قورتلیدر	hayrat	1
+kurtuba	قرطبه	hayrat	1
 kurtulabileceklerini	قورتولابیله‌جكلرینی	hayrat	1
 kurtulamadıklarını	قورتولامدقلرینی	hayrat	1
 kurtulamadığımı	قورتولامدیغمی	hayrat	1
@@ -1960,13 +2499,17 @@ küfriyât	كفریّات	hayrat	1
 küfriyâtlarıyla	كفریاتلریله	hayrat	1
 küfvü	كفوی	hayrat	1
 küheylân	كهیلان	hayrat	1
+külliyemizi	كلّیه‌مزی	hayrat	1
 külliyenin	كلّینڭ	hayrat	1
 küllîleşmesi	كلّیلشمه‌سی	hayrat	1
 küllîleştirmek	كلّیلشدیرمك	hayrat	1
 küngân	كنكان	hayrat	1
 küngânlık	كنكانلق	hayrat	1
 künyelendirmenizi	كنیه‌لندیرمه‌ڭزی	hayrat	1
+kürd'e	كرده	hayrat	1
 kürd'ü	كوردی	hayrat	1
+kürdcülük	كردجیلك	hayrat	1
+kürde	كرده	hayrat	1
 kürdî'yi	كردی	hayrat	1
 kürsü	كرسی	hayrat	1
 kürtçülük	كردجیلك	hayrat	1
@@ -1990,6 +2533,7 @@ küşûfuyla	كشوفیله	hayrat	1
 kādıhân	قاضی خان	hayrat	1
 kāf'a	قاف	hayrat	1
 kāfiyeperestlik	قافیه‌پرستلك	hayrat	1
+kālelerini	قلعه‌لرینی	hayrat	1
 kāllî	قاللی	hayrat	1
 kālîdir	قالیدر	hayrat	1
 kāmetinden	قامتندن	hayrat	1
@@ -2014,10 +2558,13 @@ kılınçlarını	قیلینجلرینی	hayrat	1
 kımıldanamadı	قیمیلدانامادی	hayrat	1
 kımıldatmadı	قیمیلداتمادی	hayrat	1
 kır'âv	قرآو	hayrat	1
+kıraağaç	قره آغاچ	hayrat	1
 kıracaklardı	قیراجقلردی	hayrat	1
+kırbacıyla	قیرباجیله	hayrat	1
 kırklareli	قرقلر ایلی	hayrat	1
 kırmadığımı	قیرمدیغمی	hayrat	1
 kırmalarıyla	قیرمه‌لریله	hayrat	1
+kırmasıdır	قیرمسیدر	hayrat	1
 kırmayız	قیرمایز	hayrat	1
 kırmıyorlar	قیرمییورلر	hayrat	1
 kırmıyorum	قیرمییورم	hayrat	1
@@ -2025,12 +2572,16 @@ kırpmadan	قیرپمادن	hayrat	1
 kırâeten	قرائتا	hayrat	1
 kırılmadan	قیریلمدن	hayrat	1
 kırılmaması	قیریلمامسی	hayrat	1
+kırılmasından	قیریلمه‌سندن	hayrat	1
+kısalmasındaki	قیصالمه‌سنده‌كی	hayrat	1
 kısasını	قیصه‌سنی	hayrat	1
 kıssat	قصّات	hayrat	1
 kıssâtı	قصّاتی	hayrat	1
 kısâsımızı	قصاصمزی	hayrat	1
+kıvılcımlarıyla	قیویلجیملریله	hayrat	1
 kıyyelik	قیّه‌لق	hayrat	1
 kıyâstaki	قیاسده‌كی	hayrat	1
+kıyılanmış	قییلانمش	hayrat	1
 kızmıyoruz	قیزمییورز	hayrat	1
 kūt'un	قوتڭ	hayrat	1
 lafzulâh	لفظ اللّه	hayrat	1
@@ -2044,6 +2595,7 @@ latîfliğine	لطیفلكنه	hayrat	1
 leal	لعل	hayrat	1
 lehime	لهمه	hayrat	1
 lehindeyim	لهنده‌یم	hayrat	1
+lehte	لهده	hayrat	1
 lekeledi	لكه‌له‌دی	hayrat	1
 lekelendiren	لكه‌لندیرن	hayrat	1
 lekelendirmeye	لكه‌لندیرمكه	hayrat	1
@@ -2082,10 +2634,19 @@ lâyihamı	لایحه‌می	hayrat	1
 lâyuhtî	لایخطی	hayrat	1
 lâyüs'eldir	لا یسئلدر	hayrat	1
 lâğım	لاغیم	hayrat	1
+lügatce	لغتجه	hayrat	1
 lügatlardır	لغتلردر	hayrat	1
+lügatların	لغتلرڭ	hayrat	1
+lügatlerin	لغتلرڭ	hayrat	1
 lügatnâmeden	لغتنامه‌دن	hayrat	1
 lügatnâmenin	لغتنامه‌نڭ	hayrat	1
 lügatnâmesini	لغتنامه‌سنی	hayrat	1
+lügatta	لغتده	hayrat	1
+lügatte	لغتده	denetim	1
+lügatçedir	لغتچه‌در	hayrat	1
+lügatçeye	لغتچه‌یه	hayrat	1
+lügatın	لغتڭ	denetim	1
+lügatından	لغتندن	hayrat	1
 lütfa	لطفه	hayrat	1
 lütfeden	لطف ایدن	hayrat	1
 lütfedersiniz	لطف ایدرسڭز	hayrat	1
@@ -2115,6 +2676,7 @@ maddeperestti	مادّه پرستدی	hayrat	1
 maddiyûn	مادّیون	hayrat	1
 maddiyûnun	مادیونڭ	hayrat	1
 mademkitapların	مادام كتابلرڭ	hayrat	1
+magrib'de	مغربده	hayrat	1
 mahalsiniz	محلسڭز	hayrat	1
 mahaneli	ماهانه‌لی	hayrat	1
 mahbûsiyetim	محبوسیتم	hayrat	1
@@ -2123,6 +2685,7 @@ mahfûziyet	محفوظیّت	hayrat	1
 mahfûziyetle	محفوظیّتله	hayrat	1
 mahfûziyetlerine	محفوظیتلرینه	hayrat	1
 mahfûzâtının	محفوظاتنڭ	hayrat	1
+mahkiyyün	محكیّ	hayrat	1
 mahlûkātla	مخلوقاتله	hayrat	1
 mahlûkātlar	مخلوقاتلر	hayrat	1
 mahlûkātlarının	مخلوقاتلرینڭ	hayrat	1
@@ -2144,6 +2707,7 @@ mahzeniyetçe	مخزنیّتجه	hayrat	1
 mahzûrludur	محذورلیدر	hayrat	1
 mahzıysa	محضیسه	hayrat	1
 mahşûş	مخشوش	hayrat	1
+maiyetindeki	معیّتنده‌كی	hayrat	1
 maiyetlerinde	معیتلرنده	hayrat	1
 makamî	مقامی	hayrat	1
 makberistana	مقبرستانه	hayrat	1
@@ -2159,6 +2723,10 @@ maksadıma	مقصدیمه	hayrat	1
 maksadımı	مقصدیمی	hayrat	1
 malta'dan	مالطه‌دن	hayrat	1
 malıyız	مالی ییز	hayrat	1
+manastırlı	مناسترلی	hayrat	1
+manisa	مغنیسا	hayrat	1
+manisa'da	مغنیساده	hayrat	1
+manisa'daki	مغنیساده‌كی	hayrat	1
 mantûkunca	منطوقنجه	hayrat	1
 manyetizmalandıran	مانیه‌تیزمه‌لاندیران	hayrat	1
 manyeto	مانیه‌تو	hayrat	1
@@ -2175,6 +2743,7 @@ maslahatdâr	مصلحتدار	hayrat	1
 masnû'cuklar	مصنوعجقلر	hayrat	1
 massedebilmesi	مصّ ایده‌بیلمسی	hayrat	1
 massedip	مص ایدوب	hayrat	1
+masuracı	ماصوره‌جی	hayrat	1
 matematik	ماته‌ماتیك	hayrat	1
 matiye	مطیّه	hayrat	1
 matiyeleri	مطیّه‌لری	hayrat	1
@@ -2188,7 +2757,11 @@ mazlumuz	مظلومز	hayrat	1
 maâdine	معادنه	hayrat	1
 maâlim	معالم	hayrat	1
 maâniye	معانی یه	hayrat	1
+mağazada	مغازه‌ده	hayrat	1
+mağazalarda	مغازه‌لرده	hayrat	1
+mağazamın	مغازه‌مڭ	hayrat	1
 mağazasındaki	مغازه‌سنده‌كی	hayrat	1
+mağazayı	مغازه‌یی	hayrat	1
 mağruriyetinden	مغروریتندن	hayrat	1
 maşraba	مشربه	hayrat	1
 maşrabalardan	مشربه‌لردن	hayrat	1
@@ -2201,6 +2774,7 @@ me'muriyetinin	مأموریتنڭ	hayrat	1
 me'murlarıyız	مأمورلری یز	hayrat	1
 me'mûrluğu'na	مأمورلغنه	hayrat	1
 me'yûsen	مأیوسا	hayrat	1
+mea'ziyâdetin	مع زیادة	hayrat	1
 meb'ûsluğum	مبعوثلغم	hayrat	1
 meb'ûsuyum	مبعوثی یم	hayrat	1
 meb'ûsân	مبعوثان	hayrat	1
@@ -2219,10 +2793,12 @@ mederr	مدر	hayrat	1
 medhedebilmek	مدح ایده‌بیلمك	hayrat	1
 medhedenlerin	مدح ایدنلرڭ	hayrat	1
 medhedip	مدح ایدوب	hayrat	1
+medhetmeleriyle	مدح ایتملریله	hayrat	1
 medhetmesi	مدح ایتمه‌سی	hayrat	1
 medhetmesiyle	مدح ایتمه‌سیله	hayrat	1
 medhü	مدح و	hayrat	1
 mef'ûliyette	مفعولیتده	hayrat	1
+mefharetle	مفخرتله	hayrat	1
 mefkûrem	مفكوره‌م	hayrat	1
 meftûnuyuz	مفتونی یز	hayrat	1
 mekirlerinden	مكرلرندن	hayrat	1
@@ -2238,8 +2814,10 @@ mel'aneti	ملعنتی	hayrat	1
 mel'anetiniz	ملعنتڭز	hayrat	1
 melce'e	ملجئه	hayrat	1
 melce'i	ملجأی	hayrat	1
+melâiketullâh	ملائكة اللّه	hayrat	1
 memeleri	ممه‌لری	hayrat	1
 memesi	ممه‌سی	hayrat	1
+memnûiyeti	ممنوعیّتی	hayrat	1
 memsûh	ممسوخ	hayrat	1
 men'ede	منع ایده	hayrat	1
 men'edecektir	منع ایده‌جكدر	hayrat	1
@@ -2281,15 +2859,20 @@ mes'elecik	مسئله‌جك	hayrat	1
 mes'elem	مسئله‌م	hayrat	1
 mes'elemde	مسئله‌مده	hayrat	1
 mesaimi	مساعیمی	hayrat	1
+mesalâ	مثلا	hayrat	1
 meselâkar	مثلا قار	hayrat	1
 meskeniyet	مسكنیّت	hayrat	1
+meslektaşlarımın	مسلكداشلریمڭ	hayrat	1
 mestan	مستان	hayrat	1
 mesâfesizliğin	مسافه‌سزلكڭ	hayrat	1
 mesâkînin	مساكینڭ	hayrat	1
 mesâkını	مساكنی	hayrat	1
+mesîlinde	مسیلنده	hayrat	1
 mesîregâhdaki	مسیره‌كاهده‌كی	hayrat	1
 mesîregâhtaki	مسیره‌كاهده‌كی	hayrat	1
 meth	مدح	hayrat	1
+metindeki	متنده‌كی	hayrat	1
+metinleri	متنلری	hayrat	1
 mevhûmât	موهومات	hayrat	1
 mevhûmî	موهومی	hayrat	1
 mevki'ye	موقعه	hayrat	1
@@ -2316,10 +2899,18 @@ meâbınıza	مئابڭزه	hayrat	1
 meçhûliyetlerini	مجهولیتلرینی	hayrat	1
 meğerki	مكركه	hayrat	1
 meş'ûmâne	مشئومانه	hayrat	1
+meşegâha	میشه‌كاهه	hayrat	1
+meşelik	میشه‌لك	hayrat	1
 meşelikten	میشه‌لكدن	hayrat	1
 meşrûtiyetperver	مشروطیّتپرور	hayrat	1
 meşrûtî	مشروطی	hayrat	1
+meşâbihleriyle	مصابیحلریله	hayrat	1
+mihenkleri	محكلری	hayrat	1
+mihenktirler	محكدرلر	denetim	1
 mihmândârın	مهماندارڭ	hayrat	1
+mikroplardan	میقروپلردن	hayrat	1
+mikroplarına	میقروپلرینه	hayrat	1
+mikroplarını	میقروبلرینی	hayrat	1
 mikroplarıyla	میكروبلریله	hayrat	1
 mikrâslarla	مقراصلرله	hayrat	1
 mikyâsçığıyla	مقیاسجغیله	hayrat	1
@@ -2327,6 +2918,7 @@ milletperver	ملّتپرور	hayrat	1
 milletperverlerin	ملّتپرورلرڭ	hayrat	1
 milletperverlik	ملّتپرورلك	hayrat	1
 milletperverliği	ملّتپرورلكی	hayrat	1
+millettaşını	ملّتداشنی	hayrat	1
 milletvekîllerince	ملّت وكیللرنجه	hayrat	1
 min	من	hayrat	1
 minnetdârlığı	منتدارلغی	hayrat	1
@@ -2360,6 +2952,7 @@ muazzebiyetleri	معذّبیتلری	hayrat	1
 muazzib	معذّب	hayrat	1
 mubsırât	مبصرات	hayrat	1
 mucîb'in	مجیبڭ	hayrat	1
+mudill	مضلّ	denetim	1
 mufaddil'in	مفضّلڭ	hayrat	1
 mufaddıl'ın	مفضّلڭ	hayrat	1
 mugayyebesini	مغیّبه‌سنی	hayrat	1
@@ -2367,7 +2960,10 @@ muh	موح	hayrat	1
 muhabbetnâmemi	محبّتنامه‌می	hayrat	1
 muhabbetse	محبّتسه	hayrat	1
 muhakkaktı	محقّقدی	hayrat	1
+muhallâtta	محلاتده	hayrat	1
 muhalâta	محالطه	hayrat	1
+muhassise	مخصّصه	hayrat	1
+muhassisi	مخصّصی	hayrat	1
 muhayrık	مخیرق	hayrat	1
 muhik	محق	hayrat	1
 muhkemleşinceye	محكملشنجه‌یه	hayrat	1
@@ -2386,6 +2982,7 @@ muhâfızıyım	محافظی یم	hayrat	1
 muhâkemem	محاكمه‌م	hayrat	1
 muhâsamayı	مخاصمه‌یی	hayrat	1
 muhâtablarca	مخاطبلرجه	hayrat	1
+muhâtablarımsınız	مخاطبلرمسكز	hayrat	1
 muhâtabâne	مخاطبانه	hayrat	1
 muhâtabîn	مخاطبین	hayrat	1
 mukaddeman	مقدّما	hayrat	1
@@ -2398,6 +2995,8 @@ mukattaâtı	مقطّعاتی	hayrat	1
 mukavkıs	مقوقس	hayrat	1
 mukavkıs'a	مقوقسه	hayrat	1
 mukavves	مقوّس	hayrat	1
+mukavvesiyetiyle	مقوّسیتیله	hayrat	1
+mukābeleten	مقابلة	hayrat	1
 muktezayâtından	مقتضیاتندن	hayrat	1
 mukteziyâtlarını	مقتضیاتلرینی	hayrat	1
 mukteziyâtından	مقتضیّاتندن	hayrat	1
@@ -2410,6 +3009,9 @@ murassaâtla	مرصّعاتله	hayrat	1
 murdia	مرضعه	hayrat	1
 murtazıye	مرتضیه	hayrat	1
 murâbıt	مرابط	hayrat	1
+musaffî	مصفّی	hayrat	1
+musahhih	مصحّح	hayrat	1
+musallî	مصلّی	hayrat	1
 musavvir'imiz	مصوّریمز	hayrat	1
 musibetiydi	مصیبتیدی	hayrat	1
 musibetliye	مصیبتلی یه	hayrat	1
@@ -2422,6 +3024,10 @@ musâhebetim	مصاحبتم	hayrat	1
 mutasallifların	متصلّفلرڭ	hayrat	1
 mutasavvifînin	متصوّفینڭ	hayrat	1
 mutasavvire	متصوّره	hayrat	1
+mutasavvıfa	متصوّفه	hayrat	1
+mutasavvıfanın	متصوّفه‌نڭ	hayrat	1
+mutasavvıfînin	متصوّفینڭ	hayrat	1
+mutasavvıfın	متصوّفڭ	hayrat	1
 mutmeinnâne	مطمئنّانه	hayrat	1
 mutâ'	مطاع	hayrat	1
 mutâbaat	متابعت	hayrat	1
@@ -2429,6 +3035,7 @@ mutâvaat	مطاوعت	hayrat	1
 mutâvaatla	مطاوعتله	hayrat	1
 mutî'miş	مطیعمش	hayrat	1
 muvattâ'	موطّأ	hayrat	1
+muvâsalatımın	مواصلتمڭ	hayrat	1
 muzafferen	مظفّرا	hayrat	1
 muzafferiyeti	مظفّریته	hayrat	1
 muzlem	مظلم	hayrat	1
@@ -2442,6 +3049,7 @@ muâleceleriyle	معالجه‌لریله	hayrat	1
 muâlecelerle	معالجه‌لرله	hayrat	1
 muârefem	معارفه‌م	hayrat	1
 muâyenemin	معاینه‌مڭ	hayrat	1
+muğalatalara	مغلطه‌لره	hayrat	1
 mâ'ı	مائی	hayrat	1
 mâfîhâ	ما فیها	hayrat	1
 mâfîhânın	مافیهانڭ	hayrat	1
@@ -2453,11 +3061,13 @@ mâlen	مالا	hayrat	1
 mâlâyutâk	مالا یطاق	hayrat	1
 mâni'dirler	مانعدرلر	hayrat	1
 mâni'lerini	مانعلرینی	hayrat	1
+mânii	مانعی	hayrat	1
 mâsivâullâhdan	ماسواء اللّهدن	hayrat	1
 mâsivâullâhı	ماسواء اللّهی	hayrat	1
 mâtürîdî'ce	ماتریدیجه	hayrat	1
 mâzen	ماذن	hayrat	1
 mâziyât	ماضیات	hayrat	1
+mâzîyen	ماضیا	hayrat	1
 mîhânîkiyeti	میخانیكیّتی	hayrat	1
 mîhâîl	میخائیل	hayrat	1
 mîrâsyedi	میراث ییدی	hayrat	1
@@ -2471,10 +3081,13 @@ müannid	معنّد	hayrat	1
 mübecceliyetini	مبجّلیتنی	hayrat	1
 mübecceliyette	مبجّلیتده	hayrat	1
 mübeyyiz	مبیّض	hayrat	1
+mübeyyizi	مبیّضی	hayrat	1
 mübhemeden	مبهمه‌دن	hayrat	1
 mübhemiyetin	مبهمیّتڭ	hayrat	1
 mübtedîlerle	مبتدعلرله	hayrat	1
 mübtıl	مبطل	hayrat	1
+mübâhâta	مباهاته	hayrat	1
+mübâhâte	مباهاته	hayrat	1
 mübâlağâne	مبالغانه	hayrat	1
 mübârekiyet	مباركیّت	hayrat	1
 mübârekiyetlerini	مباركیّتلرینی	hayrat	1
@@ -2517,6 +3130,7 @@ müjdekarâne	مژده‌كارانه	hayrat	1
 müjdeme	مژده‌مه	hayrat	1
 mükelleftin	مكلّفدڭ	hayrat	1
 mükevvenâttan	مكوّناتدن	hayrat	1
+mükrimlere	مكرملره	hayrat	1
 mükâbir	مكابر	hayrat	1
 mükâbirdir	مكابردر	hayrat	1
 mükâfâtlandırır	مكافاتلاندیرر	hayrat	1
@@ -2527,6 +3141,7 @@ mülahhastır	ملخّصدر	hayrat	1
 mülken	ملكا	hayrat	1
 mülkihsân	ملك احسان	hayrat	1
 mülsak	ملصق	hayrat	1
+mültezimleri	ملتزملری	hayrat	1
 mülzim	ملزم	hayrat	1
 mülâhazâtı	ملاحظاتی	hayrat	1
 mümessellerin	ممثّللرڭ	hayrat	1
@@ -2544,6 +3159,7 @@ müncelib	منجلب	hayrat	1
 münekker	منكّر	hayrat	1
 münezzehiyetin	منزّهیّتڭ	hayrat	1
 münhafiza	منخفضه	hayrat	1
+münhaniyedir	منحنیّه‌در	hayrat	1
 münkalib	منقلب	hayrat	1
 münsıf	منصف	hayrat	1
 müntabika	منطبقه	hayrat	1
@@ -2557,11 +3173,14 @@ münâkız	مناقض	hayrat	1
 münâkızdır	مناقضدر	hayrat	1
 münâsebetdârlığa	مناسبتدارلغه	hayrat	1
 münâsebetdârlığı	مناسبتدارلغی	hayrat	1
+münâzaun	منازع	denetim	1
 münâzır	مناظر	hayrat	1
 münşaib	منشعب	hayrat	1
 münşerih	منشرح	hayrat	1
+mürtebit	مرتبط	hayrat	1
 mürtebittir	مرتبطدر	hayrat	1
 mürteci'lere	مرتجعلره	hayrat	1
+mürtet	مرتد	hayrat	1
 mürîdimi	مریدیمی	hayrat	1
 mürîdimin	مریدیمڭ	hayrat	1
 müsebbebiyet	مسبّبیت	hayrat	1
@@ -2572,17 +3191,21 @@ müsta'celiyetle	مستعجلیتله	hayrat	1
 müsta'niyen	مستعنیا	hayrat	1
 müstahsinleri	مستحسنلری	hayrat	1
 müstahzar	مستحضر	hayrat	1
+müstahzarâtından	مستحضراتندن	hayrat	1
 müstakilen	مستقلا	hayrat	1
+müstakillün	مستقلّ	hayrat	1
 müstazî	مستضی	hayrat	1
 müstehaksınız	مستحقسڭز	hayrat	1
 müstemid	مستمد	hayrat	1
 müstemiddirler	مستمددرلر	hayrat	1
+müsterham	مسترحم	hayrat	1
 müsterihîm	مستریحم	hayrat	1
 müsâadem	مساعده‌م	hayrat	1
 müsâadesizliğim	مساعده‌سزلكم	hayrat	1
 müsâadesizliğine	مساعده‌سزلكنه	hayrat	1
 müsâadesizliğini	مساعده‌سزلكنی	hayrat	1
 müsâdemet	مصادمت	hayrat	1
+müsâdim	مصادم	hayrat	1
 müsâidse	مساعدسه	hayrat	1
 müsâlahakârâne	مصالحه‌كارانه	hayrat	1
 müsâmahama	مسامحه‌مه	hayrat	1
@@ -2594,6 +3217,7 @@ mütasavverdir	متصوّردر	hayrat	1
 müteaccibâne	متعجّبانه	hayrat	1
 müteaddidisti'dâdlar	متعدّد استعدادلر	hayrat	1
 müteaddidtabakalarda	متعدّد طبقه‌لرده	hayrat	1
+müteallakı	متعلّقی	hayrat	1
 müteallikātlarına	متعلّقاتلرینه	hayrat	1
 müteallikātında	متعلّقاتنده	hayrat	1
 müteallikātına	متعلّقاتنه	hayrat	1
@@ -2629,34 +3253,47 @@ mütâlaasındayım	مطالعه‌سنده‌یم	hayrat	1
 mütâliînin	مطالعینڭ	hayrat	1
 müvecceh	موجّه	hayrat	1
 müvekkil	موكّل	hayrat	1
+müvekkillerim	موكّللرم	hayrat	1
+müvezzi'lik	موزّعلك	hayrat	1
+müvezzii	موزّعی	hayrat	1
 müvâcehesinde	مواجهه‌سنده	hayrat	1
 müyesseriyet	میسّریت	hayrat	1
 müzahrefiyeti	مزخرفیتی	hayrat	1
 müzehânemi	موزه‌خانه‌می	hayrat	1
+müzeye	موزه‌یه	hayrat	1
 müzhir	مظهر	hayrat	1
 müzmahil	مضمحل	hayrat	1
+müzâhirdir	مظاهردر	hayrat	1
 müzâkerâtı	مذاكراتی	hayrat	1
 müşebbehteki	مشبّه ده‌كی	hayrat	1
 müşeyyeddir	مشیّددر	hayrat	1
+müşkülât	مشكلات	hayrat	1
 müşrık	مشرق	hayrat	1
 müşteriyse	مشتریسه	hayrat	1
 müştâkāna	مشتاقانه	hayrat	1
 müştâkıyız	مشتاقی یز	hayrat	1
+müşâhedeten	مشاهدة	hayrat	1
 müşâhedetle	مشاهدتله	hayrat	1
 müşâhedetullâhtır	مشاهدت اللّهدر	hayrat	1
 müşâverete	مشاورته	hayrat	1
 mıhlamalarının	میخلامه‌لرینڭ	hayrat	1
 mıhlamasınlar	میخلاماسینلر	hayrat	1
+mıhlanmış	میخلانمش	hayrat	1
+mıntıkalara	منطقه‌لره	hayrat	1
 mıntıkalarınızda	منطقه‌لریڭزده	hayrat	1
+mıntıkası	منطقه‌سی	hayrat	1
 mısrâ'lardaki	مصراعلرده‌كی	hayrat	1
 mısır'ınızı	مصریڭزی	hayrat	1
 na'büdü	نعبد	hayrat	1
+nabızları	نبضلری	hayrat	1
 nadîr	نضیر	hayrat	1
 nakledilmeyenlerle	نقل ایدیلمه‌ینلرله	hayrat	1
+nakletmişim	نقل ایتمشم	hayrat	1
 nakzeyn	نقضین	hayrat	1
 nakîzayn	نقیضین	hayrat	1
 nakşedilmeyecekti	نقش ایدیلمیه‌جكدی	hayrat	1
 nakşedip	نقش ایدوب	hayrat	1
+nalınlı	نعلینلی	hayrat	1
 namazıma	نمازیمه	hayrat	1
 namazımın	نمازیمڭ	hayrat	1
 nasl'sız	نصلسز	hayrat	1
@@ -2672,7 +3309,15 @@ nazariyet	نظریت	hayrat	1
 nazariyetine	نظریتنه	hayrat	1
 nazarvârî	نظرواری	hayrat	1
 nazlanmıyorlar	نازلانمییورلر	hayrat	1
+nazmeylemiş	نظم ایله‌مش	denetim	1
+nazmeyleyip	نظم ایله‌یوب	denetim	1
 nazvârî	نازواری	hayrat	1
+nazzâm	نظّام	hayrat	1
+nazâirini	نظائرینی	hayrat	1
+necim	نجم	hayrat	1
+necimler	نجملر	hayrat	1
+necimlerin	نجملرڭ	hayrat	1
+necimlerine	نجملرینه	hayrat	1
 necîp	نجیب	hayrat	1
 nefheyledi	نفخ ایله‌دی	hayrat	1
 nefi'li	نفعلی	hayrat	1
@@ -2689,7 +3334,9 @@ nemâsı	نماسی	hayrat	1
 nenelerinizin	ننه‌لریڭزڭ	hayrat	1
 neptün	نپتون	hayrat	1
 neptün'ün	نپتونڭ	hayrat	1
+nesihten	نسخدن	hayrat	1
 nessâr	نثار	hayrat	1
+neticeten	نتیجة	hayrat	1
 nev'e	نوعه	hayrat	25
 nev'ilerin	نوعلرڭ	hayrat	1
 nev'indendirler	نوعندندرلر	hayrat	1
@@ -2703,6 +3350,7 @@ nevâkıstan	نواقصدن	hayrat	1
 neyin	نه‌یڭ	hayrat	1
 neyindir	نه‌یڭدر	hayrat	1
 neylemiş	نه‌یله‌مش	hayrat	1
+neylerden	نیلردن	hayrat	1
 nezzârdır	نظّاردر	hayrat	1
 nezzâre	نظّاره	hayrat	1
 nezâfetperver	نظافتپرور	hayrat	1
@@ -2736,6 +3384,8 @@ noksâniyâtımız	نقصانیّاتمز	hayrat	1
 noksânlarıçoktur	نقصانلری چوقدر	hayrat	1
 noksânlığı	نقصانلغی	hayrat	1
 noksânlığıyla	نقصانلغیله	hayrat	1
+numaradan	نومرودن	hayrat	1
+numarasını	نومروسنی	hayrat	1
 numâne	نمونه	hayrat	1
 numûnecik	نمونه‌جك	hayrat	1
 numûnecikte	نمونه‌جكده	hayrat	1
@@ -2786,11 +3436,15 @@ okumadığımı	اوقومدیغمی	hayrat	1
 okumadığımız	اوقومدیغمز	hayrat	1
 okumaklığımız	اوقومقلغمز	hayrat	1
 okumaktayım	اوقومقده‌یم	hayrat	1
+okumamasını	اوقومامسنی	hayrat	1
+okumayınız	اوقوماییڭز	hayrat	1
 okumuşsa	اوقومشسه	hayrat	1
 okumuşsam	اوقومشسه‌م	hayrat	1
 okumuşsunuzdur	اوقومشسڭزدر	hayrat	1
+okuna	اوقونا	denetim	1
 okunduğuna	اوقوندیغنه	hayrat	1
 okunmaması	اوقونمامسی	hayrat	1
+okunmasından	اوقونمه‌سندن	hayrat	1
 okutacaksın	اوقوداجقسڭ	hayrat	1
 okutmazsak	اوقوتمزسه‌ق	hayrat	1
 okutturulan	اوقوتدیریلان	hayrat	1
@@ -2799,6 +3453,8 @@ okutturuluyor	اوقوتدیریلییور	hayrat	1
 okuttuğumuzdan	اوقوتدیغمزدن	hayrat	1
 okuyamadıkları	اوقویامدقلری	hayrat	1
 okuyamıyorsan	اوقویامایورسه‌ڭ	hayrat	1
+okuyucuların	اوقویوجیلرڭ	hayrat	1
+okuyucularına	اوقویوجیلرینه	hayrat	1
 okuyucularının	اوقویوجیلرینڭ	hayrat	1
 okuyuverdi	اوقویویردی	hayrat	1
 okuyuşta	اوقویوشده	hayrat	1
@@ -2807,14 +3463,19 @@ okıyeyi	اوقیّه‌یی	hayrat	1
 okşamadır	اوقشامه‌در	hayrat	1
 okşamaları	اوقشامه‌لری	hayrat	1
 olamadın	اولامدڭ	hayrat	1
+olamadığınız	اولامدیغڭز	hayrat	1
 olamayacağımdan	اولامایاجغمدن	hayrat	1
 olamayacağımı	اولامایاجغمی	hayrat	1
 olanin'âm	اولان انعام	hayrat	1
 olarakihbâr	اولارق اخبار	hayrat	1
 oldumsa	اولدمسه	hayrat	1
+olmadığımıza	اولمدیغمزه	hayrat	1
 olmaklığımızdır	اولمقلغمزدر	hayrat	1
 olmaktansa	اولمقدنسه	hayrat	1
 olmaktı	اولمقدی	hayrat	1
+olmamalarına	اولمامه‌لرینه	hayrat	1
+olmamayı	اولمامغی	hayrat	1
+olmuyordum	اولمییوردم	hayrat	1
 olmuşcasına	اولمشجه‌سنه	hayrat	1
 olmuşlarsa	اولمشلرسه	hayrat	1
 olumaz	اولماز	hayrat	1
@@ -2827,6 +3488,7 @@ olunmuyoruz	اولونمییورز	hayrat	1
 oluşmasında	اولوشمه‌سنده	hayrat	1
 omzuma	اوموزیمه	hayrat	1
 omzunuza	اوموزیڭزه	hayrat	1
+onaltısına	اون آلتیسنه	hayrat	1
 ondangelen	اوندن كلن	hayrat	1
 ondokuzuncu	اون طوقوزنجی	hayrat	1
 ondörttür	اون درتدر	hayrat	1
@@ -2836,35 +3498,54 @@ ortaşarkta	اورته شرقده	hayrat	1
 oruca	اوروجه	hayrat	1
 osmaniyet	عثمانیت	hayrat	1
 osmân'a	عثمانه؇	hayrat	1
+otobüslerin	اوطوبوسلرڭ	hayrat	1
 oturamadığım	اوتورامدیغم	hayrat	1
 oturma	اوتورما	hayrat	1
 oturtuyor	اوتوردییور	hayrat	1
+oturuyorlar	اوتورییورلر	hayrat	1
+oturuyorlarmış	اوتورییورلرمش	hayrat	1
 otuzar	اوتوزر	hayrat	1
 oynama	اویناما	hayrat	1
 oynamaya	اوینامغه	hayrat	1
 oğlunuz	اوغلڭز	hayrat	1
 pabucu	پاپوجی	hayrat	1
+pabuçlar	پاپوجلر	hayrat	1
 padişahlığına	پادشاهلغنه	hayrat	1
 padişahınki	پادشاهڭكه	hayrat	1
+palaska	پالاصقه	hayrat	1
 palavralarla	پالاوره‌لرله	hayrat	1
+pantolonu	پانطالونی	hayrat	1
 papa	پاپا	hayrat	1
 papaya	پاپایه	hayrat	1
+papazlarına	پاپاسلرینه	hayrat	1
+papazlarından	پاپاسلرندن	hayrat	1
 paralamakla	پاره‌لامقله	hayrat	1
 paralanmış	پاره‌لانمش	hayrat	1
 parlamasını	پارلامسنی	hayrat	1
+parlamayacaktı	پارلامیاجقدی	hayrat	1
 parmakcığını	پارماقجغنی	hayrat	1
 partimize	پارتیمزه	hayrat	1
 parçalanmaması	پارچه‌لانمامسی	hayrat	1
+parçalanmasına	پارچه‌لانمه‌سنه	hayrat	1
+parçalanmasından	پارچه‌لانمه‌سندن	hayrat	1
 parçalarsın	پارچه‌لارسڭ	hayrat	1
 parıldıyor	پاریلدایور	hayrat	1
+paslandıran	پاسلاندیران	hayrat	1
 paslarını	پاصلرینی	hayrat	1
+patlıcanları	بادلیجانلری	hayrat	1
+paytonla	پایطونله	hayrat	1
 pehlivan	پهلوان	hayrat	1
 pehlivânları	پهلوانلری	hayrat	1
 penceremiz	پنجره‌مز	hayrat	1
+pençeleri	پنچه‌لری	hayrat	1
+pençelerine	پنچه‌لرینه	hayrat	1
+pençeleşmek	پنچه‌لشمك	hayrat	1
+pençenin	پنچه‌نڭ	hayrat	1
 pençesine	پنچه سنه	hayrat	1
 perdelenmesi	پرده‌لنمه‌سی	hayrat	1
 perdelenmesini	پرده‌لنمه‌سنی	hayrat	1
 perestişedip	پرستش ایدوب	hayrat	1
+pergel	پركار	hayrat	1
 pergeri	پركاری	hayrat	1
 pergerin	پركارڭ	hayrat	1
 pergerini	پركارینی	hayrat	1
@@ -2874,14 +3555,22 @@ portartür	پورت آرطور	hayrat	1
 postacılık	پوسته‌جیلق	hayrat	1
 postacılığı	پوسته‌جیلغی	hayrat	1
 postlarıyla	پوستلریله	hayrat	1
+postuna	پوستنه	hayrat	1
+prensipleriyle	پرنسیبلریله	hayrat	1
 prestiş	پرستش	hayrat	1
+profesörler	پروفه‌سورلر	hayrat	1
 protestanlığa	پروتستانلغه	hayrat	1
 protluk	پروطلق	hayrat	1
 protluğu	پروطلغی	hayrat	1
+purotlar	پروتلر	hayrat	1
+purotluk	پروتلق	hayrat	1
 purotluğa	پروتلغه	hayrat	1
 purutlukta	پروتلقده	hayrat	1
 purutluğa	پروتلغه	hayrat	1
 puthâne	پوتخانه	hayrat	1
+putperestliğe	پوتپرستلكه	hayrat	1
+putperestliği	پوتپرستلكی	hayrat	1
+putperestliğinden	پوتپرستلكندن	hayrat	1
 pâklık	پاكلك	hayrat	1
 pâklıkla	پاكلكله	hayrat	1
 pâklığı	پاكلكی	hayrat	1
@@ -2900,6 +3589,7 @@ rahatsızken	راحتسزكن	hayrat	1
 rahatsızlığa	راحتسزلغه	hayrat	1
 rahatsızlığınız	راحتسزلغڭز	hayrat	1
 rahmetiyet	رحمتیّت	hayrat	1
+rahmetullâhi	رحمة اللّه	hayrat	1
 rakîpleri	رقیبلری	hayrat	1
 ramazanımız	رمضانمز	hayrat	1
 ramazanımızı	رمضانمزی	hayrat	1
@@ -2940,6 +3630,7 @@ rengigül	رنكیكل	hayrat	1
 resmetmeye	رسم ایتمكه	hayrat	1
 resânetini	رصانتنی	hayrat	1
 revaçta	رواجده	hayrat	1
+rezeleyi	رذله‌یی	hayrat	1
 rezîlet	رذیلت	hayrat	1
 rezîletin	رذیلتڭ	hayrat	1
 rezîletten	رذیلتدن	hayrat	1
@@ -2950,11 +3641,13 @@ rivâyeten	روایتا	hayrat	1
 riyâkârlığın	ریاكارلغڭ	hayrat	1
 riyâzetkârâne	ریاضتكارانه	hayrat	1
 ru'yet	رؤیت	hayrat	1
+rub'unun	ربعنڭ	hayrat	1
 rubhu	ربحی	hayrat	1
 rumeliliyim	روم ایلیلی یم	hayrat	1
 râfiidir	رافعیدر	hayrat	1
 râhîsi	راهیسی	hayrat	1
 râyihalandıran	رایحه‌لاندیران	hayrat	1
+râzık'ımızı	رازقمزی	hayrat	1
 râşit	راشد	hayrat	1
 rûba	روبه	hayrat	1
 rü'yetinin	رؤیتنڭ	hayrat	1
@@ -2975,23 +3668,32 @@ saadetgâha	سعادتكاهه	hayrat	1
 saadetresân	سعادت رسان	hayrat	1
 saadâtı	سعاداتی	hayrat	1
 saban	صبان	hayrat	1
+sabanlar	صاپانلر	hayrat	1
+sabanı	صبانی	hayrat	1
 sabredemiyordu	صبر ایده‌مییوردی	hayrat	1
 sabretmekteyim	صبر ایتمكده‌یم	hayrat	1
 sabretmemiz	صبر ایتمه‌مز	hayrat	1
 sabrî'deki	صبریده‌كی	hayrat	1
 sabırsızlığın	صبرسزلغڭ	hayrat	1
 sadâkatkârane	صداقتكارانه	hayrat	1
+sadırda	صدرده	hayrat	1
+sadırlara	صدرلره	hayrat	1
 safevîler	صفویلر	hayrat	1
 saffet	صفوت	hayrat	1
 safsatiyâtı	سفسطیاتی	hayrat	1
 safsatiyâtından	سفسطیاتندن	hayrat	1
 safâiye	صفائیّه	hayrat	1
+sahiv	صحو	hayrat	1
+sahursuz	سحورسز	hayrat	1
+sahuru	سحوری	hayrat	1
+sahâbiye	صحابیه	hayrat	1
 sakinleşmeye	ساكنلشمه‌یه	hayrat	1
 saklamaya	صاقلامغه	hayrat	1
 saklansa	صاقلانسه	hayrat	1
 saksıdaki	صاقسیده‌كی	hayrat	1
 sakîf	ثقیف	hayrat	1
 sallıyor	صاللایور	hayrat	1
+salâtü	صلاة	denetim	1
 samedâniyet	صمدانیّت	hayrat	1
 samettir	صمددر	hayrat	1
 samîmîleştiren	صمیمیلشدیرن	hayrat	1
@@ -3001,15 +3703,23 @@ san'atçıkla	صنعتجقله	hayrat	1
 san'atçıklarıyla	صنعتجقلریله	hayrat	1
 san'atımenfûr	صنعتی منفور	hayrat	1
 sancakdârı	صانجاقداری	hayrat	1
+sandalye	صاندالیه	hayrat	1
+sandalyede	صاندالیه‌ده	hayrat	1
+sandalyesinden	صاندالیه‌سندن	hayrat	1
 saniyecik	ثانیه‌جك	hayrat	1
 saniyecikte	ثانیه‌جكده	hayrat	1
 sanma	صانما	hayrat	1
+santim	سانتیم	hayrat	1
+santrafüj	سانترافوژ	hayrat	1
 saplanmalarında	صاپلانمه‌لرنده	hayrat	1
 saplansa	صاپلانسه	hayrat	1
 sapsan	صاپسه‌ڭ	hayrat	1
 sapta	صاپده	hayrat	1
 sarayındaki	سراینده‌كی	hayrat	1
 sarfedebilirsem	صرف ایده‌بیلیرسه‌م	hayrat	1
+sarmalarına	صارمه‌لرینه	hayrat	1
+sarması	صارمه‌سی	hayrat	1
+sarmaya	صارمه‌یه	hayrat	1
 sarsmasıyla	صارصمسیله	hayrat	1
 sarsılmaması	صارصیلمامسی	hayrat	1
 sarsılmasıyla	صارصیلمه‌سیله	hayrat	1
@@ -3019,6 +3729,7 @@ sarıkamış'a	صاری قامیشه	hayrat	1
 sarılma	صاریلما	hayrat	1
 sarılmaktayım	صاریلمقده‌یم	hayrat	1
 sarılmamızın	صاریلمه‌مزڭ	hayrat	1
+sarılmasının	صاریلمه‌سنڭ	hayrat	1
 sarılmasıyla	صاریلمسیله	hayrat	1
 sasaniye	ساسانیه	hayrat	1
 sataştın	صاتاشدڭ	hayrat	1
@@ -3033,6 +3744,7 @@ savuruyor	صاوورییور	hayrat	1
 savâbiyeti	صوابیتی	hayrat	1
 saymadan	صایمدن	hayrat	1
 sayması	صایمسی	hayrat	1
+saymıyorsunuz	صایمییورسڭز	hayrat	1
 sayılmaktı	صاییلمقدی	hayrat	1
 sayıyorlar	صایییورلر	hayrat	1
 sayıyorsunuz	صایییورسڭز	hayrat	1
@@ -3054,23 +3766,33 @@ sekiztekerrürüyle	سكز تكرّریله	hayrat	1
 sekkābı	ثقّابی	hayrat	1
 sekseninci	سكساننجی	hayrat	1
 sekîne'deki	سكینه‌ده‌كی	hayrat	1
+selahattin	صلاح الدّین	hayrat	1
+selâhaddîn	صلاح الدّین	hayrat	1
+selâhaddîn'in	صلاح الدّینڭ	hayrat	1
 selâmlaşmamaklığım	سلاملاشمامقلغم	hayrat	1
+selânik'ten	سلانیكدن	hayrat	1
 sem'a	سمعه	hayrat	1
 sem'inin	سمعنڭ	hayrat	1
+semerci	سمرجی	hayrat	1
 semâ'da	سماعده	hayrat	2
 semâ'dır	سماعدر	hayrat	1
 senet	سند	hayrat	1
 senettir	سنددر	hayrat	1
 seneçalışırdım	سنه چالیشیردم	hayrat	1
+senâmı	ثنامی	hayrat	1
+senânın	ثنانڭ	hayrat	1
 sergardiyanın	سرغاردییانڭ	hayrat	1
+serinledi	سرینله‌دی	hayrat	1
 sermayedâr	سرمایه‌دار	hayrat	1
 sermayemiz	سرمایه‌مز	hayrat	1
 sermeden	سرمدا	hayrat	1
 serptirerek	سرپدیره‌رك	hayrat	1
 serveten	ثروتا	hayrat	1
 serzâkirdir	سرذاكردر	hayrat	1
+serâya	ثرایه	hayrat	1
 serîan	سریعا	hayrat	1
 sevabtan	ثوابدن	hayrat	1
+sevdirmeyenlere	سودیرمه‌ینلره	hayrat	1
 sevgilimiz	سوكیلیمز	hayrat	1
 sevgin	سوكیڭ	hayrat	1
 sevginle	سوكیڭله	hayrat	1
@@ -3085,16 +3807,22 @@ sevmeli	سوملی	hayrat	1
 sevmemesi	سومه‌مه‌سی	hayrat	1
 seyidimiz	سیدیمز	hayrat	1
 seyreyle	سیر أیله	hayrat	1
+seyreylediğimiz	سیر ایله‌دیكمز	hayrat	1
+seyreyleyenin	سیر ایله‌ینڭ	denetim	1
 seyrângâhtaki	سیرانكاهده‌كی	hayrat	1
 sezmeye	سزمه‌یه	hayrat	1
 seçilemediği	سچیله‌مدیكی	hayrat	1
 seçimini	سچیمنی	hayrat	1
 seçmeyerek	سچمیه‌رك	hayrat	1
+sibirya'ya	سبریه‌یه	hayrat	1
 sicinden	سجندن	hayrat	1
 sikkesiyim	سكّه‌سی یم	hayrat	1
 silahlanmalıyız	سلاحلانملی یز	hayrat	1
 silinmememizi	سیلینمه‌مه‌مزی	hayrat	1
+silme	سیلمه	hayrat	1
+silmeye	سیلمكه	hayrat	1
 silsilevârî	سلسله‌واری	hayrat	1
+silsin	سیلسین	hayrat	1
 simotoğraftır	سیموطوغرافدر	hayrat	1
 sinemalı	سینامه‌لی	hayrat	1
 sinematoğraf	سینامه طوغراف	hayrat	1
@@ -3104,12 +3832,15 @@ sinoplu	سینوبلی	hayrat	1
 sipkan	سبكان	hayrat	1
 sipopdan	سوپاپدن	hayrat	1
 sivricikler	سیوریجكلر	hayrat	1
+siyahlandıra	سیاهلاندیرا	denetim	1
+siyahlanır	سیاهلانیر	hayrat	1
 siyahlığıyla	سیاهلغیله	hayrat	1
 siyâmın	صیامڭ	hayrat	1
 siyânet	صیانت	hayrat	1
 siyâseten	سیاستا	hayrat	1
 siyâsetkârâne	سیاستكارانه	hayrat	1
 sko­lâs­tik	سقولاستیك	hayrat	1
+sloganı	صلوغانی	hayrat	1
 sokmayanın	صوقمایانڭ	hayrat	1
 soksa	صوقسه	hayrat	1
 soksam	صوقسه‌م	hayrat	1
@@ -3123,16 +3854,25 @@ sormaktı	صورمقدی	hayrat	1
 sormamasını	صورمامسنی	hayrat	1
 sormuyorsunuz	صورمییورسڭز	hayrat	1
 sormuyorum	صورمییورم	hayrat	1
+sorumlulukları	صوروملیلقلری	hayrat	1
 soruşturmalara	صوروشدیرمه‌لره	hayrat	1
+sosyalistlikse	صوسیالیستلكسه	hayrat	1
+sosyalistliktir	صوسیالیستلكدر	hayrat	1
 sosyete	صوسیته	hayrat	1
+soyadını	صوی آدینی	hayrat	1
 soyulmasıyla	صویولمسیله	hayrat	1
 soyun	صویون	hayrat	1
+soğukkanlılığımı	صوغوق قانلیلغمی	hayrat	1
 soğutmalıyız	صوغوتملی یز	hayrat	1
 subaya	صوبایه	hayrat	1
 subayı	صوبایی	hayrat	1
 sulhkârâne	صلحكارانه	hayrat	1
+sulhperverlik	صلح پرورلك	hayrat	1
+sun'una	صنعنه	hayrat	1
+sun'uyla	صنعیله	hayrat	1
 sun'îliğin	صنعیلكڭ	hayrat	1
 sunarız	صونارز	hayrat	1
+suratına	صورتنه	hayrat	1
 surettte	صورتده	hayrat	1
 susdurmasına	صوصدیرمه‌سنه	hayrat	1
 susturma	صوصدیرما	hayrat	1
@@ -3155,6 +3895,10 @@ sâflar	صافلر	hayrat	1
 sâfîleştirip	صافیلشدیروب	hayrat	1
 sâfîleştiriyor	صافیلشدیرییور	hayrat	1
 sâhiblerince	صاحبلرنجه	hayrat	1
+sâikalara	صاعقه‌لره	hayrat	1
+sâikalarla	صاعقه‌لرله	hayrat	1
+sâikalarından	صاعقه‌لرندن	hayrat	1
+sâikavârî	صاعقه واری	hayrat	1
 sâlihîn	صالحین	hayrat	1
 sâmi'leri	سامعلری	hayrat	1
 sâmiam	سامعه‌م	hayrat	1
@@ -3174,7 +3918,11 @@ söndürülmesidir	سوندیریلمسیدر	hayrat	1
 söndürülmesiyle	سوندیریلمه‌سیله	hayrat	1
 söndürülmezse	سوندیریلمزسه	hayrat	1
 söndürürüm	سوندیریرم	hayrat	1
+söndürüyorlar	سویوندیرییورلر	hayrat	1
 sönemem	سونه‌مم	hayrat	1
+sönmeyecektir	سونمیه‌جكدر	hayrat	1
+sönmeyesin	سونمه‌یه‌سڭ	hayrat	1
+sönmüştür	سویونمشدر	hayrat	1
 sönüklüğüne	سونوكلكنه	hayrat	1
 söylemeden	سویله‌مدن	hayrat	1
 söylendiği	سویلندیكی	hayrat	1
@@ -3201,6 +3949,8 @@ söylettirmiştir	سویلتدیرمشدر	hayrat	1
 söyleyecekmişsiniz	سویله‌یه‌جكمشسڭز	hayrat	1
 söyleyecektik	سویله‌یه‌جكدك	hayrat	1
 söyleyemiyoruz	سویله‌یه‌مییورز	hayrat	1
+söyleşmek	سویلشمك	hayrat	1
+söyleşmem	سویلشمم	hayrat	1
 söylüyorlarken	سویله‌یورلركن	hayrat	1
 sû'i	سوء	hayrat	1
 sûdân	سودان	hayrat	1
@@ -3217,11 +3967,13 @@ sübhân'ımız	سبحانمز	hayrat	1
 sübûtiyetleri	ثبوتیتلری	hayrat	1
 süfliyetten	سفلیتدن	hayrat	1
 süfyâniyeyi	سفیانیه‌یی	hayrat	1
+sümbülün	سنبلڭ	hayrat	1
 sünbüllendirmeye	سنبللندیرمه‌یه	hayrat	1
 sünbüllettirir	سنبللتدیرر	hayrat	1
 süngü	سونكو	hayrat	1
 süngücüklerini	سونكوجكلرینی	hayrat	1
 süngücüğünde	سونكوجكنده	hayrat	1
+süpürülmüş	سوپرولمش	hayrat	1
 süresindeki	سوره‌سنده‌كی	hayrat	1
 sürmeli	سورمه‌لی	hayrat	1
 sürâdan	سرادن	hayrat	1
@@ -3243,6 +3995,8 @@ sıfâtlarını	صفاتلرینی	hayrat	1
 sıfâttır	صفاتدر	hayrat	1
 sıfâtî	صفاتی	hayrat	1
 sıfâtından	صفاتندن	hayrat	1
+sıktı	صیقدی	hayrat	1
+sıktılar	صیقدیلر	hayrat	1
 sıkça	صیقجه	hayrat	1
 sıkıntım	صیقینتیم	hayrat	1
 sıkıntımız	صیقینتیمز	hayrat	1
@@ -3282,7 +4036,9 @@ ta'zîmâtımı	تعظیماتمی	hayrat	1
 taaffünâttan	تعفّناتدن	hayrat	1
 taaffünâtı	تعفّناتی	hayrat	1
 taahhüdâtta	تعهّداتده	hayrat	1
+taahhütlü	تعهّدلی	hayrat	1
 taasubundan	تعصّبندن	hayrat	1
+taattuf	تعطّف	hayrat	1
 taayyünât	تعینات	hayrat	1
 taayyünâtlarıyla	تعیّناتلریله	hayrat	1
 taazzum	تعظم	hayrat	1
@@ -3298,6 +4054,7 @@ tab'edilebilir	طبع ایدیله‌بیلیر	hayrat	1
 tab'edilip	طبع ایدیلوب	hayrat	1
 tab'edilmesin	طبع ایدیلمه‌سین	hayrat	1
 tab'edilmesinden	طبع ایدیلمه‌سندن	hayrat	1
+tab'edip	طبع ایدوب	hayrat	1
 tab'ediyorlar	طبع ایدییورلر	hayrat	1
 tab'etmemiş	طبع ایتمه‌مش	hayrat	1
 tab'etmesinde	طبع ایتمه‌سنده	hayrat	1
@@ -3312,7 +4069,14 @@ tab'ettiğim	طبع ایتدیكم	hayrat	1
 tab'ettiğiniz	طبع ایتدیكڭز	hayrat	1
 tab'larına	طبعلرینه	hayrat	1
 tab'olunan	طبع اولونان	hayrat	1
+tab'tan	طبعدن	hayrat	1
+tabancası	طبانجه‌سی	hayrat	1
+tabancasını	طبانجه‌سنی	hayrat	1
+tabancayı	طبانجه‌یی	hayrat	1
+tabanını	طاباننی	hayrat	1
 tabasbusâta	تبصبصاته	hayrat	1
+taberânî	طبرانی	hayrat	1
+taberî	طبری	hayrat	1
 taberî'nin	طبرینڭ	hayrat	1
 tabâyie	طبایعه	hayrat	1
 tabîiyyuûnluğu	طبیّعیونلغی	hayrat	1
@@ -3326,24 +4090,33 @@ tagayyüb	تغیّب	hayrat	1
 tahacümüne	تهاجمنه	hayrat	1
 tahakkümâtı	تحكماتی	hayrat	1
 tahammülsüzlüğün	تحمّلسزلكڭ	hayrat	1
+taharrüf	تحرّف	hayrat	1
 tahassürlü	تحسّرلی	hayrat	1
 tahatturâtımı	تخطّراتمی	hayrat	1
+tahazzün	تحزّن	denetim	1
 tahmînimizce	تخمینمزجه	hayrat	1
 tahmînimizden	تخمینمزدن	hayrat	1
 tahmînimizi	تخمینمزی	hayrat	1
+takallübü	تقلّبی	hayrat	1
+takallüdü	تقلّدی	hayrat	1
 takdîmindeki	تقدیمنده‌كی	hayrat	1
 takdîrime	تقدیریمه	hayrat	1
 takdîrnâmesi	تقدیرنامه‌سی	hayrat	1
 takdîskâr	تقدیسكار	hayrat	1
+takkeyi	طاقیه‌یی	hayrat	1
 taklîdciliğini	تقلیدجیلكنی	hayrat	1
 taklîdimi	تقلیدیمی	hayrat	1
 takması	طاقمسی	hayrat	1
 takmasıyla	طاقمسیله	hayrat	1
 taksa	طاقسه	hayrat	1
+taktikle	تاقتیكله	hayrat	1
 taktırdınız	طاقدیردیڭز	hayrat	1
+takāzâsını	تقاضاسنی	hayrat	1
 takılmaması	طاقیلمامسی	hayrat	1
 talebelerimsiniz	طلبه‌لرمسڭز	hayrat	1
 talebeleriyiz	طلبه‌لری یز	hayrat	1
+talebinizi	طلبه‌ڭزی	hayrat	1
+tallâhi	تاللّه	hayrat	1
 talâş	طالاش	hayrat	1
 tamamlıyorum	تماملایورم	hayrat	1
 tanecik	دانه‌جك	hayrat	1
@@ -3358,18 +4131,26 @@ tanıttırdığınız	طانیتدیردیغڭز	hayrat	1
 tanıttırmış	طانیتدیرمش	hayrat	1
 tanıyamadığım	طانییامدیغم	hayrat	1
 tapan	طاپان	hayrat	1
+tapanlar	طاپانلر	hayrat	1
+tapanların	طاپانلرڭ	hayrat	1
 tapma	طاپما	hayrat	1
 taptırmak	طاپدیرمق	hayrat	1
 tarafdarlığın	طرفدارلغڭ	hayrat	1
 tarafdârlığım	طرفدارلغم	hayrat	1
 tarafgîrliğine	طرفكیرلكنه	hayrat	1
+tarak	طراق	hayrat	1
+taramak	طرامق	hayrat	1
+tarağa	طراغه	hayrat	1
+tarağı	طراغی	hayrat	1
 tartmadan	طارتمدن	hayrat	1
 tarîkatcilik	طریقتجیلق	hayrat	1
 tarîkatçiliği	طریقتجیلغی	hayrat	1
 tasannu'kâr	تصنّعكار	hayrat	1
 tasannu'î	تصنّعی	hayrat	1
 tasannuf	تصنّف	hayrat	1
+tasarısı	طاساریسی	hayrat	1
 tasavvurundayım	تصوّرنده‌یم	hayrat	1
+tasaykul	تصیقل	hayrat	1
 tashîhimizin	تصحیحمزڭ	hayrat	1
 taslamamıştır	طاسلامامشدر	hayrat	1
 tasrîfâtı	تصریفاتی	hayrat	1
@@ -3380,6 +4161,7 @@ tatmînkâr	تطمینكار	hayrat	1
 tattın	طاتدڭ	hayrat	1
 tattırdığın	طاتدیردیغڭ	hayrat	1
 tattırmayacağını	طاتدیرمایاجغنی	hayrat	1
+tavanına	طواننه	hayrat	1
 tavrî	طوری	hayrat	1
 tavsîfnâmesi	توصیفنامه‌سی	hayrat	1
 tavsîfnâmesini	توصیفنامه‌سنی	hayrat	1
@@ -3394,9 +4176,12 @@ tazarruâtını	تضرّعاتنی	hayrat	1
 taâruzan	تعارضا	hayrat	1
 taşköprü	طاش كوپرو	hayrat	1
 taşköprü'ye	طاش كوپرویه	hayrat	1
+taşlarlar	طاشلارلر	hayrat	1
+taştı	طاشدی	hayrat	1
 taşımaktayım	طاشیمقده‌یم	hayrat	1
 taşımalı	طاشیمه‌لی	hayrat	1
 taşımı	طاشمی	hayrat	1
+taşımıyorlar	طاشیمییورلر	hayrat	1
 taşıttırdığı	طاشیتدیردیغی	hayrat	1
 taşıyamıyacaksın	طاشییامیاجقسڭ	hayrat	1
 te'hîrine	تأخیرینه	hayrat	1
@@ -3405,6 +4190,7 @@ te'lîfâtının	تألیفاتنڭ	hayrat	1
 te'mînkârâne	تأمینكارانه	hayrat	1
 te'sîrimiz	تأثیریمز	hayrat	1
 te'sîrine	تأثیرینه	hayrat	1
+te'sîriniz	تأثیریڭز	hayrat	1
 te'sîsleriyledir	تأسیسلریله‌در	hayrat	1
 te'vîlkârâne	تأویلكارانه	hayrat	1
 te'vîllerine	تأویللرینه	hayrat	1
@@ -3472,7 +4258,10 @@ temellukkârâne	تملّقكارانه	hayrat	1
 temeltaşı	تمل طاشی	hayrat	1
 temizlemesiyle	تمیزله‌مه‌سیله	hayrat	1
 temizletmeye	تمیزلتمه‌یه	hayrat	1
+temmuzda	تمموزده	hayrat	1
 temyîzen	تمییزا	hayrat	1
+temzîcin	تمزیجڭ	hayrat	1
+temzîcine	تمزیجنه	hayrat	1
 temâsülse	تماثلسه	hayrat	1
 tenaggum	تنغّم	hayrat	1
 tenbelkârâne	تنبلكارانه	hayrat	1
@@ -3486,6 +4275,7 @@ tenkîdimi	تنقیدیمی	hayrat	1
 tenneffüs	تنفّس	hayrat	1
 tenvîriye	تنویریه	hayrat	1
 terbiyegâhlarıyla	تربیه‌كاهلریله	hayrat	1
+terbiyeten	تربیة	hayrat	1
 tercümanıyım	ترجمانی یم	hayrat	1
 tereffu'	ترفّع	hayrat	1
 terettüblerine	ترتبلرینه	hayrat	1
@@ -3507,6 +4297,7 @@ terâzisi	ترازیسی	hayrat	1
 tesbîhhân	تسبیح خوان	hayrat	1
 tese'ül	تسئّل	hayrat	1
 teselsülen	تسلسلا	hayrat	1
+tesliyetbahş	تسلیتبخش	hayrat	1
 teslîmen	تسلیما	hayrat	1
 teslîsiyeti	تثلیثیّتی	hayrat	1
 tesâdüfât	تصادفات	hayrat	1
@@ -3531,6 +4322,7 @@ teyemmünü	تیمّنی	hayrat	1
 teyzem	تیزه‌م	hayrat	1
 tezgâhdârına	تزكاهدارینه	hayrat	1
 tezgâhtârıdırlar	تزكاهداریدرلر	hayrat	1
+tezkirelerini	تذكره‌لرینی	hayrat	1
 tezâhüriyettir	تظاهریّتدر	hayrat	1
 teşahhusca	تشخّصجه	hayrat	1
 teşahhusât	تشخّصات	hayrat	1
@@ -3548,6 +4340,7 @@ tibyanınız	تبیانڭز	hayrat	1
 ticarethânemdir	تجارتخانه‌مدر	hayrat	1
 ticarethânemizin	تجارتخانه‌مزڭ	hayrat	1
 tipte	تیپده	hayrat	1
+titremesiyle	تیتره‌مه‌سیله	hayrat	1
 titremeyen	تیتره‌مه‌ین	hayrat	1
 tohumcuklarınıki	تخومجقلرینیكه	hayrat	1
 tokatlanması	طوقاتلانمه‌سی	hayrat	1
@@ -3564,6 +4357,8 @@ topçuları	طوپچیلری	hayrat	1
 torun	طورون	hayrat	1
 tosya	طوسیه	hayrat	1
 tufaân	طوفان	hayrat	1
+tulum	طولوم	hayrat	1
+tulumbacıklardan	طلومبه‌جقلردن	hayrat	1
 turrasıyım	طرّه‌سی یم	hayrat	1
 tutamadığını	طوتامدیغنی	hayrat	1
 tutamayız	طوتامایز	hayrat	1
@@ -3596,13 +4391,16 @@ tâzelendir	تازه‌لندیر	hayrat	1
 tâûs	طائوس	hayrat	1
 tâğūtî	طاغوتی	hayrat	1
 törenden	تورندن	hayrat	1
+tüfeğini	تفنكنی	hayrat	1
 tükürsün	توكورسون	hayrat	1
+türkçe'sidir	توركجه‌سیدر	hayrat	1
 türkçüyüz	توركجی یز	hayrat	1
 tüsu'	تسع	hayrat	1
 tüyündeki	توینده‌كی	hayrat	1
 tıkamaya	طیقامغه	hayrat	1
 tıkıyorlar	طیقایورلر	hayrat	1
 tılsımküşâsı	طلسم كشاسی	hayrat	1
+tıntın	طین طین	hayrat	1
 uddetim	عدّتم	hayrat	1
 ukke	عكّه	hayrat	1
 ukkede	عكه‌ده	hayrat	1
@@ -3626,6 +4424,7 @@ unutturması	اونوتدیرمه‌سی	hayrat	1
 unutturulabilen	اونوتدیریلابیلن	hayrat	1
 unutturuldu	اونوتدیریلدی	hayrat	1
 unutulmamaklığımı	اونوتولمامقلغمی	hayrat	1
+unutulmasıdır	اونوتولمسیدر	hayrat	1
 unutulmuyorlar	اونوتولمییورلر	hayrat	1
 uru	اوری	hayrat	1
 usanma	اوصانما	hayrat	1
@@ -3639,6 +4438,7 @@ uyandırılmasın	اویاندیریلماسون	hayrat	1
 uyandırılmasıyla	اویاندیریلمسیله	hayrat	1
 uyandırırsa	اویاندیررسه	hayrat	1
 uyanmıyor	اویانمییور	hayrat	1
+uydurmalar	اویدورمه‌لر	hayrat	1
 uydurulmuş	اویدیریلمش	hayrat	1
 uysal	اویصال	hayrat	1
 uyuyorsunuz	اویویورسڭز	hayrat	1
@@ -3651,18 +4451,24 @@ uzaması	اوزامسی	hayrat	1
 uzatmadın	اوزاتمادڭ	hayrat	1
 uzatması	اوزاتمسی	hayrat	1
 uzattığımda	اوزاتدیغمده	hayrat	1
+uzatılması	اوزاتیلمه‌سی	hayrat	1
 uzuvcuğuna	عضوجغنه	hayrat	1
 uzvunda	عضونده	hayrat	1
 uzvunun	عضوینڭ	hayrat	1
 uçmalarında	اوچمه‌لرنده	hayrat	1
 uçmalarıyla	اوچمه‌لریله	hayrat	1
+uçtur	اوجدر	hayrat	1
 uçurulabilir	اوچوریلابیلیر	hayrat	1
 uğrama	اوغراما	hayrat	1
 uğramaması	اوغرامامسی	hayrat	1
+uğramasının	اوغرامه‌سنڭ	hayrat	1
 uğratırlar	اوغراتیرلر	hayrat	1
 uğraşma	اوغراشما	hayrat	1
 uğraştırmasıyla	اوغراشدیرمه‌سیله	hayrat	1
 uğrunuza	اوغریڭزه	hayrat	1
+uşak'ta	عشاقده	hayrat	1
+uşak'tan	عشّاقدن	hayrat	1
+uşaklı	عشاقلی	hayrat	1
 va'deden	وعد ایدن	hayrat	1
 va'dedilmesi	وعد ایدیلمسی	hayrat	1
 va'detmesi	وعد ایتمه‌سی	hayrat	1
@@ -3677,11 +4483,15 @@ vahyen	وحیا	hayrat	1
 vahşînin	وحشینڭ	hayrat	1
 vakfedip	وقف ایدوب	hayrat	1
 vakfetmeliyiz	وقف ایتمه‌لی ییز	hayrat	1
+vakfetmişim	وقف ایتمشم	hayrat	1
 vaktüzzuhr	وقت الظّهر	hayrat	1
+varakpâreciğime	ورقپاره‌جكمه	hayrat	1
+varakpâreciğimi	ورقپاره‌جكمی	hayrat	1
 varamadığım	وارامدیغم	hayrat	1
 varlarmış	وارلرمش	hayrat	1
 varmadan	وارمادن	hayrat	1
 varmadım	وارمادم	hayrat	1
+vartaları	وارطه‌لری	hayrat	1
 vasfet	وصف ایت	hayrat	1
 vasfeylemek	وصف ایله‌مك	hayrat	1
 vasiyetnâmem	وصیّتنامه‌م	hayrat	1
@@ -3710,8 +4520,11 @@ vehmeyledi	وهم أیله‌دی	hayrat	1
 vehmiyât	وهمیّات	hayrat	1
 vehâmiyeti	وهامیتی	hayrat	1
 vei'câzlı	و اعجازلی	hayrat	1
+veiltifâtâtın	و التفاتاتڭ	hayrat	1
 vekâleti'nin	وكالتنڭ	hayrat	1
 vekāyi'	وقایع	hayrat	1
+velkalem	والقلم	hayrat	1
+velkelâm	والكلام	hayrat	1
 velînîmetin	ولی نعمتڭ	hayrat	1
 venizelos	ونیزه‌لوس	hayrat	1
 veremediklerinden	ویره‌مدكلرندن	hayrat	1
@@ -3719,6 +4532,11 @@ verememektedirler	ویره‌مه‌مكده‌درلر	hayrat	1
 verememiş	ویره‌مه‌مش	hayrat	1
 veremeyeceklerdir	ویره‌مه‌یه‌جكلردر	hayrat	1
 veremiyorsunuz	ویره‌مییورسڭز	hayrat	1
+vereselerdir	ورثه‌لردر	hayrat	1
+veresenin	ورثه‌نڭ	hayrat	1
+veresesindedir	ورثه‌سنده‌در	hayrat	1
+veresesinden	ورثه‌سندن	hayrat	1
+veresesine	ورثه‌سنه	hayrat	1
 vergisini	ویركیسنی	hayrat	1
 verilmeye	ویریلمه‌یه	hayrat	1
 verirlerdi	ویررلردی	hayrat	1
@@ -3728,10 +4546,12 @@ vermedikti	ویرمدكدی	hayrat	1
 vermeksizin	ویرمكسزین	hayrat	1
 vermemeliyiz	ویرمه‌ملی یز	hayrat	1
 vermesem	ویرمه‌سه‌م	hayrat	1
+vermeyeceklerdir	ویرمیه‌جكلردر	hayrat	1
 vermeyecektiler	ویرمه‌یه‌جكدیلر	hayrat	1
 vermiştin	ویرمشدڭ	hayrat	1
 versek	ویرسك	hayrat	1
 verseydim	ویرسه ایدم	hayrat	1
+vessellâm'ın	والسّلامڭ	hayrat	1
 vesâyete	وصایته	hayrat	1
 vesîkasıyım	وثیقه‌سی یم	hayrat	1
 vesîlem	وسیله‌م	hayrat	1
@@ -3739,12 +4559,14 @@ vesîleolarak	وسیله اولارق	hayrat	1
 vesükûttan	و سكوتدن	hayrat	1
 vetevbîh	و توبیخ	hayrat	1
 vezevk	و ذوق	hayrat	1
+veşşükrülillâh	والشّكر للّه	hayrat	1
 vicdaniyeye	وجدانیه‌یه	hayrat	1
 vicdansûz	وجدان سوز	hayrat	1
 vicdansızlığa	وجدانسزلغه	hayrat	1
 vilâyetteyim	ولایتده‌یم	hayrat	1
 virdime	وردیمه	hayrat	1
 virdimi	وردیمی	hayrat	1
+viyana	ویانه	hayrat	1
 vukūu	وقوعی	hayrat	1
 vurmadan	وورمادن	hayrat	1
 vurmadın	اورمادڭ	hayrat	1
@@ -3753,6 +4575,7 @@ vurmuşlarsa	اورمشلرسه	hayrat	1
 vurmuşsa	اورمشسه	hayrat	1
 vurulmam	اورولمه‌م	hayrat	1
 vurulmasıyla	وورولمسیله	hayrat	1
+vâhidün	واحد	hayrat	1
 vâhime	واهمه	hayrat	1
 vâsıtamla	واسطه‌مله	hayrat	1
 vâsıtayım	واسطه‌یم	hayrat	1
@@ -3776,12 +4599,14 @@ yakıştıramadığımdan	یاقیشدیرامدیغمدن	hayrat	1
 yalvarmaktayız	یالوارمقده‌یز	hayrat	1
 yalvarmasından	یالوارمه‌سندن	hayrat	1
 yalçın	یالچین	hayrat	1
+yamalayan	یامه‌لایان	hayrat	1
 yanardağ	یانار طاغ	hayrat	1
 yanaşma	یاناشما	hayrat	1
 yandır	یاندیر	hayrat	1
 yandırmaya	یاندیرمه‌یه	hayrat	1
 yanmağa	یانمه‌یه	hayrat	1
 yanıncaya	یاننجه‌یه	hayrat	1
+yapa	یاپا	denetim	1
 yapamadan	یاپامادن	hayrat	1
 yapamadın	یاپامدڭ	hayrat	1
 yapamadığımız	یاپامدیغمز	hayrat	1
@@ -3796,6 +4621,7 @@ yapmama	یاپمه‌مه	hayrat	1
 yapmamaklığınızı	یاپمامقلغڭزی	hayrat	1
 yapmamasıdır	یاپمامسیدر	hayrat	1
 yapmamayı	یاپمامغی	hayrat	1
+yapmasından	یاپمه‌سندن	hayrat	1
 yapmıyoruz	یاپمییورز	hayrat	1
 yaptırabilirler	یاپدیرابیلیرلر	hayrat	1
 yaptıracağız	یاپدیراجغز	hayrat	1
@@ -3822,17 +4648,23 @@ yaralanmaması	یاره‌لانمامسی	hayrat	1
 yaralanıp	یاره‌لانوب	hayrat	1
 yaralanırlar	یاره‌لانیرلر	hayrat	1
 yaralayan	یاره‌لایان	hayrat	1
+yaramadığımı	یارامدیغمی	hayrat	1
 yaratabilen	یارادابیلن	hayrat	1
 yaratacaksın	یاراداجقسڭ	hayrat	1
 yaratamasın	یاراداماسون	hayrat	1
+yaratmasında	یاراتمه‌سنده	hayrat	1
 yaratsın	یاراتسون	hayrat	1
 yaratıldıklarına	یارادیلدقلرینه	hayrat	1
 yaratıldıktan	یارادیلدقدن	hayrat	1
 yaratılmadığı	یارادیلمدیغی	hayrat	1
 yaratılmadığını	یارادیلمدیغنی	hayrat	1
+yaratılmakta	یارادیلمقده	hayrat	1
 yaratılmaktan	یارادیلمقدن	hayrat	1
 yaratılmasından	یارادیلمه‌سندن	hayrat	1
 yaratılmasının	یارادیلمه‌سنڭ	hayrat	1
+yaratılsa	یارادیلسه	hayrat	1
+yaratılıp	یارادیلوب	hayrat	1
+yaratılırsa	یارادیلیرسه	hayrat	1
 yarınısı	یارینسی	hayrat	1
 yarıyor	یارایور	hayrat	1
 yarıyorlar	یارایورلر	hayrat	1
@@ -3867,17 +4699,28 @@ yağdırmaya	یاغدیرمه‌یه	hayrat	1
 yağımı	یاغمی	hayrat	1
 yaşamaklığınızı	یاشامقلغڭزی	hayrat	1
 yaşamaktayız	یاشامقده‌یز	hayrat	1
+yaşamamızı	یاشامه‌مزی	hayrat	1
 yaşatmaya	یاشاتمه‌یه	hayrat	1
 yaşımdayım	یاشمده‌یم	hayrat	1
 ye'cüclere	یأجوجلره	hayrat	1
+yedime	یدیمه	hayrat	1
+yedimize	یدیمزه	hayrat	1
+yedin	ییدڭ	hayrat	1
+yediremediğinden	ییدیره‌مدیكندن	hayrat	1
+yedirsin	ییدیرسین	hayrat	1
+yedirsinler	ییدیرسینلر	hayrat	1
 yekündeki	یكونده‌كی	hayrat	1
+yelkovanı	یل قوغانی	hayrat	1
 yemediğim	ییمه‌دیكم	hayrat	1
 yemediğini	ییمه‌دیكنی	hayrat	1
 yememeli	ییمه‌ملی	hayrat	1
 yememizin	ییمه‌مزڭ	hayrat	1
 yemeyiz	ییمه‌یز	hayrat	1
 yemişim	ییمشم	hayrat	1
+yemişlerle	یمیشلرله	hayrat	1
+yenilmeyeceğini	یینلمه‌یه‌جكنی	hayrat	1
 yerdi	ییردی	hayrat	1
+yeriz	ییرز	hayrat	1
 yerleşsin	یرلشسون	hayrat	1
 yerleştiremediklerinden	یرلشدیره‌مدكلرندن	hayrat	1
 yerleştirilinceye	یرلشدیریلنجه‌یه	hayrat	1
@@ -3902,7 +4745,9 @@ yetiştiremiyorum	یتیشدیره‌مییورم	hayrat	1
 yetiştirilmesi	یتیشدیریلمه‌سی	hayrat	1
 yetiştirilmesine	یتیشدیریلمه‌سنه	hayrat	1
 yetiştirilmesini	یتیشدیریلمه‌سنی	hayrat	1
+yetmediğinden	یتمه‌دیكندن	hayrat	1
 yeğenim	یكنم	hayrat	1
+yiyecekleri	ییه‌جكلری	hayrat	1
 yiyelim	یییه‌لم	hayrat	1
 yiyemediğim	یییه‌مدیكم	hayrat	1
 yiyoruz	یییورز	hayrat	1
@@ -3913,8 +4758,11 @@ yoldaşlığımız	یولداشلغمز	hayrat	1
 yoldaşınız	یولداشڭز	hayrat	1
 yormuyor	یورمییور	hayrat	1
 yoğumu	یوغمی	hayrat	1
+yuhanna	یوحنّا	hayrat	1
 yukardaki	یوقارده‌كی	hayrat	1
+yularla	یولارله	hayrat	1
 yularlarını	یولارلرینی	hayrat	1
+yuları	یولاری	hayrat	1
 yumru	یومرو	hayrat	1
 yunanistan	یونانستان	hayrat	1
 yunanistan'la	یونانستانله	hayrat	1
@@ -3950,6 +4798,7 @@ yıkılmasından	ییقیلمه‌سندن	hayrat	1
 yıldızlarıyız	ییلدیزلری یز	hayrat	1
 yıldızvârî	ییلدیزواری	hayrat	1
 yıldızı'ndan	ییلدیزندن	hayrat	1
+yırtılması	ییرتیلمسی	hayrat	1
 yığın	ییغین	hayrat	1
 zaafıysa	ضعفیسه	hayrat	1
 zahmetsizdir	زحمتسزدر	hayrat	1
@@ -3963,6 +4812,7 @@ zamâirindeki	ضمائرنده‌كی	hayrat	1
 zanedip	ظن ایدوب	hayrat	1
 zannettiğimizden	ظن ایتدیكمزدن	hayrat	1
 zannındayım	ظننده‌یم	hayrat	1
+zapsu	ژاپصو	hayrat	1
 zarardîde	ضرردیده	hayrat	1
 zararıma	ضرریمه	hayrat	1
 zararımı	ضرریمی	hayrat	1
@@ -3984,20 +4834,34 @@ zehirlemelerin	زهرله‌مه‌لرڭ	hayrat	1
 zehirliyim	زهرلی یم	hayrat	1
 zek	ذكی	hayrat	1
 zekiyim	ذكی یم	hayrat	1
+zellâka	ذلّاقه	hayrat	1
 zelâka	ذلاقه	hayrat	1
 zelîlî	ذلیلی	hayrat	1
+zembereği	زنبركی	hayrat	1
+zembereğidir	زنبركیدر	hayrat	1
+zembereğine	زنبركنه	hayrat	1
+zembereğini	زنبركنی	hayrat	1
 zemmedip	ذم ایدوب	hayrat	1
 zenberekvârî	زنبرك واری	hayrat	1
 zenginden	زنكیندن	hayrat	1
 zenginiz	زنكینز	hayrat	1
+zevil'idrâk	ذوی الادراك	hayrat	1
+zevilakıl	ذوی العقل	hayrat	1
+zevilefkâr	ذوی الافكار	hayrat	1
+zevilervâh	ذوی الارواح	hayrat	1
+zevilidrâk	ذوی الادراك	hayrat	1
 zevkiyâtını	ذوقیاتنی	hayrat	1
 zevklenmesi	ذوقلنمه‌سی	hayrat	1
 zevkperest	ذوقپرست	hayrat	1
+zevâhirdeki	ظواهرده‌كی	hayrat	1
 zevâhirini	ظواهرینی	hayrat	1
 zeyl'e	ذیله	hayrat	1
 zeyli'nden	ذیلندن	hayrat	1
+zeynelâbidîn	زین العابدین	hayrat	8
+zeynelâbidîn'e	زین العابدینه	hayrat	1
 zeytinyağı	زیتون یاغی	hayrat	1
 zeyâb	ذیاب	hayrat	1
+zihniyetini	ذهنیتنی	hayrat	1
 zikiredilmesi	ذكر ایدیلمسی	hayrat	1
 zikiredilmiş	ذكر ایدیلمش	hayrat	1
 zikirediyordum	ذكر ایدییوردم	hayrat	1
@@ -4006,6 +4870,8 @@ zikrettiğimden	ذكر ایتدیكمدن	hayrat	1
 zikrettiğimizden	ذكر ایتدیكمزدن	hayrat	1
 zikreyle	ذكر أیله	hayrat	1
 zikrime	ذكریمه	hayrat	1
+zil'ecniha	ذی الاجنحه	hayrat	1
+zilyed	ذی الید	hayrat	1
 zinnûr	ذی النّور	hayrat	1
 ziyâ'dan	ضیاعدن	hayrat	2
 ziyâ'ına	ضیاعنه	hayrat	1
@@ -4048,6 +4914,7 @@ zûlfikār'ın	ذوالفقارڭ	hayrat	1
 zühdünün	زهدینڭ	hayrat	1
 zül	ذل	hayrat	1
 züleyha'dan	زلیخادن	hayrat	1
+zülyezen	ذو الیزن	hayrat	1
 zıddıyeti	ضدّیتی	hayrat	1
 zılde	ظلّده	hayrat	1
 zılden	ظلدن	hayrat	1
@@ -4083,16 +4950,21 @@ zıyâî	ضیاعی	hayrat	1
 âhiruddeverân	آخر الدّوران	hayrat	1
 âhâddendir	آحددندر	hayrat	1
 âlemşumûl	عالم شمول	hayrat	1
+âlihelerdir	آلهه‌لردر	hayrat	1
+âlihelerinizden	الهه‌لریڭزدن	hayrat	1
 âlimiz	عالمز	hayrat	1
 âlîcenap	عالی جناب	hayrat	1
 âlîşânzâde	عالیشان زاده	hayrat	1
 âlûdeolanlardan	آلوده اولانلردن	hayrat	1
+âmir'i	عامری	hayrat	1
 âmme	عامّه	hayrat	1
 âmmeye	عامّه‌یه	hayrat	1
 âmâlini	آمالنی	hayrat	1
+ânen	آنا	hayrat	1
 âriye	عاریه	hayrat	1
 âriyet	عاریت	hayrat	1
 âriyeyi	عاریه‌یی	hayrat	1
+âsiyâne	عاصیانه	hayrat	1
 âyettenbirinci	آیتدن برنجی	hayrat	1
 âğūşundayım	آغوشنده‌یم	hayrat	1
 âşikârdı	آشكاردی	hayrat	1
@@ -4108,6 +4980,9 @@ zıyâî	ضیاعی	hayrat	1
 çalmalıyız	چالمه‌لی ییز	hayrat	1
 çalışabilmekliğimiz	چالیشابیلمكلكمز	hayrat	1
 çalışamadım	چالیشامدم	hayrat	1
+çalışmamalı	چالیشماملی	hayrat	1
+çalışmamanız	چالیشمامه‌ڭز	hayrat	1
+çalışmıyorsun	چالیشمییورسڭ	hayrat	1
 çalıştın	چالیشدڭ	hayrat	1
 çalıştırmalarında	چالیشدیرمه‌لرنده	hayrat	1
 çalıştırmıyor	چالیشدیرمییور	hayrat	1
@@ -4115,6 +4990,8 @@ zıyâî	ضیاعی	hayrat	1
 çalıştırılmaya	چالیشدیریلمایا	hayrat	1
 çamdağı'nda	چام طاغنده	hayrat	1
 çamulari'nin	چامولارینڭ	hayrat	1
+çankırı'da	چانقیریده	hayrat	1
+çankırı'dan	چانقیریدن	hayrat	1
 çantama	چانطه‌مه	hayrat	1
 çantamızdan	چانطه‌مزدن	hayrat	1
 çarptırıp	چارپدیروب	hayrat	1
@@ -4123,38 +5000,57 @@ zıyâî	ضیاعی	hayrat	1
 çaycıemîn	چایجی أمین	hayrat	1
 çayımı	چایمی	hayrat	1
 çağlatma	چاغلاتما	hayrat	1
+çağrılmıştık	چاغیریلمشدق	hayrat	1
 çekecektik	چكه‌جكدك	hayrat	1
+çekemedi	چكه‌مدی	hayrat	1
 çekemediğimiz	چكه‌مدیكمز	hayrat	1
 çekememezlik	چكه‌مه‌مزلك	hayrat	1
 çekememezlikten	چكه‌مه‌مزلكدن	hayrat	1
+çekemeyerek	چكه‌مه‌یه‌رك	hayrat	1
 çekildikte	چكیلدكده	hayrat	1
 çekilemediği	چكیله‌مدیكی	hayrat	1
 çekmeli	چكملی	hayrat	1
 çekmese	چكمه‌سه	hayrat	1
+çekmeyecek	چكمیه‌جك	hayrat	1
+çekmeyeceksin	چكمیه‌جكسڭ	hayrat	1
 çektirdi	چكدیردی	hayrat	1
 çektirdiniz	چكدیردیڭز	hayrat	1
+çektirilen	چكدیریلن	hayrat	1
+çektirilse	چكدیریلسه	hayrat	1
 çektirmediler	چكدیرمدیلر	hayrat	1
 çektirmediğini	چكدیرمدیكنی	hayrat	1
 çektirmemiş	چكدیرمه‌مش	hayrat	1
 çektirmiş	چكدیرمش	hayrat	1
+çember	چنبر	hayrat	1
 çengelcikleri	چنكلجكلری	hayrat	1
+çerkez	چركس	hayrat	1
 çeviremedi	چویره‌مدی	hayrat	1
 çevirememiş	چویره‌مه‌مش	hayrat	1
+çevirilmesi	چوریلمه‌سی	hayrat	1
 çevirirken	چویرركن	hayrat	1
 çevirmemişim	چویرمه‌مشم	hayrat	1
 çevirmesin	چویرمه‌سون	hayrat	1
 çevrilmesinden	چوریلمسندن	hayrat	1
 çevrilmesine	چوریلمه‌سنه	hayrat	1
+çeyizler	جهیزلر	hayrat	1
 çeşitle	چشیتله	hayrat	1
 çilli	چیللی	hayrat	1
 çimengâh	چمنكاه	hayrat	1
 çimengâhının	چمنكاهنڭ	hayrat	1
+çimento	چیمنطو	hayrat	1
+çingeneler	چنكانه‌لر	hayrat	1
+çingeneleri	چنكانه‌لری	hayrat	1
+çingenelik	چنكانه‌لك	hayrat	1
+çingeneliğe	چنكانه‌لكه	hayrat	1
 çirkince	چركینجه	hayrat	1
 çirkindi	چركیندی	hayrat	1
 çirkinleşmesi	چركینلشمه‌سی	hayrat	1
+çirkâbdan	چركابدن	hayrat	1
+çirkâbına	چركابنه	hayrat	1
 çiçekdâr	چیچكدار	hayrat	1
 çokselâm	چوق سلام	hayrat	1
 çukuruma	چوقوریمه	hayrat	1
+çuvâldan	چووالدن	hayrat	1
 çâresizdim	چاره‌سزدم	hayrat	1
 çâşırlı	چاشیرلی	hayrat	1
 çökelim	چوكه‌لم	hayrat	1
@@ -4163,19 +5059,23 @@ zıyâî	ضیاعی	hayrat	1
 çürümeyip	چورومه‌یوب	hayrat	1
 çürütemediklerinden	چوروته‌مدكلرندن	hayrat	1
 çürütemediler	چوروته‌مدیلر	hayrat	1
+çıkamıyorum	چیقامییورم	hayrat	1
 çıkaramadım	چیقارامدم	hayrat	1
 çıkarmadığına	چیقارمادیغنه	hayrat	1
 çıkarmıyor	چیقارمییور	hayrat	1
 çıkarılmama	چیقاریلمه‌مه	hayrat	1
 çıkarıncaya	چیقارنجه‌یه	hayrat	1
 çıkasıya	چیقاسی یه	hayrat	1
+çıkmadığımdan	چیقمدیغمدن	hayrat	1
 çıkmadığına	چیقمادیغنه	hayrat	1
 çıkmadığından	چیقمادیغندن	hayrat	1
 çıkmamaya	چیقمامغه	hayrat	1
 çıkmamızla	چیقمه‌مزله	hayrat	1
+çıkmıyoruz	چیقمییورز	hayrat	1
 çıktıysa	چیقدیسه	hayrat	1
 çıkılması	چیقیلمه‌سی	hayrat	1
 çılgınlığıdır	چیلغینلغیدر	hayrat	1
+çırakları	چراقلری	hayrat	1
 êfendimiz	افندیمز	hayrat	1
 îcâdça	ایجادجه	hayrat	1
 îcâdıki	ایجادیكه	hayrat	1
@@ -4225,7 +5125,9 @@ zıyâî	ضیاعی	hayrat	1
 örtmesi	اورتمه‌سی	hayrat	1
 öyleyim	اویله‌یم	hayrat	1
 özene	اوزنه	hayrat	1
+özledim	اوزله‌دم	hayrat	1
 özrümü	عذریمی	hayrat	1
+özümüze	اوزیمزه	hayrat	1
 öğrenemiyor	اوكرنه‌مییور	hayrat	1
 öğretilmesini	اوكرتیلمه‌سنی	hayrat	1
 öğretmesi	اوكرتمسی	hayrat	1
@@ -4246,6 +5148,7 @@ zıyâî	ضیاعی	hayrat	1
 ümîdime	امیدیمه	hayrat	1
 üniversiteydi	اونیورسیته‌یدی	hayrat	1
 ürdün'de	اردنده	hayrat	1
+ürkenler	اوركنلر	hayrat	1
 ürkmeye	ئوركمه‌یه	hayrat	1
 ürktürüyorlar	ئوركدیرییورلر	hayrat	1
 üsame'nin	اسامه‌نڭ	hayrat	1
@@ -4256,6 +5159,7 @@ zıyâî	ضیاعی	hayrat	1
 üçbuçuk	اوچ بچوق	hayrat	1
 ıbrıkta	ابریقده	hayrat	1
 ıhdı	ایخدی	hayrat	1
+ırak'dan	عراقدن	hayrat	1
 ırkdaşlarından	عرقداشلرندن	hayrat	1
 ırsıyette	ارثیّتده	hayrat	1
 ıslahâtı	اصلاحاتی	hayrat	1
@@ -4266,7 +5170,9 @@ zıyâî	ضیاعی	hayrat	1
 ıstılâhâtından	اصطلاحاتندن	hayrat	1
 ısırmaması	ایصیرمامسی	hayrat	1
 ısırmamasına	ایصیرمامسنه	hayrat	1
+ısırmasından	ایصیرمه‌سندن	hayrat	1
 ısırır	ایصیریر	hayrat	1
+ısıtmaya	ایصیتمغه	hayrat	1
 ısıttırdığını	ایصیتدیردیغنی	hayrat	1
 ısıtıcı	ایصیدیجی	hayrat	1
 ıvazdırlar	عوضدرلر	hayrat	1
@@ -4281,14 +5187,17 @@ zıyâî	ضیاعی	hayrat	1
 şa'şaalandırarak	شعشعه‌لاندیرارق	hayrat	1
 şa'şaalandırmak	شعشعه‌لاندیرمق	hayrat	1
 şa'şaalandırmamaya	شعشعه‌لاندیرمامغه	hayrat	1
+şadırvanında	شادرواننده	hayrat	1
 şahsiyât	شخصیات	hayrat	1
 şahsiyâtın	شخصیّاتڭ	hayrat	1
 şakederler	شق ایدرلر	hayrat	1
+şalvârımı	شالواریمی	hayrat	1
 şam'lıtevfîk'in	شاملی توفیقڭ	hayrat	1
 şamlıhâfız'a	شاملی خافظه	hayrat	1
 şarlatanlığına	شارلاتانلغنه	hayrat	1
 şaziye'yi	شاذیه‌یی	hayrat	1
 şaşdım	شاشدم	hayrat	1
+şaşırmıyorlar	شاشیرمییورلر	hayrat	1
 şefâatkârâne	شفاعتكارانه	hayrat	1
 şefî'leri	شفیعلری	hayrat	1
 şefîim	شفیعم	hayrat	1
@@ -4308,6 +5217,7 @@ zıyâî	ضیاعی	hayrat	1
 şer'a	شرعه	hayrat	1
 şer'im	شرعم	hayrat	1
 şeridiz	شریدز	hayrat	1
+şeytanetkârâne	شیطنتكارانه	hayrat	1
 şeytâniyette	شیطانیتده	hayrat	1
 şi'râ	شعری	hayrat	2
 şi'râ'nın	شعرانڭ	hayrat	2
@@ -4316,6 +5226,8 @@ zıyâî	ضیاعی	hayrat	1
 şihâbürrasat	شهاب الرّصد	hayrat	1
 şiirdi	شعردی	hayrat	1
 şimşekvârî	شیمشك واری	hayrat	1
+şipariş	سپارش	hayrat	1
+şirbînî	شیربینی	hayrat	1
 şitap	شتاب	hayrat	1
 şişeciklerin	شیشه‌جكلرڭ	hayrat	1
 şişeciklerinde	شیشه‌جكلرنده	hayrat	1
@@ -4347,6 +5259,7 @@ zıyâî	ضیاعی	hayrat	1
 şükretmektedirler	شكر ایتمكده‌درلر	hayrat	1
 şükretmekteyim	شكر ایتمكده‌یم	hayrat	1
 şükretmesi	شكر ایتمه‌سی	hayrat	1
+şükretmeyenleri	شكر ایتمه‌ینلری	hayrat	1
 şükreylemekte	شكر ایله‌مكده	hayrat	1
 şükrânemi	شكرانه‌می	hayrat	1
 şükrüme	شكریمه	hayrat	1
