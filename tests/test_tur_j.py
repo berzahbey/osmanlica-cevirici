@@ -1,6 +1,6 @@
 """Tur J (17 Ekim, Bakara denetimi 2): kâf-ı nûnî ve emir (ölün, eşin, kalın), ettirgen -dır (yağdır, alıştır), -ıver-, -mAnI, -mAmA-,
--yemeyecek, -madan, -lardan, ettirgen + -uyor, ی + -yiz, kesmeli ad + -ye, sözlük kayıtları, Hayrat ZWNJ kayıtları, parantez içi Kur'an
-okunuşları (kuran_okunus.py). "korunan"lar bozulmamalı. Yazım birebir (ZWNJ dahil) karşılaştırılır.
+-yemeyecek, -madan, -lardan, ettirgen + -uyor, ی + -yiz, kesmeli ad + -ye, sözlük kayıtları, Hayrat ZWNJ kayıtları.
+(Parantez içi Kur'an okunuşları Tur O'da kaldırıldı.) "korunan"lar bozulmamalı. Yazım birebir (ZWNJ dahil) karşılaştırılır.
 Çalıştırma: docker run --rm -v "$PWD":/k -w /k berzahbey/osmanlica-cevirici:latest python tests/test_tur_j.py"""
 import logging
 import os
@@ -74,12 +74,6 @@ DURUMLAR = [
     ('ya\u011f\u0131nca', '\u06cc\u0627\u063a\u0646\u062c\u0647'),
     ('sald\u0131r', '\u0635\u0627\u0644\u062f\u06cc\u0631'),
     ('\xe7oban\u0131n\u0131n', '\u0686\u0648\u0628\u0627\u0646\u0646\u06ad'),
-    ('2. Sak\u0131nanlar (el-muttaq\xeen) i\xe7in', '\u0662. \u0635\u0627\u0642\u06cc\u0646\u0627\u0646\u0644\u0631 (\u0627\u0644\u0645\u062a\u0651\u0642\u06cc\u0646) \u0627\u06cc\u0686\u0648\u0646'),
-    ('6. nank\xf6rl\xfck edenleri (el-kefer\xfb) uyarsan da', '\u0666. \u0646\u0627\u0646\u0643\u0648\u0631\u0644\u0643 \u0627\u06cc\u062f\u0646\u0644\u0631\u06cc (\u0643\u0641\u0631\u0648\u0627) \u0627\u0648\u06cc\u0627\u0631\u0633\u0647\u200c\u06ad \u062f\u0647'),
-    ('14. \u015eeytanlar\u0131yla (\u015fey\xe2t\xeenihim) ba\u015f ba\u015fa', '\u0661\u0664. \u0634\u06cc\u0637\u0627\u0646\u0644\u0631\u06cc\u0644\u0647 (\u0634\u06cc\u0627\u0637\u06cc\u0646\u0647\u0645) \u0628\u0627\u0634 \u0628\u0627\u0634\u0647'),
-    ("256. Dinde zorlama yoktur (l\xe2 ikr\xe2he f\xee'd-d\xeen).", '\u0662\u0665\u0666. \u062f\u06cc\u0646\u062f\u0647 \u0632\u0648\u0631\u0644\u0627\u0645\u0647 \u06cc\u0648\u0642\u062f\u0631 (\u0644\u0627 \u0625\u0643\u0631\u0627\u0647 \u0641\u06cc \u0627\u0644\u062f\u0651\u06cc\u0646).'),
-    ('57. b\u0131ld\u0131rc\u0131n (es-selv\xe2) indirdik', '\u0665\u0667. \u0628\u0644\u062f\u0631\u062c\u06cc\u0646 (\u0627\u0644\u0633\u0651\u0644\u0648\u06cc) \u0627\u06cc\u0646\u062f\u06cc\u0631\u062f\u0643'),
-    ("156. derler (inn\xe2 lill\xe2hi ve inn\xe2 ileyhi r\xe2ci'\xfbn).", '\u0661\u0665\u0666. \u062f\u06cc\u0631\u0644\u0631 (\u0625\u0646\u0651\u0627 \u0644\u0644\u0651\u0647 \u0648\u0625\u0646\u0651\u0627 \u0625\u0644\u06cc\u0647 \u0631\u0627\u062c\u0639\u0648\u0646).'),
     ('58. secde ederek (boyun e\u011ferek) girin', '\u0665\u0668. \u0633\u062c\u062f\u0647 \u0627\u06cc\u062f\u0631\u0643 (\u0628\u0648\u06cc\u0648\u0646 \u0627\u0643\u0647\u200c\u0631\u0643) \u0643\u06cc\u0631\u06ad'),
     ('Bu kitapta (bkz. s. 12) ve (Allah) ge\xe7er.', '\u0628\u0648 \u0643\u062a\u0627\u0628\u062f\u0647 (\u0628\u0642\u0632. \u0633. \u0661\u0662) \u0648 (\u0627\u0644\u0644\u0647) \u0643\u0686\u0631.'),
 ]

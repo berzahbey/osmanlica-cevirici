@@ -2375,48 +2375,6 @@ def transliterate_text(turkish_text, *args, **kwargs):
 
 
 
-# ---- Tur J (17 Ekim): en dış katman — mealde parantez içindeki Arapça okunuş (el-muttaqîn) Kur'an'daki Arapça yazımıyla ----
-from . import kuran_okunus as _kuran_okunus
-_transliterate_text_okunussuz = transliterate_text
-_OKUNUS_PARANTEZ = re.compile(r"\(([^()\n]{2,80})\)")
-_OKUNUS_GUCLU = re.compile(r"(q|['’‘]|(?<![^\W\d_])(?:e[lsşrtdzn]|at|ed)-|(?<![^\W\d_])el(?=[bcçdfğhkmnprsştvyz]))")
-
-
-def _okunus_mu(ic: str, ayetli: bool) -> bool:
-    if re.search(r"[A-ZÇĞİÖŞÜÂÎÛ0-9öüç/]", ic) or not re.fullmatch(r"[a-zğıışâîûq'’‘\- ]+", ic):
-        return False                     # büyük harf, rakam, ö/ü/ç (Türkçe), eğik çizgi: okunuş değil
-    if _OKUNUS_GUCLU.search(ic):
-        return True
-    return ayetli and bool(re.search(r"[âîû]|ğ", ic))     # ayet numaralı paragrafta uzun ünlü ya da ğ (eşribû, ğulfun)
-
-
-def transliterate_text(turkish_text, *args, **kwargs):
-    if not isinstance(turkish_text, str) or "(" not in turkish_text:
-        return _transliterate_text_okunussuz(turkish_text, *args, **kwargs)
-    saklanan = []
-    parcalar = []
-    for par in turkish_text.split("\n"):
-        m = re.match(r"\s*(\d{1,3})\s*[.)]", par)
-        ayet = int(m.group(1)) if m else None
-
-        def degis(mm):
-            ic = mm.group(1).strip()
-            if not _okunus_mu(ic, ayet is not None):
-                return mm.group(0)
-            ar = _kuran_okunus.bul(ic, ayet)
-            if not ar:
-                return mm.group(0)
-            saklanan.append(ar)
-            return "(" + chr(0xeb00 + len(saklanan) - 1) + ")"
-        parcalar.append(_OKUNUS_PARANTEZ.sub(degis, par) if len(saklanan) < 200 else par)
-    if not saklanan:
-        return _transliterate_text_okunussuz(turkish_text, *args, **kwargs)
-    out = _transliterate_text_okunussuz("\n".join(parcalar), *args, **kwargs)
-    for i, ar in enumerate(saklanan):
-        out = out.replace("" + chr(0xeb00 + i), ar)
-    return out
-
-
 # ---- Tur N (18 Ekim): en dış katman — sondaki kesme işareti ayın/hemzedir (men' منع، vâzı'-ı şerîat واضع شریعت، vaz' وضع) ----
 # Kelime içi işaretsiz düz kesme (') ek ayıracı sayılıp kelimeden düşüyordu: men' -> من. Sözlükte kesmeli kaydı olan kelime doğrudan yazılır;
 # ardından gelen izafet kesresi (-ı/-i) Osmanlıcada yazılmaz.
