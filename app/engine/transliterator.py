@@ -56,6 +56,110 @@ def _eddin_adi(word: str):
     return y + " \u0627\u0644\u062f\u0651\u06cc\u0646"
 
 
+# ---- Tur N (18 Ekim): sözlükte olmayan kelime için yazım varyantı (kural motoruna düşmeden önce) ----
+# Latin metinler aynı Arapça kelimeyi farklı yazıyor: müspet (sözlükte müsbet)، içtihat (içtihad)، fıkhiyye (fıkhiye)، fıkhî (fıkh + î)، müctehidîn (müctehid + în).
+# Yalnız sözlükteki Arapça/Farsça kayda varıyorsa kullanılır; Türkçe kelimeler (sapık، tapa، kent) istisna listesinde.
+_VARYANT_ISTISNA = {"sapık", "sapıklık", "sapığ", "sarp", "tapa", "tapıcı", "tapı", "kapak", "kapsa", "kapsayıcı", "satma", "korkut", "tepki", "kent",
+                    "seçme", "seç", "kasap", "paran", "poliçe", "emret", "pinti", "pens", "part", "espana", "lits", "fait", "sart", "kapaklar",
+                    "kement", "tapan", "çapta", "kopya", "zapt", "sebet", "yalvaç", "yalvaçlı", "kurs", "mubîd", "somut"}
+_UNLU_TR = set("aeıioöuüâîû")
+
+
+def _varyant_adaylari(wl):
+    import itertools
+    kon = []
+    for i, c in enumerate(wl):
+        son = i == len(wl) - 1 or wl[i + 1] not in _UNLU_TR
+        if c == "p" and i > 0:
+            kon.append((i, "b"))
+        elif c in "tç" and son and i > 0:
+            kon.append((i, "d" if c == "t" else "c"))
+    if kon and len(kon) <= 4:
+        for r in range(1, len(kon) + 1):
+            for alt in itertools.combinations(kon, r):
+                l = list(wl)
+                for i, c in alt:
+                    l[i] = c
+                yield "".join(l), {i for i, _ in alt}, "u"
+    for i, c in enumerate(wl):            # Arapçada o/ö yok: Lukman ~ Lokman, Hulefâ ~ Holefa (yalnız tek harf)
+        if c in "uoüö" and i > 0:
+            yield wl[:i] + {"u": "o", "o": "u", "ü": "ö", "ö": "ü"}[c] + wl[i + 1:], set(), "s"
+
+
+def _varyant_yaz(word, onceki_tire=False):
+    wl = turkish_lower(word).replace("\u2019", "'")
+    if len(wl) < 4 or wl in _VARYANT_ISTISNA:
+        return None
+    harmony = rules._harmony_class(wl.replace("'", ""))
+
+    def yaz(v, hit, sufs):
+        root = v[: len(v) - len("".join(sufs))] if sufs else v
+        return hit[0] + (rules.ekleri_yaz(root.replace("'", ""), sufs, [], harmony, rules.ek_guvenilir(root, sufs)) if sufs else "")
+
+    if re.search("[iı]yy", wl):            # çift y: fıkhiyye -> fıkhiye، cemiyyet -> cemiyet، şer'iyye -> şer'iye
+        v = re.sub("([iı])yy", r"\1y", wl)
+        hit, sufs = dictionary.lookup_with_suffix(v)
+        if hit and " " not in hit[0]:
+            return yaz(v, hit, sufs)
+    if "'" in wl or "\u2018" in wl:
+        return None
+    mb = re.fullmatch(r"(bi|fi|li)(?:l-?|-?([tdszşrn])-?(?=\2))(.{3,})", wl)
+    if mb and not (mb.group(1) == "bi" and not mb.group(2) and (mb.group(3)[:1] in "md" or mb.group(3).startswith(("iyor", "ir", "ip", "in", "ec", "er", "eb", "en", "e", "ı")))):
+        # Latin harfli Arapça harf-i tarif: bilhak بالحق، bilaraz بالعرض، bittakdîr بالتقدیر، fil-… فی ال…، lil-… لل… (bil-medin: bilmek fiili değil)
+        hr = dictionary.lookup_exact(mb.group(3))
+        if hr and " " not in hr[0] and (str(hr[1]).startswith("ar") or (str(hr[1]).startswith("soz") and len(mb.group(3)) >= 5)):
+            ky = hr[0][2:] if hr[0].startswith("\u0627\u0644") else hr[0]
+            return {"bi": "\u0628\u0627\u0644", "fi": "\u0641\u06cc \u0627\u0644", "li": "\u0644\u0644"}[mb.group(1)] + ky
+    # nisbe -î ve Arapça çoğul -în/-ûn: fıkhî فقهی، müctehidîn مجتهدین (çoğul yalnız mef'ûl/fâil kalıbında: müctehidîn، sâlikîn; Sahnûn özel ad)
+    m = re.fullmatch(r"(.{4,}?)(î|în|ûn)", wl) if not onceki_tire else None
+    if m and (m.group(1) in _VARYANT_ISTISNA or (m.group(2) != "î" and not re.match(r"m[uüa]|.â", m.group(1)))):
+        m = None
+    if m:
+        h = dictionary.lookup_exact(m.group(1))
+        if h and " " not in h[0] and str(h[1]).startswith(("ar", "fa") if m.group(2) == "î" else ("ar", "fa", "soz")) and h[0][-1:] not in "ایة" \
+                and not (h[0].endswith("ه") and m.group(1)[-1:] in "aeıioöuü"):
+            return h[0] + {"î": "ی", "în": "ین", "ûn": "ون"}[m.group(2)]
+    for v, yer, tur in _varyant_adaylari(wl.replace("â", "a").replace("î", "i").replace("û", "u") if False else wl):
+        hit, sufs = dictionary.lookup_with_suffix(v)
+        if not hit or " " in hit[0]:
+            continue
+        kaynak = str(hit[1])
+        root = v[: len(v) - len("".join(sufs))] if sufs else v
+        if len(root) < 4 or any(wl.startswith(x) for x in _VARYANT_ISTISNA):
+            continue
+        if any(i >= len(root) for i in yer) or any(wl[i] in "tç" and i != len(root) - 1 for i in yer):
+            continue                       # yumuşama yalnız kökün son harfinde (seçme -> secme değil)
+        if any(_fiil_koku_mu(wl[:k]) or dictionary.lookup_exact(wl[:k] + "mak") or dictionary.lookup_exact(wl[:k] + "mek")
+               for k in range(3, len(root) + 1)):
+            continue                       # Türkçe fiil kökü (kapla-sın قاپلاسین، kes-) varyantla Arapçaya çevrilmez
+        if re.search(r"[ıiuü]p", wl[len(root) - 2: len(root)]) and wl[: len(root) - 2] in _KOK_MOD.ZKOK:
+            continue                       # zarf-fiil -ıp (kazıp قازوب، yazıp) Arapça -ib değil (rakip رقیب، mucip موجب)
+        if not (kaynak.startswith("ar") or (kaynak.startswith(("fa", "soz")) and len(root) >= 5)):
+            continue
+        if tur == "s" and not (kaynak.startswith(("ar", "soz")) and len(root) >= 5 and not sufs and word[:1].isupper()):
+            continue
+        return yaz(v, hit, sufs)
+    return None
+
+
+_NISBE_DISI = {"ber", "ger", "der", "ser", "şer", "den", "can", "nev", "yed", "hav", "sen", "ben", "cidd", "birinc"}
+
+
+def _nisbe_koku_mu(r):
+    """Tur N2: -iye'den önceki kök Arapça/Farsça bir kelime mi (şahs-iye, esas-iye) ya da -anî nisbesi mi (cisman-iye)."""
+    if len(r) < 3 or r in _NISBE_DISI or "'" in r:
+        return False
+    def ar(k):
+        h = dictionary.lookup_exact(k)
+        return h if h and " " not in h[0] and str(h[1]).startswith(("ar", "fa", "soz")) else None
+    hk = ar(r)
+    if hk:
+        hi = dictionary.lookup_exact(r + "i") or dictionary.lookup_exact(r + "\u00ee")
+        # -i'li kelime kökten türemiş nisbe olmalı (şahs شخص -> şahsi شخصی); arazi اراضی (araz عرض) değil
+        return not hi or hi[0].replace("\u0651", "") == hk[0].replace("\u0651", "") + "\u06cc"
+    return bool(re.fullmatch(r".{3,}[aâ]n", r)) and ar(r[:-2])
+
+
 def draft_transliterate_sentence(sentence: str) -> str:
     """Cümledeki her kelimeyi önce sözlükte arar, bulamazsa kural motoruna düşer."""
     def repl(m):
@@ -153,6 +257,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
             root = w[: len(w) - len("".join(sufs))]
             harmony = rules._harmony_class(w)
             return hit[0] + rules.ekleri_yaz(root, sufs, [], harmony, rules.ek_guvenilir(root, sufs))
+        _vy = _varyant_yaz(word, onceki_tire=hasattr(m, "string") and m.start() > 0 and m.string[m.start() - 1] in "-\u2010")
+        if _vy:
+            return _vy               # Tur N: yazım varyantı (müspet مثبت، fıkhî فقهی)
         o = rules.transliterate_word_with_suffix(word)
         return kok.kokle(word, o) or o   # kök sözlüğü: kural motorunun kökü Hayrat yazımıyla (gizleyemezler كیزله‌یه‌مزلر)
 
@@ -185,7 +292,30 @@ def draft_transliterate_sentence(sentence: str) -> str:
             return ayrik
         _wt = wl.replace("\u2019", "'").replace("\u2018", "'")
         if _wt in dictionary.HAYRAT_TEK:
-            return dictionary.HAYRAT_TEK[_wt]   # Tur L: Hayrat'ta az geçen kelime, yalnız tam eşleşmede (kök olarak kullanılmaz)
+            return dictionary.HAYRAT_TEK[_wt]
+        if re.search("[iı]yy", _wt) and not dictionary.lookup_exact(_wt) and _wt not in dictionary.HAYRAT_ANAHTAR \
+                and not dictionary.lookup_with_suffix(_wt)[0]:
+            _cy = None
+            _my = re.fullmatch(r"(.{2,}?)[iî]yye(.*)", _wt) if "'" not in _wt else None
+            _kr = dictionary.lookup_exact(_my.group(1)) if _my else None
+            if _kr and " " not in _kr[0] and str(_kr[1]).startswith(("ar", "soz", "fa")) and _kr[0][-1:] not in "\u0627\u0629\u06cc" and not (_kr[0].endswith("\u0647") and _my.group(1)[-1:] in "aeıioöuü") \
+                    and (not _my.group(2) or _ek_mi(_my.group(2))):
+                _st = _my.group(1) + "iye"
+                _cy = _kr[0] + "\u06cc\u0647" + ((("\u200c" if _my.group(2)[:1] not in "eıia" else "") + rules.ekleri_yaz(_st, [], [_my.group(2)], rules._harmony_class(_st + _my.group(2))).lstrip("\u200c"))
+                                             if _my.group(2) else "")   # dişil -iyye: esâsiyye اساسیه، külliyye كلّیه
+            _cy = _cy or _varyant_yaz(re.sub("([iı])yy", r"\1y", _wt))
+            if not _cy:
+                _v = re.sub("([iı])yy", r"\1y", _wt)
+                _h, _sf = dictionary.lookup_with_suffix(_v)
+                if _h and " " not in _h[0]:
+                    _rt = _v[: len(_v) - len("".join(_sf))].replace("'", "") if _sf else _v
+                    _cy = _h[0] + (rules.ekleri_yaz(_rt, _sf, [], rules._harmony_class(_v.replace("'", "")), rules.ek_guvenilir(_rt, _sf)) if _sf else "")
+            if re.search(r"[ae]ten$", _wt):
+                _cy = _tenvin_zarf(re.sub("([iı])yy", r"\1y", _wt)) or None   # keyfiyyeten -> keyfiyeten (Arapça -en zarfı)
+            if _cy and "yye" in _wt:
+                _cy = _cy.replace("\u06cc\u06cc\u0647", "\u06cc\u0647")       # -iyye tek ye ile: fer'iyye فرعیه، saneviyye ثانویه
+            if _cy:
+                return _cy            # Tur N: çift y'li akademik yazım (şer'iyye، fıkhiyye، cemiyyet) sözlükteki tek y'li kelime
         if wl in dictionary.HAYRAT_ANAHTAR:
             return repl(m)            # Hayrat'taki tam kelime: ek kuralları dokunmaz (tek ölçü)
         my = re.fullmatch(r"(.{3,}[ıiuü])y([ıiuüae])", wl)
@@ -289,9 +419,24 @@ def draft_transliterate_sentence(sentence: str) -> str:
             o = re.sub("(?:ا|ه\u200c?)?(?:سین|سڭ)$", "اسڭ" if m.group(1) == "a" else "ه\u200cسڭ", o)
             # istek 2. tekil (Hayrat): kalında اسڭ (olasın اولاسڭ، davranasın طاوراناسڭ)، incede ه‌سڭ (gizleyesin كیزله‌یه‌سڭ)
         o = _tur_d_ekler(wl, o)
+        if o.endswith("\u06ad") and re.search(r"[bcçdfgğhjklmnprştvyz][ıiuü]n$", wl) and wl in _KOK_MOD.ZKOK \
+                and wl[:-2] not in _KOK_MOD.ZKOK and not dictionary.lookup_exact(wl[:-2]) and " " not in o \
+                and (wl[:-3] + {"c": "ç", "b": "p", "d": "t", "ğ": "k"}.get(wl[-3], wl[-3])) not in _KOK_MOD.ZKOK:
+            o = o[:-1] + ("\u0648\u0646" if wl[-2] in "uü" else "\u06cc\u0646")   # Tur N: -In ile biten kök kelime ilgi eki değil (bilgin بیلكین، seçkin، olgun)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
-    return WORD_RE.sub(lambda m: _tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), sentence)
+    return WORD_RE.sub(lambda m: _nisbe_iye(_tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), sentence)
+
+
+def _nisbe_iye(o: str, latin: str) -> str:
+    """Tur N2: dişil nisbe -iye ayrılmaz ve ye ikilenmez (şahsiye شخصیه، esasiye اساسیه); yönelme hâli (şimdiye، terakkiye) değil. î'li kelime (hakîkîye) _I_YE katmanında ayrı yazılır (Hayrat)."""
+    if not o.endswith(("\u06cc \u06cc\u0647", "\u06cc\u06cc\u0647")):
+        return o
+    wl = turkish_lower(latin)
+    mn = re.fullmatch(r"(.{3,}?)[i\u00ee]ye", wl)
+    if not mn or wl in dictionary.HAYRAT_ANAHTAR or wl in dictionary.HAYRAT_TEK or dictionary.lookup_exact(wl) or not _nisbe_koku_mu(mn.group(1)):
+        return o
+    return o[:-4] + "\u06cc\u0647" if o[-3] == " " else o[:-3] + "\u06cc\u0647"
 
 
 def _he_ki(o: str, latin: str) -> str:
@@ -2269,4 +2414,40 @@ def transliterate_text(turkish_text, *args, **kwargs):
     out = _transliterate_text_okunussuz("\n".join(parcalar), *args, **kwargs)
     for i, ar in enumerate(saklanan):
         out = out.replace("" + chr(0xeb00 + i), ar)
+    return out
+
+
+# ---- Tur N (18 Ekim): en dış katman — sondaki kesme işareti ayın/hemzedir (men' منع، vâzı'-ı şerîat واضع شریعت، vaz' وضع) ----
+# Kelime içi işaretsiz düz kesme (') ek ayıracı sayılıp kelimeden düşüyordu: men' -> من. Sözlükte kesmeli kaydı olan kelime doğrudan yazılır;
+# ardından gelen izafet kesresi (-ı/-i) Osmanlıcada yazılmaz.
+_transliterate_text_sonkesmesiz = transliterate_text
+_SON_KESME_RE = re.compile(r"(?<![-\u2010\u2011\u2013\u2014A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû'’‘])([A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû]{2,})['’](-[ıiuü](?![A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû]))?(?![A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû'’])")
+
+_SON_KESME_HARF = "\u0639\u0621\u0626\u0623\u0624"     # Tur N2: yazım ayın/hemze ile bitmeli (istimâ' استما değil)
+_SON_KESME_DISI = {"şeri"}                                # şeri' at (şeriat), ittihad-ı şeri' (şer'î): شریع değil
+_SON_KESME_TARIF = re.compile(r"(?<![^\W\d_])[eaüuiı][lstdrnzş][ \-\u2010\u2011\u2013\u2014]$")   # meyl-üt tevsi', celb-ül menafi': Hayrat ifadesi/ek katmanı yazar
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not isinstance(turkish_text, str) or not ("'" in turkish_text or "’" in turkish_text):
+        return _transliterate_text_sonkesmesiz(turkish_text, *args, **kwargs)
+    saklanan = []
+    alanlar = _ifade_alanlari(turkish_text)
+
+    def sakla(m):
+        _k = turkish_lower(m.group(1))
+        h = dictionary.lookup_exact(_k + "'")
+        if not h or " " in h[0] or h[0][-1:] not in _SON_KESME_HARF or _k in _SON_KESME_DISI \
+                or _SON_KESME_TARIF.search(turkish_text[max(0, m.start() - 4):m.start()]) \
+                or len(saklanan) > 3000 or _k[-1:] in "âîû" or (_k + "'") in dictionary.HAYRAT_ANAHTAR \
+                or (_k + "\u2019") in dictionary.HAYRAT_ANAHTAR or any(a <= m.start() < b for a, b in alanlar):
+            return m.group(0)
+        saklanan.append(h[0])
+        return chr(0xed00 + len(saklanan) - 1)
+    metin = _SON_KESME_RE.sub(sakla, turkish_text)
+    if not saklanan:
+        return _transliterate_text_sonkesmesiz(turkish_text, *args, **kwargs)
+    out = _transliterate_text_sonkesmesiz(metin, *args, **kwargs)
+    for i, y in enumerate(saklanan):
+        out = out.replace(chr(0xed00 + i), y)
     return out
