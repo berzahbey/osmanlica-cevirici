@@ -160,7 +160,7 @@ def load_dictionary() -> dict:
 DICTIONARY = load_dictionary()
 
 # Osmanlıca yazımda tutarlılık: Arapça ye (ي) yerine Osmanlıca/Farsça ye (ی), Farsça kef (ک) yerine kef (ك)
-DICTIONARY = {k: (v[0].replace("\u064a", "\u06cc").replace("\u06a9", "\u0643"), v[1]) for k, v in DICTIONARY.items()}
+DICTIONARY = {k: (v[0].replace("\u064a", "\u06cc").replace("\u06a9", "\u0643").replace("\u0656", ""), v[1]) for k, v in DICTIONARY.items()}   # Tur P: alt elif (ٖ) artığı silinir
 
 # ---------------- Şedde (ّ) ----------------
 # Arapça/Farsça kökenli kelimelerde ikizleşen harfin üzerine şedde konur: muallim -> معلّم, cennet -> جنّت.
@@ -250,6 +250,36 @@ for _k, _v in DICTIONARY.items():
     _fk = _flat(_k)
     if _fk != _k and len(_fk) >= 4 and _fk not in DICTIONARY and _fk not in _FLAT_EXCLUDE and _fk not in _CIKAR:
         FLAT.setdefault(_fk, _v)
+
+# Tur P: kesmesiz/ayınsız yazım (mukatta'ât -> mukattaat, ta'mîrât -> tamirat). Yalnız sözlükte yoksa;
+# Türkçe kök (Zemberek) ya da Türkçe kök + ek olan yazım alınmaz (tan, kas, tersi). OSM_KESMESIZ=0 kapatır.
+_KESME_SIL = {ord(_c): None for _c in "'\u2019\u2018\u02bf\u02be`"}
+if _os.environ.get("OSM_KESMESIZ", "1") != "0":
+    _ZK = set()
+    _zf = Path(__file__).parent.parent / "data" / "zemberek_kok.txt"
+    if _zf.exists():
+        _ZK = {_l.split()[0].lower() for _l in open(_zf, encoding="utf-8") if _l.strip()}
+
+    def _turkce_mi(w):
+        if w in _ZK:
+            return True
+        return any(w.endswith(_e) and len(w) - len(_e) >= 3 and w[: -len(_e)] in _ZK for _e in LOOKUP_SUFFIXES)
+    _EK_KESME = set(LOOKUP_SUFFIXES) | _EK_ANAHTAR | set("yi yı yu yü ye ya nın nin nun nün ın in un ün e a i ı u ü ndan nden".split())
+
+    def _ek_ayiraci(k):
+        # kesme ek ayıracıysa (türkçe'yi, feyzi'nin) kesmesiz yazım üretilmez: yalnız ayın/hemze kesmesi
+        return any(_c in k and k.rsplit(_c, 1)[1] in _EK_KESME for _c in "'\u2019")
+    _say = {}
+    for _k, _v in DICTIONARY.items():
+        _fk = _flat(_k).translate(_KESME_SIL)
+        if _fk != _flat(_k) and len(_fk) >= 4:
+            _say.setdefault(_fk, set()).add(_v[0])
+    for _k, _v in DICTIONARY.items():
+        _fk = _flat(_k).translate(_KESME_SIL)
+        if (_fk != _flat(_k) and len(_fk) >= (7 if _v[1] == "sozlukler" else 5) and len(_say[_fk]) == 1 and _fk not in DICTIONARY and _fk not in FLAT
+                and _fk not in _FLAT_EXCLUDE and _fk not in _CIKAR and not _turkce_mi(_fk) and not _ek_ayiraci(_k)
+                and _fk.replace("yy", "y") not in DICTIONARY):   # çift y: Hayrat'ın tek y'li yazımı (cemiyet جمعیت, Tur N)
+            FLAT[_fk] = _v
 
 
 def _get(key: str):

@@ -1869,7 +1869,10 @@ def transliterate_text(turkish_text, *args, **kwargs):
             _son2 = turkish_lower(turkish_text[m.start(1):m.end(1)].rstrip())
             if _ek2[:1] == "n" and yazim.endswith("\u0633\u06cc") and _son2.endswith(("si", "s\u0131", "su", "s\u00fc")):
                 yazim = yazim[:-1]   # Tur L: Meyve Risâlesi'nin -> رساله‌سنڭ (Hayrat), iyelik ی'si n'li ekten önce düşer
-            yazim += _ifade_ek(turkish_text[m.start(1):m.end(1)], turkish_text[m.start(2):m.end(2)])
+            _ek_yaz = _ifade_ek(turkish_text[m.start(1):m.end(1)], turkish_text[m.start(2):m.end(2)])
+            if yazim.endswith("\u0647") and _son2[-1:] in "ae" and _ek_yaz[:1] not in ("", "\u200c"):
+                yazim += "\u200c"   # Tur P: ünlü he ile biten ifade + ek ayrı (hakaik-i imaniyeyi حقائق ایمانیه‌یی)
+            yazim += _ek_yaz
         son = m.end()
         iz = _IFADE_IZAFET_RE.match(turkish_text, son)
         if iz:                           # ifadeden sonraki izafet (yed-i beyzâ-yı ید بیضای)
