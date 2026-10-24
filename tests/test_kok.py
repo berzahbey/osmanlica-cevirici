@@ -31,7 +31,7 @@ DURUMLAR = [
     # sunucu ölçümü 3: ünlüyle biten isim + 2. tekil iyelik -n (ڭ), -ncı
     ("elbisen", "البسه‌ڭ"), ("sermayen", "سرمایه‌ڭ"), ("annenle", "آننه‌ڭله"), ("birinci", "برنجی"), ("bilginler", "بیلكینلر"),
     # sunucu ölçümü 4: kök+n gerçek kelime (oran, safran); ilk kök tutmazsa sıradaki (hizmetçi -> hizmet)
-    ("oranla", "اورانله"), ("safran", "صافران"), ("hizmetçin", "خدمتچڭ"),
+    ("oranla", "اورانله"), ("safran", "زعفران"), ("hizmetçin", "خدمتچڭ"),
 ]
 
 

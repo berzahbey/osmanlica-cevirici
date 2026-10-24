@@ -1,0 +1,311 @@
+# Kitap sözlüğü (Tur R, 25 Ekim 2026): kitaplarda geçen, hiçbir sözlükte olmayan ve kural motorunun yanlış yazdığı kelimeler.
+# Claude 34 kitap denetimi 3'ün kelime listesini (sözlükte olmayan, en az 30 geçiş) tek tek okuyarak seçti. duzeltmeler.tsv'den SONRA,
+# Hayrat'tan ÖNCE okunur (Hayrat aynı anahtarı ezer). Biçim: latin<TAB>osmanlıca<TAB>köken. ASCII bölümü: Türkçesi ş/ı/ğ'siz kaynaklar (tek anlamlı olanlar).
+# ASCII kaynak (s/ı/ğ düşmüş), tek anlamlı
+sey	شی	tr
+birsey	بر شی	tr
+birseyin	بر شیئڭ	tr
+birseydir	بر شیدر	tr
+hersey	هر شی	tr
+herseyi	هر شیئی	tr
+ser'î	شرعی	ar
+ser'an	شرعا	ar
+seriatin	شریعتڭ	ar
+seriati	شریعتی	ar
+seklinde	شكلنده	ar
+seklindeki	شكلنده‌كی	ar
+sekil	شكل	ar
+sekli	شكلی	ar
+sarti	شرطی	ar
+sartin	شرطڭ	ar
+kiyas	قیاس	ar
+kisas	قصاص	ar
+kiyamet	قیامت	ar
+kismi	قسمی	ar
+kisma	قسمه	ar
+kismen	قسما	ar
+kismini	قسمنی	ar
+kismin	قسمڭ	ar
+sirf	صرف	ar
+kasit	قصد	ar
+kasitla	قصدله	ar
+sihhat	صحّت	ar
+sihhati	صحّتی	ar
+fikih	فقه	ar
+lafiz	لفظ	ar
+vasif	وصف	ar
+mütesâbih	متشابه	ar
+mütesâbihlik	متشابهلك	ar
+sâri'	شارع	ar
+haddizatinda	حدّ ذاتنده	ar
+haddizatında	حدّ ذاتنده	ar
+simdi	شیمدی	tr
+karsiliginda	قارشیلیغنده	tr
+zayif	ضعیف	ar
+agir	آغیر	tr
+düsen	دوشن	tr
+allah'in	اللّهڭ	ar
+allah'i	اللّهی	ar
+allah'tir	اللّهدر	ar
+# Allah + ek (şedde düşüyordu)
+allah'ta	اللّهده	ar
+allah'la	اللّهله	ar
+beytullah	بیت اللّه	ar
+rasûlullah	رسول اللّه	ar
+rasulullah	رسول اللّه	ar
+# özel adlar
+adnan	عدنان	ar
+useyd	اسید	ar
+vakkas	وقّاص	ar
+mudar	مضر	ar
+calûd	جالوت	ar
+münir	منیر	ar
+abbâd	عبّاد	ar
+râfi	رافع	ar
+abdülmelik	عبد الملك	ar
+abdulmelik	عبد الملك	ar
+abdulaziz	عبد العزیز	ar
+abduluzzâ	عبد العزّی	ar
+mus'ab	مصعب	ar
+avvam	عوّام	ar
+hazrec	خزرج	ar
+muttalib	مطّلب	ar
+esat	اسعد	ar
+rebi	ربیع	ar
+rebiülevvel	ربیع الاوّل	ar
+hudayr	حضیر	ar
+mikdad	مقداد	ar
+külsûm	كلثوم	ar
+hukayk	حقیق	ar
+züheyr	زهیر	ar
+âise	عائشه	ar
+huseyn	حسین	ar
+hureyre	هریره	ar
+nuaym	نعیم	ar
+imranoğlu	عمران اوغلی	tr
+kaynuka	قینقاع	ar
+âs	عاص	ar
+gatafan	غطفان	ar
+gatafanlar	غطفانلر	ar
+zem'a	زمعه	ar
+cahş	جحش	ar
+maz'un	مظعون	ar
+makdis	مقدس	ar
+hevâzin	هوازن	ar
+büdeyl	بدیل	ar
+humeynî	خمینی	ar
+mut'im	مطعم	ar
+husâmeddin	حسام الدّین	ar
+şurahbil	شرحبیل	ar
+cübeyr	جبیر	ar
+rasim	راسم	ar
+habbab	خبّاب	ar
+huvaytıb	حویطب	ar
+haccac	حجّاج	ar
+bişr	بشر	ar
+namık	نامق	ar
+muslim	مسلم	ar
+şiî	شیعی	ar
+şiîler	شیعیلر	ar
+şiîlerin	شیعیلرڭ	ar
+# kelimeler
+tutsak	طوتساق	tr
+tercî	ترجیع	ar
+düzene	دوزنه	tr
+nerkis	نركس	ar
+iptidaî	ابتدائی	ar
+övgü	اوكو	tr
+övgüye	اوكویه	tr
+olgu	اولغو	tr
+testi	تستی	tr
+tuttun	طوتدڭ	tr
+biziz	بزز	tr
+bizse	بزسه	tr
+miyiz	مییز	tr
+mıyız	مییز	tr
+muyuz	مییز	tr
+lügat	لغت	ar
+taâlâ	تعالی	ar
+kur'ân'i	قرآنی	ar
+yoğun	یوغون	tr
+safran	زعفران	ar
+süsen	سوسن	ar
+lûtfet	لطف ایت	ar
+tütün	توتون	tr
+amber	عنبر	ar
+emret	امر ایت	ar
+hükmet	حكم ایت	ar
+evvel'in	اوّلڭ	ar
+öfkeli	اوفكه‌لی	tr
+zapt	ضبط	ar
+karşıtı	قارشیتی	tr
+zümrüdüanka	زمرّد عنقا	ar
+nispeten	نسبتا	ar
+vaz'î	وضعی	ar
+insanoğlunun	انسان اوغلنڭ	tr
+insanoğluna	انسان اوغلنه	tr
+insanoğlunu	انسان اوغلنی	tr
+taabbudî	تعبّدی	ar
+müstedrek	مستدرك	ar
+araf	اعراف	ar
+ukiyye	اوقیه	ar
+furû	فروع	ar
+bittabî	بالطّبع	ar
+kifâî	كفائی	ar
+eşhedü	اشهد	ar
+namevcut	ناموجود	ar
+mutasavvıf	متصوّف	ar
+mutasavvıflar	متصوّفلر	ar
+mutasavvıfların	متصوّفلرڭ	ar
+emirülmüminin	امیر المؤمنین	ar
+zihniyet	ذهنیت	ar
+zerâi	ذرائع	ar
+reisicumhur	رئیس جمهور	ar
+mefâilün	مفاعیلن	ar
+feilâtün	فاعلاتن	ar
+müşkül	مشكل	ar
+hudeybiye	حدیبیه	ar
+# Ikinci parti (8-29 gecis, buyuk harfli/sapkali kelimeler: cogu ozel ad)
+keykubad	كیقباد	ar
+abdilberr	عبد البرّ	ar
+zerîa	ذریعه	ar
+süveyd	سوید	ar
+hodâ	خدا	ar
+fâilâtün	فاعلاتن	ar
+fuat	فؤاد	ar
+cumhurreisi	جمهور رئیسی	ar
+isfahan	اصفهان	ar
+ahâdîs	احادیث	ar
+zertüşt	زردشت	ar
+huzâfe	حذافه	ar
+yesrib	یثرب	ar
+sümâme	ثمامه	ar
+huzâa	خزاعه	ar
+huzâalar	خزاعه‌لر	ar
+kudâa	قضاعه	ar
+hudrî	خدری	ar
+abduleşhel	عبد الاشهل	ar
+aden	عدن	ar
+konevî	قونوی	ar
+edhemoğlu	ادهم اوغلی	ar
+âsim	عاصم	ar
+reşat	رشاد	ar
+himyer	حمیر	ar
+nizar	نزار	ar
+hadarî	حضری	ar
+hadarîlik	حضریلك	ar
+mefâîlün	مفاعیلن	ar
+tebrizî	تبریزی	ar
+selânik	سلانیك	ar
+abduddar	عبد الدّار	ar
+diyarbekrî	دیاربكری	ar
+rükâne	ركانه	ar
+ekvâ	اكوع	ar
+kahtan	قحطان	ar
+yeşcüb	یشجب	ar
+düreyd	درید	ar
+sabahattin	صباح الدّین	ar
+abdülaziz	عبد العزیز	ar
+rafet	رأفت	ar
+vâkı	واقع	ar
+mikrez	مكرز	ar
+huseyl	حسیل	ar
+hafsâ	حفصه	ar
+hıtay	خطای	ar
+afganistan	افغانستان	ar
+abduh	عبده	ar
+vasil	واصل	ar
+hübeyre	هبیره	ar
+uskuf	اسقف	ar
+addas	عدّاس	ar
+muayt	معیط	ar
+uzre	عذره	ar
+kasvâ	قصوا	ar
+hüreyre	هریره	ar
+fâtımî	فاطمی	ar
+zekvan	ذكوان	ar
+yâlil	یالیل	ar
+meryemoğlu	مریم اوغلی	ar
+musul	موصل	ar
+hayder	حیدر	ar
+fikhî	فقهی	ar
+huzeyme	خزیمه	ar
+sahabî	صحابی	ar
+meşşâî	مشّائی	ar
+cavit	جاوید	ar
+kayravan	قیروان	ar
+yağus	یغوث	ar
+muattib	معتّب	ar
+cüşem	جشم	ar
+mersed	مرثد	ar
+üded	ادد	ar
+ğafur	غفور	ar
+mudârabe	مضاربه	ar
+satibi	شاطبی	ar
+nihat	نهاد	ar
+nurettin	نور الدّین	ar
+coğrafî	جغرافی	ar
+ubeydî	عبیدی	ar
+ubeydîler	عبیدیلر	ar
+bükeyr	بكیر	ar
+nübeyh	نبیه	ar
+ervâ	اروی	ar
+hadramevt	حضرموت	ar
+abdülhamid	عبد الحمید	ar
+abdülhamit	عبد الحمید	ar
+harezm	خوارزم	ar
+sabbah	صبّاح	ar
+allah'u	الله	ar
+stalin	ستالین	ar
+ensarî	انصاری	ar
+şi'i	شیعی	ar
+müdlic	مدلج	ar
+abdulesed	عبد الاسد	ar
+dırâr	ضرار	ar
+kubeys	قبیس	ar
+ahî	اخی	ar
+milât	میلاد	ar
+sehâdet	شهادت	ar
+serîat	شریعت	ar
+âs'a	عاصه	ar
+cündüb	جندب	ar
+kabîsa	قبیصه	ar
+hallikân	خلّكان	ar
+cühenî	جهنی	ar
+necmettin	نجم الدّین	ar
+ürdün	اردن	ar
+âkif	عاكف	ar
+suheyb	صهیب	ar
+ahtab	اخطب	ar
+mirdas	مرداس	ar
+mut'a	متعه	ar
+mebusan	مبعوثان	ar
+fitrî	فطری	ar
+keyhusrev	كیخسرو	ar
+sagıyr	صغیر	ar
+mısrî	مصری	ar
+yecüc	یأجوج	ar
+belkıys	بلقیس	ar
+cahiliyet	جاهلیت	ar
+evzâî	اوزاعی	ar
+südûr	صدور	ar
+ziraî	زراعی	ar
+dolmabahçe	طولمه‌باغچه	ar
+şahap	شهاب	ar
+sinhâce	صنهاجه	ar
+cüveyriye	جویریه	ar
+huneys	خنیس	ar
+hıraş	خراش	ar
+hayseme	خیثمه	ar
+hazrecî	خزرجی	ar
+ci'râne	جعرانه	ar
+muhiddin	محیی الدّین	ar
+hürmüz	هرمز	ar
+allah'da	اللّهده	ar
+tihâme	تهامه	ar
+meâlen	مآلا	ar
+tahran	طهران	ar
+kiyâs	قیاس	ar
+abdillah	عبد اللّه	ar
+hayyân	حیّان	ar
+zuhal	زحل	ar

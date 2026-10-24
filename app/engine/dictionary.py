@@ -16,6 +16,7 @@ from .alphabet import turkish_lower
 DATA_FILE = Path(__file__).parent.parent / "data" / "ottoman_dict.tsv"
 # Türkçe kelime düzeltmeleri: sözlükten sonra okunur (sözlük kaydı Türkçe kelimeyle çakışınca Türkçe kazanır)
 DUZELTME_FILE = Path(__file__).parent.parent / "data" / "duzeltmeler.tsv"
+KITAP_SOZLUK_FILE = Path(__file__).parent.parent / "data" / "kitap_sozlugu.tsv"  # Tur R: kitaplardan, Claude'un okuyarak secti (Hayrat ezer)
 HAYRAT_FILE = Path(__import__("os").environ.get("HAYRAT_DOSYA") or Path(__file__).parent.parent / "data" / "hayrat.tsv")  # Risale-i Nur (Hayrat) eksik kelimeler
 HAYRAT_AZ_FILE = Path(__file__).parent.parent / "data" / "hayrat_az.tsv"  # Hayrat'ta az geçen, meallerde gereken kelimeler
 # Tur L: Hayrat'ta 1 kez geçen ya da sözlüğe girmemiş kelimeler; yalnız hiçbir sözlükte olmayan anahtar için (OSM_HAYRAT_TEK=0 kapatır)
@@ -114,7 +115,7 @@ if CIKAR_FILE.exists():
 
 def _load_extra_from_tsv() -> dict:
     extra = {}
-    for dosya in (DATA_FILE, DUZELTME_FILE, HAYRAT_FILE, HAYRAT_AZ_FILE):  # Hayrat en son: tek ölçü
+    for dosya in (DATA_FILE, DUZELTME_FILE, KITAP_SOZLUK_FILE, HAYRAT_FILE, HAYRAT_AZ_FILE):  # Hayrat en son: tek ölçü
         if not dosya.exists():
             continue
         with open(dosya, "r", encoding="utf-8") as f:
