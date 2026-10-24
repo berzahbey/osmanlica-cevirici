@@ -243,7 +243,11 @@ def draft_transliterate_sentence(sentence: str) -> str:
                         and " " not in kok_yazi and turkish_lower(word).replace("\u2019", "'").endswith(("'ya", "'ye")):
                     return kok_yazi + " یه"   # Tur J: i ile biten ad + kesmeli -ye ayri (Hayrat: Efendi'ye افندی یه): Elçi'ye
                 return kok_yazi + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs))
-            return rules.transliterate_word_with_suffix(base) + rules.ekleri_yaz(b, [], tails_l, harmony)
+            _yazi = rules.transliterate_word_with_suffix(base)
+            if tails_l in (["ya"], ["ye"]) and b.endswith(("i", "ı", "î")) and _yazi.endswith("ی") and " " not in _yazi \
+                    and turkish_lower(word).replace("’", "'").endswith(("'ya", "'ye")):
+                return _yazi + " یه"   # Tur Q: sozlukte olmayan ad da (Tanri'ya, Habesi'ye) Tur J gibi ayri
+            return _yazi + rules.ekleri_yaz(b, [], tails_l, harmony)
 
         hit, sufs = dictionary.lookup_with_suffix(word)
         if not hit or sufs:
@@ -990,6 +994,11 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     if re.search(r"[pçtksşhf]t[ae]n$", l) and re.search(r"(تان|تن)$", osm) and len(l) > 4 \
             and not (dictionary.lookup_exact(l) and dictionary.lookup_exact(l)[0] == osm):   # yaratan, tutan; Tur G: bostan, destan sözlükte
         osm = re.sub(r"(تان|تن)$", "دن", osm)
+    # Tur Q: bulunma eki -ta/-te (gerçekte، sonuçta، savaşta) ده; kelime sözlükte tam kayıtlıysa (hasta، nükte، liste) dokunulmaz
+    if re.search(r"[pçtksşhf]t[ae]$", l) and osm.endswith("ته") and len(l) >= 4 \
+            and not dictionary.lookup_exact(l) and (l[:-2] in dictionary._zkok() or dictionary.lookup_exact(l[:-2])) \
+            and not (l[:-1] in dictionary._zkok() or dictionary.lookup_exact(l[:-1])):   # üst+e (üste) yönelme
+        osm = osm[:-2] + "ده"
     # ettirgen -dir/-tir: یتیشدیرمك، چالیشدیرییور، ایتدیرن
     if re.search(r"(ş|t)t[ıiuü]r", l):
         osm = osm.replace("شتیر", "شدیر").replace("تتیر", "تدیر").replace("شتور", "شدیر").replace("تتور", "تدیر")
@@ -2411,4 +2420,78 @@ def transliterate_text(turkish_text, *args, **kwargs):
     out = _transliterate_text_sonkesmesiz(metin, *args, **kwargs)
     for i, y in enumerate(saklanan):
         out = out.replace(chr(0xed00 + i), y)
+    return out
+
+
+# ---- Tur Q: Turkcede olmayan Latin harfleri (Levi, Traite, dass, OCR'da I-akut-slam) duz harfe indirilir ----
+# (yoksa ciktida Latin harf kaliyordu). Once yabanci ibareler (kaynakca: "Traite de droit compare") ayrilir: onlar eskisi gibi
+# asliyla kalir; yalniz cevrilecek kelimelerdeki harfler degisir. Turk harfleri (a-sapka, c, o, u, s, g, i) dokunulmaz.
+_YABANCI_HARF = str.maketrans({
+    "\u00e9": "e", "\u00e8": "e", "\u00ea": "e", "\u00eb": "e", "\u00c9": "E", "\u00c8": "E", "\u00ca": "E", "\u00cb": "E",
+    "\u00e0": "a", "\u00e1": "a", "\u00e4": "a", "\u00e5": "a", "\u00c0": "A", "\u00c1": "A", "\u00c4": "A", "\u00c5": "A",
+    "\u00f3": "o", "\u00f2": "o", "\u00f5": "o", "\u00f8": "o", "\u00d3": "O", "\u00d2": "O", "\u00d8": "O",
+    "\u00ed": "i", "\u00ec": "i", "\u00ef": "i", "\u00cd": "\u0130", "\u00cc": "\u0130",
+    "\u00fa": "u", "\u00f9": "u", "\u00da": "U", "\u00d9": "U",
+    "\u00f1": "n", "\u00d1": "N", "\u0142": "l", "\u0141": "L", "\u013c": "l", "\u013b": "L",
+    "\u00df": "ss", "\u0153": "oe", "\u00e6": "ae",
+})
+_YABANCI_HARF_RE = re.compile("[" + "".join(chr(k) for k in _YABANCI_HARF) + "]")
+# Turkce OCR'da a-sapka/u-sapka/i yerine akutlu harf (Dahiliye, rucu, Islam): yabanci ibare sayilmasin diye ayirmadan once
+_TR_OCR_HARF = str.maketrans({k: _YABANCI_HARF[k] for k in map(ord, "\u00e1\u00c1\u00fa\u00da\u00ed\u00cd\u00ec\u00cc")})
+_transliterate_text_yabancisiz = transliterate_text
+
+
+def _yabanci_ayir(metin, saklanan):
+    """Yabanci ibareleri ayirir (aslini saklar), yerine tek isaret harfi koyar (U+EE00 + sira)."""
+    m, s = _yabancilari_sakla(metin)
+    s = list(s)
+    if not s:
+        return metin
+    parcalar, pos = [], 0
+    for parca in s:
+        a = metin.find(parca, pos)
+        if a < 0:
+            return metin
+        parcalar.append(metin[pos:a])
+        parcalar.append(chr(0xee00 + len(saklanan)))
+        saklanan.append(parca)
+        pos = a + len(parca)
+    parcalar.append(metin[pos:])
+    return "".join(parcalar)
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if not isinstance(turkish_text, str) or not _YABANCI_HARF_RE.search(turkish_text):
+        return _transliterate_text_yabancisiz(turkish_text, *args, **kwargs)
+    saklanan = []
+    # 1) asil metinde yabanci ibareler (akutlu harfler yabanci sayilir; Turkce OCR harfleri once duzeltilir)
+    metin = _yabanci_ayir(turkish_text.translate(_TR_OCR_HARF), saklanan)
+    # 2) harfler indirildikten sonra yabanci gorunen ibareler de asliyla saklanir (Collection du Centenaire de l'Algerie)
+    duz, eslem = [], []
+    for i, c in enumerate(metin):
+        for d in c.translate(_YABANCI_HARF):
+            duz.append(d)
+            eslem.append(i)
+    duz = "".join(duz)
+    _, s2 = _yabancilari_sakla(duz)
+    if s2 and len(saklanan) + len(s2) < 1000:
+        parcalar, pos, dpos = [], 0, 0
+        for parca in s2:
+            a = duz.find(parca, dpos)
+            if a < 0:
+                break
+            oa, ob = eslem[a], eslem[a + len(parca) - 1] + 1
+            parcalar.append(metin[pos:oa].translate(_YABANCI_HARF))
+            parcalar.append(chr(0xee00 + len(saklanan)))
+            saklanan.append(metin[oa:ob])
+            pos, dpos = ob, a + len(parca)
+        parcalar.append(metin[pos:].translate(_YABANCI_HARF))
+        metin = "".join(parcalar)
+    else:
+        metin = metin.translate(_YABANCI_HARF)
+    if len(saklanan) >= 1000:
+        return _transliterate_text_yabancisiz(turkish_text, *args, **kwargs)
+    out = _transliterate_text_yabancisiz(metin, *args, **kwargs)
+    for i, y in enumerate(saklanan):
+        out = out.replace(chr(0xee00 + i), y)
     return out
