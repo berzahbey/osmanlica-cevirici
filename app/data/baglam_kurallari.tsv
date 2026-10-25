@@ -35,3 +35,4 @@ bağışlar	باغیشلار	C:(diledi\w*|günah\w*|allah)
 koru	قورو	C:(bizi|beni|onları|sizi|azab\w*|ateş\w*)
 kalın	قالڭ	L1:([a-zçğıöşüâîû]+[dt][ae]|orada|burada|şurada)
 vaz	واز	R1:geç.*
+men	منع	R1:@ETMEK

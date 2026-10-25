@@ -429,7 +429,44 @@ def draft_transliterate_sentence(sentence: str) -> str:
             o = o[:-1] + ("\u0648\u0646" if wl[-2] in "uü" else "\u06cc\u0646")   # Tur N: -In ile biten kök kelime ilgi eki değil (bilgin بیلكین، seçkin، olgun)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
-    return WORD_RE.sub(lambda m: _nisbe_iye(_tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), sentence)
+    return WORD_RE.sub(lambda m: _tur_s(_nisbe_iye(_tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), sentence)
+
+
+
+def _tur_s(o: str, latin: str) -> str:
+    """Tur S (25 Ekim): Hayrat cogunluguna gore ek duzeltmeleri; yalniz Hayrat'ta ve sozlukte tam kaydi olmayan kelimede. OSM_TUR_S=0 kapatir.
+    -lIklA لقله/لكله (Hayrat kolaylıkla قولایلقله: özellikle اوزللكله); cift he (benziyorsun); ı/i ile biten kelime + -yım ayrı (Hayrat râzıyım
+    راضی یم); yeterlilik olumsuz -emem ه‌مم (Hayrat edemem ایده‌مم: bilemem); genis zaman 2. tekil -rsın سڭ (Hayrat 1.237); -mAksızın سزین;
+    gecmis -tın دڭ; önceki اوڭجه‌كی; yönelik یوڭلیك; benz- بڭز (Hayrat benzer بڭزر)."""
+    if _os.environ.get("OSM_TUR_S", "1") == "0" or not o:
+        return o
+    wl = turkish_lower(latin).replace("’", "'")
+    if wl in dictionary.HAYRAT_ANAHTAR or wl in dictionary.HAYRAT_TEK or dictionary.lookup_exact(wl):
+        return o
+    if re.search(r"l[ıiuü][kğ]l[ae]$", wl) and len(wl) >= 8:   # çelikle، balıkla degil
+        o = re.sub("لی([كق])له$", "ل\\1له", o)
+    o = o.replace("ه‌ه‌", "ه‌")
+    if re.search(r"[ıi]y[ıi]m$", wl) and o.endswith("یییم") and len(wl) >= 6 and wl != "biriyim":   # giyim، kıyım degil
+        o = o[:-3] + " یم"
+    if len(wl) >= 7 and re.search(r"[^aeıioöuü]emem$", wl) and o.endswith("مم") and not o.endswith("ه‌مم"):
+        o = o[:-2] + "ه‌مم"
+    elif len(wl) >= 8 and wl.endswith("yemem") and o.endswith("یمم"):
+        o = o[:-3] + "یه‌مم"
+    if re.search(r"[aeıiuü]r(sın|sin)$", wl) and o.endswith("سین") and (
+            _genis_zaman(wl) or _fiil_koku_mu(re.sub(r"[ıiuü]rs[ıi]n$", "", wl))) and not _fiil_koku_mu(wl[:-3]):
+        o = o[:-3] + "سڭ"
+    if re.search(r"[çfhkpsşt]t[ıiuü]n$", wl) and o.endswith("تڭ") and not dictionary.lookup_exact(wl[:-2]) and (
+            _fiil_koku_mu(wl[:-3]) or re.search(r"(m[ıiuü]ş|[ae]c[ae]k)$", wl[:-3])):
+        o = o[:-2] + "دڭ"                # gecmis zaman 2. tekil (Hayrat آتدی): attın آتدڭ، uçtun، etmiştin ایتمشدڭ
+    if re.search(r"m[ae]ks[ıi]z[ıi]n$", wl) and o.endswith("سزڭ"):
+        o = o[:-1] + "ین"
+    if wl.startswith("önceki"):
+        o = o.replace("اوڭجك", "اوڭجه‌ك", 1)
+    if wl.startswith("yönelik"):
+        o = o.replace("یوڭه‌لیك", "یوڭلیك", 1)
+    if wl.startswith("benz") and not wl.startswith("benzin") and o.startswith("بنز"):
+        o = "بڭز" + o[3:]
+    return o
 
 
 def _nisbe_iye(o: str, latin: str) -> str:
