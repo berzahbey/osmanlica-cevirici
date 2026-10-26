@@ -521,8 +521,10 @@ def _tur_t_kopula(wl: str):
             return None                          # çekimli fiil (yemiyorlar+dı، vermeyecek+tim، dayanılmaz+dı، verdi+yse)
         if tur == "s" and len(kok) < 4:
             return None                          # Bursa، kasa
-        if tur in "dt" and (dictionary.lookup_exact(wl[:len(kok) + 1]) or wl[:len(kok) + 1] in dictionary.HAYRAT_ANAHTAR):
-            return None                          # baht+ı، bahtım، sırt+ı، redd+i (belirtme/iyelik)
+        _uzun = wl[:len(kok) + 1]
+        if tur in "dts" and (dictionary.lookup_exact(_uzun) or _uzun in dictionary.HAYRAT_ANAHTAR or
+                             (tur == "s" and _os.environ.get("OSM_TUR_T2", "1") != "0" and _uzun in _KOK_MOD.ZKOK)):
+            return None                          # baht+ı، bahtım، sırt+ı، redd+i، Tur T2: lisans+a (lisan+sa değil)
         if kok in _TUR_T_FIIL_ISIM or re.search(r"[ıiuü]?l[ae]n$", kok) or \
                 (re.search(r"[aeıiuü]r$", kok) and _tur_t_fiil(kok[:-2])):
             return None                          # aktar-، devir-، yenilen-، as+ar+sa (fiil)
@@ -538,6 +540,35 @@ def _tur_t_kopula(wl: str):
             k += "\u200c"                        # fazlaydı فضله‌یدی
         return k + yazi
     return None
+
+
+_T2_LUK = re.compile(r"^(.{3,}l)([uü])ğ([aeıioöuü].*)$")
+
+
+def _tur_t2(o: str, latin: str, wl: str) -> str:
+    """Tur T2 (27 Ekim): (1) bitişik yazılmış herşey- ayrılır, şey kısmı Hayrat yazımıyla (herşeyi هر شیئی، herşeye هر شیئه);
+    (2) -lUk + iyelik/hâl eki Hayrat kalıbıyla (yokluğu یوقلغی): sorumluluğu صوروملولغی، özgürlüğünü اوزكورلكنی (eskiden صوروملولوغو);
+    (3) özel ad Cem جم (terim cem جمع sözlükte)."""
+    if wl.startswith("herşey") and len(wl) > 6:
+        k = transliterate_text("şey" + latin[6:])
+        if k and " " not in k:
+            return "\u0647\u0631 " + k
+    if latin == "Cem":
+        return "\u062c\u0645"
+    if wl in dictionary.HAYRAT_ANAHTAR or wl in dictionary.HAYRAT_TEK or dictionary.lookup_exact(wl):
+        return o
+    m = _T2_LUK.match(wl) if not wl.startswith(("yokluğ", "büyüklüğ")) else None   # şablonun kendisi (sonsuz döngü olmasın)
+    if m and re.search("\u0644\u0648?[\u063a\u0643\u06af]\u0648?[\u0648\u0645\u06ad\u0646]", o):
+        kok, unlu, ek = m.group(1), m.group(2), m.group(3)
+        govde = kok[:-1]                                                   # sorumlu + luğu
+        if len(govde) >= 3 and (govde in _KOK_MOD.ZKOK or dictionary.lookup_exact(govde) or re.search(r"l[ıiuü]$", govde)):
+            ad = transliterate_text(latin[:len(govde)])                    # sorumlu صوروملو
+            sablon = ("yokluğ" + ek) if unlu == "u" else ("büyüklüğ" + ek)
+            bas = "\u06cc\u0648\u0642\u0644\u063a" if unlu == "u" else "\u0628\u06cc\u0648\u0643\u0644\u0643"   # یوقلغ / بیوكلك
+            so = transliterate_text(sablon)
+            if ad and " " not in ad and not ad.endswith("\u06ad") and so.startswith(bas) and " " not in so:
+                return ad + "\u0644" + ("\u063a" if unlu == "u" else "\u0643") + so[len(bas):]
+    return o
 
 
 def _tur_t(o: str, latin: str) -> str:
@@ -569,6 +600,8 @@ def _tur_t(o: str, latin: str) -> str:
             _k = transliterate_text(latin[:-3]) if len(wl) >= 7 else ""
             if _k.endswith("\u06cc") and " " not in _k:
                 o = _k + "\u062f\u06cc"           # biriydi بریدی، kendisiydi كندیسیدی
+    if _os.environ.get("OSM_TUR_T2", "1") != "0":
+        o = _tur_t2(o, latin, wl)
     if wl.startswith("ön") and not wl.startswith(_TUR_T_HARIC):
         o = re.sub("^[\u0627\u0623]\u0648\u0646", "\u0627\u0648\u06ad", o)
     elif wl.startswith("yön"):
