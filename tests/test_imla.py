@@ -100,7 +100,7 @@ CUMLE = {
     "dinsizler": "دینسزلر", "yine": "یینه", "altında": "آلتنده", "kişi": "كیشی",
     # Şefkat Tokatları
     "yedim": "ییدم", "yemiş": "ییمش", "bilirim": "بیلیرم", "olabiliriz": "اولابیلیرز", "gelmesin": "كلمهسین",
-    "geçirsin": "كچیرسین", "yazsın": "یازسین", "kalmıyordu": "قالمایوردی", "çavuş": "چاووش", "arkadaş": "آرقداش",
+    "geçirsin": "كچیرسین", "yazsın": "یازسین", "kalmıyordu": "قالمییوردی", "çavuş": "چاووش", "arkadaş": "آرقداش",
     "küçük": "كوچك", "karşı": "قارشو", "yeni": "یڭی", "üçüncü": "اوچنجی", "içinde": "ایچنده", "işte": "ایشته",
 }
 
