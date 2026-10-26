@@ -215,6 +215,8 @@ def draft_transliterate_sentence(sentence: str) -> str:
             _zamir_n = (len(parts) == 2 and _p1[:1] == "n" and len(_p1) > 1 and (_ek_mi(_p1[1:]) or _p1[1:] in ("deki", "daki", "teki", "taki")
                                                                        or (_p1[1:].endswith(("ki", "kini", "kine")) and _ek_mi(_p1[1:_p1.rindex("ki")])))
                         and turkish_lower(parts[0])[-1:] in "ıiuüae")   # Tur L: Lâhikası'nda, Nûriyesi'ndeki (ayın değil, zamir n'si + ek)
+            _ki_ekli = _os.environ.get("OSM_TUR_U", "1") != "0" and len(parts) == 2 and any(
+                _p1[i:i + 2] == "ki" and _ek_mi(_p1[:i]) and (i + 2 == len(_p1) or _ek_mi(_p1[i + 2:])) for i in range(1, len(_p1) - 1))
             if base == parts[0] and len(parts) == 2 and not _ek_mi(_p1) and not _zamir_n:
                 # ayın/hemze işareti (ma’nâ, te’mîn): ek ayıracı değil, kelimenin parçası
                 tam = turkish_lower(word.replace("\u2019", "'"))
@@ -224,7 +226,8 @@ def draft_transliterate_sentence(sentence: str) -> str:
                     if hit2:
                         kok2 = aday[: len(aday) - len("".join(sufs2))] if sufs2 else aday
                         return hit2[0] + rules.ekleri_yaz(kok2, sufs2, [], h2, rules.ek_guvenilir(kok2, sufs2))
-                if re.search("[âîûāīū]", tam):   # şapkasız kelimede kesme işareti ek ayıracıdır (Çeşmesi'nde, Urfa'daki)
+                if re.search("[âîûāīū]", tam) and not _ki_ekli:   # şapkasız kelimede kesme işareti ek ayıracıdır (Çeşmesi'nde, Urfa'daki)
+                    # Tur U: şapkalı kelime + kesmeli -deki (Kerîm'deki، Ammûriye'deki) ek ayıracıdır, ayın değil
                     return rules.transliterate_word_with_suffix(tam.replace("'", "\u2018"))
             harmony = rules._harmony_class(turkish_lower(word).replace("'", ""))
             hit, sufs = dictionary.lookup_with_suffix(base)
@@ -542,6 +545,30 @@ def _tur_t_kopula(wl: str):
     return None
 
 
+_TUR_U_YMIS = re.compile(r"^(.{3,}[aeıioöuü\u00e2\u00ee\u00fb])ym[ıiuü]ş$")
+
+
+def _tur_u(o: str, latin: str, wl: str) -> str:
+    """Tur U (27 Ekim): (1) ünlüden sonra ek-fiil -ymIş (Hayrat romanlarıymış رومانلریمش): kelimeymiş كلمه‌یمش، içindeymiş ایچنده‌یمش،
+    adamıymış آدامیمش، kişiymiş كیشیمش; fiil kökü + -mIş (kaymış، koymuş، duymuş) dokunulmaz.
+    (2) kalın olumsuz istek -mAyAsIn (Hayrat kalmayasın قالمایاسڭ): kırmayasın قیرمایاسڭ (eskiden mastar okuması قیرمغه‌سڭ)."""
+    m = _TUR_U_YMIS.match(wl)
+    if m and " " not in o:
+        kok = m.group(1)
+        _soru = re.search(r"[^aeıioöuü]m[ıiuü]$", kok) and dictionary.lookup_exact(kok[:-2]) and not dictionary.lookup_exact(kok[:-1])
+        if not (_tur_t_fiil(kok + "y") or _fiil_koku_mu(kok + "y") or _soru):   # varmıymış: soru eki (dokunulmaz)
+            k = transliterate_text(latin[:len(kok)]).strip()
+            if k and " " not in k:
+                if k.endswith("\u06cc"):
+                    return k + "\u0645\u0634"
+                if k.endswith("\u0647"):
+                    return k + "\u200c\u06cc\u0645\u0634"
+                return k + "\u06cc\u0645\u0634"
+    if re.search(r"may[aâ]s[ıi]n$", wl) and o.endswith("\u0645\u063a\u0647\u200c\u0633\u06ad"):
+        return o[:-6] + "\u0645\u0627\u06cc\u0627\u0633\u06ad"
+    return o
+
+
 _T2_LUK = re.compile(r"^(.{3,}l)([uü])ğ([aeıioöuü].*)$")
 
 
@@ -602,6 +629,9 @@ def _tur_t(o: str, latin: str) -> str:
                 o = _k + "\u062f\u06cc"           # biriydi بریدی، kendisiydi كندیسیدی
     if _os.environ.get("OSM_TUR_T2", "1") != "0":
         o = _tur_t2(o, latin, wl)
+    if _os.environ.get("OSM_TUR_U", "1") != "0" and "'" not in wl and \
+            not (wl in dictionary.HAYRAT_ANAHTAR or wl in dictionary.HAYRAT_TEK or dictionary.lookup_exact(wl)):
+        o = _tur_u(o, latin, wl)
     if wl.startswith("ön") and not wl.startswith(_TUR_T_HARIC):
         o = re.sub("^[\u0627\u0623]\u0648\u0646", "\u0627\u0648\u06ad", o)
     elif wl.startswith("yön"):
@@ -1299,6 +1329,9 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
 # bi't-tab -> بالطبع; el-Bakara -> البقره, et-Tevbe -> التوبه, en-Nesefî -> النسفی (güneş harflerinde ses benzeşmesi)
 _HARF = "A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû"
 _TARIF_IZAFET_RE = re.compile(r"(?<![" + _HARF + r"'’])((?:[" + _HARF + r"]+['’])*[" + _HARF + r"]+?)([üuıi])['’]([lstşdrnzc])[-–]([" + _HARF + r"]+(?:['’][" + _HARF + r"]+)*)")
+# Tur U: önde el-/al- (Al-İnsâna'l-Kâmil الانسان الكامل)؛ û/î/â/a/e ünlüsü (Ebû'l، ale'l، maa't)؛ tek harfli l + ünlü (lâ'l لعل) değil
+_TARIF_IZAFET_U_RE = re.compile(r"(?<![" + _HARF + r"'’])((?:[EeAa]l)[-–\s])?((?:[" + _HARF + r"]+['’])*[" + _HARF + r"]+?)([üuıi]|(?<!(?<![" + _HARF + r"'’])[lL])[ûîâae])['’]([lstşdrnzc])[-–]([" + _HARF + r"]+(?:['’][" + _HARF + r"]+)*)")
+_TARIF_BOSLUK_RE = re.compile(r"(?<![" + _HARF + r"'’])((?:[" + _HARF + r"]+['’])*[" + _HARF + r"]+?)([üuıiûîâae])['’](l)\s+([" + _HARF + r"]+(?:['’][" + _HARF + r"]+)*)")
 _HARF_I_TARIF_RE = re.compile(r"(?<![" + _HARF + r"'’\-–])([Ee]l|[Aa]l|[Üü]l|[Uu]l|[İi]l|[EeAa][tsşdrnzc])[-–]([" + _HARF + r"]+(?:['’][" + _HARF + r"]+)*)")
 
 
@@ -1312,11 +1345,62 @@ def _izafet_tarif(m):
     if not (harf == "l" or harf == turkish_lower(sonraki[:1])):
         return m.group(0)
     k = turkish_lower(kok)
-    bas = {"eb": "ابو", "ebu": "ابو", "ebü": "ابو", "ibn": "ابن", "b": "ب", "f": "فی", "l": "ل"}.get(k)
+    bas = {"eb": "ابو", "ebu": "ابو", "ebü": "ابو", "ibn": "ابن", "b": "ب", "f": "فی", "l": "ل", "v": "و", "ul": "\u0627\u0648\u0644\u0648"}.get(k)
+    if bas is None and m.group(2) in "ae\u00e2":
+        # Tur U: Hayrat ale'l-husûs علی الخصوص، maa't-teessüf مع التأسّف، ile'l-merkeziye الی، aksa'l-gāyât اقصی؛ Mekke'l-Mükerreme مكّه
+        bas = {("al", "e"): "\u0639\u0644\u06cc", ("ma", "a"): "\u0645\u0639", ("me", "a"): "\u0645\u0639", ("il", "e"): "\u0627\u0644\u06cc",
+               ("aks", "a"): "\u0627\u0642\u0635\u06cc", ("mekk", "e"): "\u0645\u0643\u0651\u0647", ("medin", "e"): "\u0645\u062f\u06cc\u0646\u0647",
+               ("taht", "e"): "\u062a\u062d\u062a", ("sümm", "e"): "\u062b\u0645\u0651", ("eyyüh", "e"): "\u0627\u06cc\u0651\u0647\u0627",
+               ("en", "e"): "\u0627\u0646\u0627", ("inn", "e"): "\u0627\u0646\u0651", ("hüv", "e"): "\u0647\u0648", ("huv", "e"): "\u0647\u0648"}.get((k.replace("\u2018", "").replace("\u2019", ""), turkish_lower(m.group(2)).replace("\u00e2", "a")))
+    if bas is None and k in ("v\u00e2d", "vad") and turkish_lower(m.group(2)) in ("i", "\u00ee"):
+        bas = "\u0648\u0627\u062f\u06cc"   # Tur U: Vâdi'l-Kurâ وادی القری (vaad وعد değil)
+    if bas is None and m.group(2) in "\u00fb\u00ee\u00e2" and _os.environ.get("OSM_TUR_U", "1") != "0":
+        bas = draft_transliterate_sentence(kok + m.group(2))   # Tur U: uzun ünlü kelimenin parçası (tuhyî'l-mevtâ، innemâ'l-a'mâl)
     if bas is None:
         bas = draft_transliterate_sentence(kok)
-    ayrac = "" if k in ("b", "l") else " "
-    return bas + ayrac + "ال" + _arapca_kelime(sonraki)
+    ayrac = "" if k in ("b", "l", "v") else " "
+    zincir = ""
+    _mm = getattr(m, "m", m)
+    if _os.environ.get("OSM_TUR_U", "1") != "0" and _mm.string[_mm.end():_mm.end() + 1] in ("-", "\u2013"):
+        _z = re.search(r"([üuıiûîâae])['’]([lstşdrnzc])$", sonraki)
+        if _z and len(sonraki) > 4:   # Tur U: zincir (fî'l-Ahâdisi'l-Kudsiyye): sonraki tamlama el-/es- olarak bırakılır
+            sonraki, zincir = sonraki[:_z.start()], " e" + _z.group(2)
+    return bas + ayrac + "ال" + _arapca_kelime(sonraki) + zincir
+
+
+_TARIF_BOSLUK_DUR = {"ve", "ile", "ü", "u", "bir", "bu", "şu", "o", "da", "de", "ki", "ya", "ne", "gibi", "için", "olan", "olarak"}
+
+
+class _TarifU:
+    """_TARIF_IZAFET_U_RE eşleşmesini _izafet_tarif'in grup düzenine çevirir (1. grup el-/al- öneki)."""
+    def __init__(self, m):
+        self.m = m
+
+    def group(self, n):
+        return self.m.group(0) if n == 0 else self.m.group(n + 1)
+
+
+def _izafet_tarif_u(m):
+    if not m.group(1):
+        return _izafet_tarif(_TarifU(m))
+    kok, unlu, harf, sonraki = m.group(2), m.group(3), m.group(4).lower(), m.group(5)
+    if not (harf == "l" or harf == turkish_lower(sonraki[:1])):
+        return m.group(0)
+    ilk = kok + unlu if unlu in "\u00fb\u00ee\u00e2" else kok
+    zincir = ""
+    _z = re.search(r"([üuıiûîâae])['’]([lstşdrnzc])$", sonraki)
+    if _z and len(sonraki) > 4 and m.string[m.end():m.end() + 1] in ("-", "\u2013"):
+        sonraki, zincir = sonraki[:_z.start()], " e" + _z.group(2)   # el-Hizbü'l-Ekberi'l-Kur'ânî
+    return "\u0627\u0644" + _arapca_kelime(ilk) + " \u0627\u0644" + _arapca_kelime(sonraki) + zincir   # Al-İnsâna'l-Kâmil الانسان الكامل
+
+
+def _izafet_tarif_bosluklu(m):
+    """Tur U: tiresiz harf-i tarif (Beytü'l Makdis بیت المقدس، Ümmü'l Kitab ام الكتاب، Ebu'l Abbas ابو العباس)."""
+    kok, sonraki = m.group(1), m.group(4)
+    k = turkish_lower(kok)
+    if (len(k.replace("'", "").replace("\u2019", "")) < 2 and k != "b") or k in ("v",) or turkish_lower(sonraki) in _TARIF_BOSLUK_DUR or len(sonraki) < 3:
+        return m.group(0)
+    return _izafet_tarif(m)
 
 
 def _harf_i_tarif(m):
@@ -1344,7 +1428,12 @@ _MAKRON = str.maketrans({"ā": "â", "ī": "î", "ū": "û", "Ā": "Â", "Ī": "
 def _arapca_tarifler(metin: str) -> str:
     metin = _EYYUHE_RE.sub(lambda m: "ایّها ال" + _arapca_kelime(m.group(1)), metin)   # Eyyühe'l-aziz -> ایّها العزیز
     metin = _UL_TAMLAMA_RE.sub(_ul_tamlama, metin)
-    metin = _TARIF_IZAFET_RE.sub(_izafet_tarif, metin)
+    if _os.environ.get("OSM_TUR_U", "1") != "0":
+        metin = _TARIF_IZAFET_U_RE.sub(_izafet_tarif_u, metin)
+    else:
+        metin = _TARIF_IZAFET_RE.sub(_izafet_tarif, metin)
+    if _os.environ.get("OSM_TUR_U", "1") != "0":
+        metin = _TARIF_BOSLUK_RE.sub(_izafet_tarif_bosluklu, metin)
     return _HARF_I_TARIF_RE.sub(_harf_i_tarif, metin)
 
 
@@ -1767,16 +1856,25 @@ _DUA_IBARE = [
      "صلّی الله علیه وسلّم"),
     (re.compile(r"(?<![^\W\d_])vell[aâ]hu\s+(?:[aâ]lem|a['’]lem)(?![^\W\d_])", re.I), "والله اعلم"),
     (re.compile(r"(?<![^\W\d_])y[aâ]\s?rabb[iî](?![^\W\d_])", re.I), "یا ربّی"),
-    (re.compile(r"(?<![^\W\d_])Irak(?:['’]([a-zçğıöşü]{1,4}))?(?![^\W\d_])"), "عراق"),   # büyük harfli Irak ülkedir (ırak = uzak)
+    (re.compile(r"(?<![^\W\d_])Irak(?:['’]([a-zçğıöşü]{1,8}))?(?![^\W\d_])"), "عراق"),   # büyük harfli Irak ülkedir (ırak = uzak)
 ]
 _HARF = "A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû"
 _SAYI_KELIME = {"bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on", "yirmi", "otuz", "kırk", "elli",
                 "altmış", "yetmiş", "seksen", "doksan", "yüz", "birkaç", "kaç", "nice", "binlerce"}
 
 
+def _dua_ek(ar, m):
+    if not (m.lastindex and m.group(1)):
+        return ar
+    e = m.group(1).lower()
+    if ar == "\u0639\u0631\u0627\u0642" and e not in _PARANTEZ_EKI and _os.environ.get("OSM_TUR_U", "1") != "0":
+        return ar + rules.ekleri_yaz("ırak", [], [e], rules._harmony_class("ırak" + e)).replace("\u062f\u0647\u0643", "\u062f\u0647\u200c\u0643")   # Tur U: Irak'taki عراقده‌كی (ek düşüyordu)
+    return ar + _PARANTEZ_EKI.get(e, "")
+
+
 def _dua_ibareleri(metin: str) -> str:
     for rx, ar in _DUA_IBARE:
-        metin = rx.sub(lambda m: ar + (_PARANTEZ_EKI.get(m.group(1).lower(), "") if m.lastindex and m.group(1) else ""), metin)
+        metin = rx.sub(lambda m: _dua_ek(ar, m), metin)
     return metin
 
 
