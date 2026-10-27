@@ -193,7 +193,8 @@ def draft_transliterate_sentence(sentence: str) -> str:
             # Kesme işareti kelimenin kendi parçası olabilir (Kur'an, Mes'ud, san'at):
             # önce birleşik hâlini sözlükte ara, kalan parçaları ek say. Kur'an'ın -> Kur'an + ın
             # Kesmeli kelimenin son parçasına ek bitişmiş olabilir: Kur'anı -> Kur'an + ı
-            if len(parts) == 2:
+            if len(parts) == 2 and not (_os.environ.get("OSM_TUR_V", "1") != "0" and dictionary.lookup_exact(parts[0] + "'" + parts[1])):
+                # Tur V: kesmeli tam kelime sözlükte varsa bölünmez (şer’iye شرعیه، şer'i + ye değil)
                 son = turkish_lower(parts[1])
                 for i in range(len(son) - 1, 0, -1):
                     if _ek_mi(son[i:]) and dictionary.lookup_exact(parts[0] + "'" + parts[1][:i]):
@@ -245,12 +246,12 @@ def draft_transliterate_sentence(sentence: str) -> str:
                 if not sufs and tails_l in (["ya"], ["ye"]) and b.endswith(("i", "ı", "î")) and kok_yazi.endswith("ی") \
                         and " " not in kok_yazi and turkish_lower(word).replace("\u2019", "'").endswith(("'ya", "'ye")):
                     return kok_yazi + " یه"   # Tur J: i ile biten ad + kesmeli -ye ayri (Hayrat: Efendi'ye افندی یه): Elçi'ye
-                return kok_yazi + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs))
+                return _kesme_iyelik(kok_yazi + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs)), [turkish_lower(word.replace("\u2019", "'").split("'", 1)[1])])
             _yazi = rules.transliterate_word_with_suffix(base)
             if tails_l in (["ya"], ["ye"]) and b.endswith(("i", "ı", "î")) and _yazi.endswith("ی") and " " not in _yazi \
                     and turkish_lower(word).replace("’", "'").endswith(("'ya", "'ye")):
                 return _yazi + " یه"   # Tur Q: sozlukte olmayan ad da (Tanri'ya, Habesi'ye) Tur J gibi ayri
-            return _yazi + rules.ekleri_yaz(b, [], tails_l, harmony)
+            return _kesme_iyelik(_yazi + rules.ekleri_yaz(b, [], tails_l, harmony), [turkish_lower(word.replace("\u2019", "'").split("'", 1)[1])])
 
         hit, sufs = dictionary.lookup_with_suffix(word)
         if not hit or sufs:
@@ -290,7 +291,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
             return kok + isaret + t2[len(k2):]
         return kok + isaret + tam[len(kok):]
 
-    sentence = _TIRNAK_EK_RE.sub(tirnak_eki, sentence)
+    sentence = _TIRNAK_EK_RE.sub(lambda m: _kesme_iyelik(tirnak_eki(m), [turkish_lower(m.group(3))]), sentence)
     def kelime(m):
         w = m.group(0)
         wl = turkish_lower(w)
@@ -545,6 +546,19 @@ def _tur_t_kopula(wl: str):
     return None
 
 
+def _tur_v_fiil(kok: str) -> bool:
+    """Tur V: fiil kökü mü (-mak ile biten isimler parmak، ırmak، basamak sayılmaz): kök sözlüğü ya da yalnız fiile gelen ek."""
+    if len(kok) < 3:
+        return False
+    if "V" in _KOK_MOD.KOK.get(kok, {}):
+        return True
+    for e in ("ıyor", "iyor", "uyor", "üyor", "yor", "arak", "erek", "yarak", "yerek", "maz", "mez", "madı", "medi", "mıyor", "miyor", "muyor", "müyor"):
+        w = kok + e
+        if w in dictionary.HAYRAT_ANAHTAR or w in dictionary.HAYRAT_TEK or dictionary.lookup_exact(w):
+            return True
+    return False
+
+
 _TUR_U_YMIS = re.compile(r"^(.{3,}[aeıioöuü\u00e2\u00ee\u00fb])ym[ıiuü]ş$")
 
 
@@ -564,6 +578,13 @@ def _tur_u(o: str, latin: str, wl: str) -> str:
                 if k.endswith("\u0647"):
                     return k + "\u200c\u06cc\u0645\u0634"
                 return k + "\u06cc\u0645\u0634"
+    if _os.environ.get("OSM_TUR_V", "1") != "0" and "\u06cc\u06cc\u0647" in o and \
+            not wl.startswith("diye") and re.search(r"^.{3,}[^aeıioöuüâîû]iye(?:n[iı]n|y[iı]|ye|de|den|dir|dır|ler|leri|lerin|lere|si|sine|sini|sinin|sinde|ce|ki)$", wl):
+        k = o.rfind("\u06cc\u06cc\u0647")   # Tur V: dişil -iye + ek (merkeziyenin مركزیه‌نڭ، remziyeyi): -iye'den sonra ek gelen yönelme hâli olamaz
+        o = o[:k] + "\u06cc\u0647" + o[k + 3:]
+    if _os.environ.get("OSM_TUR_V", "1") != "0" and wl.endswith("mağa") and o.endswith("\u0645\u0627\u063a\u0647") and \
+            _tur_v_fiil(wl[:-4]):   # parmağa، ırmağa (isim + -a) değil
+        o = o[:-4] + "\u0645\u063a\u0647"   # Tur V: okumağa اوقومغه (Hayrat okumaya اوقومغه، bakmağa باقمغه)
     if re.search(r"may[aâ]s[ıi]n$", wl) and o.endswith("\u0645\u063a\u0647\u200c\u0633\u06ad"):
         return o[:-6] + "\u0645\u0627\u06cc\u0627\u0633\u06ad"
     return o
@@ -1834,7 +1855,7 @@ def _sayilari_ayir(metin: str) -> str:
     def f(m):
         p = _sayi_parcala(m.group(0))
         return " ".join(p) if p else m.group(0)
-    return re.sub(r"(?<![^\W\d_])[A-Za-zÇçĞğİıÖöŞşÜü]{5,}(?![^\W\d_'’])", f, metin)
+    return re.sub(r"(?<![^\W\d_])[A-Za-zÇçĞğİıÖöŞşÜü]{%d,}(?![^\W\d_'’])" % (4 if _os.environ.get("OSM_TUR_V", "1") != "0" else 5), f, metin)   # Tur V: onüç (4 harf)
 
 
 def _kisaltmalar(metin: str) -> str:
@@ -1861,6 +1882,17 @@ _DUA_IBARE = [
 _HARF = "A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛû"
 _SAYI_KELIME = {"bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on", "yirmi", "otuz", "kırk", "elli",
                 "altmış", "yetmiş", "seksen", "doksan", "yüz", "birkaç", "kaç", "nice", "binlerce"}
+
+
+def _kesme_iyelik(o, tails_l):
+    """Tur V: kesmeli ad + iyelik + n'li hâl (Rahîm'ine رحیمنه، Rahîm'inin رحیمنڭ): ekler ilgi eki + yönelme (ڭه، ڭڭ) okunmasın."""
+    if _os.environ.get("OSM_TUR_V", "1") == "0" or len(tails_l) != 1:
+        return o
+    if re.fullmatch(r"[ıiuü]n[ae]", tails_l[0]) and o.endswith("\u06ad\u0647"):
+        return o[:-2] + "\u0646\u0647"
+    if re.fullmatch(r"[ıiuü]n[ıiuü]n", tails_l[0]) and o.endswith("\u06ad\u06ad"):
+        return o[:-2] + "\u0646\u06ad"
+    return o
 
 
 def _dua_ek(ar, m):

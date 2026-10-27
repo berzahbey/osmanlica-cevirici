@@ -60,7 +60,7 @@ DURUMLAR = [
     ('ba\u015f\u0131n', '\u0628\u0627\u0634\u06ad'),
     ('zaman\u0131', '\u0632\u0645\u0627\u0646\u06cc'),
     ('d\xfc\u015fman\u0131', '\u062f\u0648\u0634\u0645\u0627\u0646\u06cc'),
-    ('hikmet-i \u015fer\u2018iye', '\u062d\u0643\u0645\u062a \u0634\u0631\u0639\u06cc\u06cc\u0647'),
+    ('hikmet-i \u015fer\u2018iye', '\u062d\u0643\u0645\u062a \u0634\u0631\u0639\u06cc\u0647'),   # Tur V: Hayrat 'hikmet-i ser'iye' boyle yazar
     ("Ali'ye", '\u0639\u0644\u06cc \u06cc\u0647'),
     ("Mustafa'ya", '\u0645\u0635\u0637\u0641\u06cc \u06cc\u0647'),
     ('bah\xe7esidir', '\u0628\u0627\u063a\u0686\u0647\u200c\u0633\u06cc\u062f\u0631'),
