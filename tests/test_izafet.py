@@ -22,7 +22,7 @@ BEKLENEN = [
     ("nokta-i nazar", "نقطهٔ نظر"), ("Risâle-i Nûr", "رسالهٔ نور"), ("Asâ-yı Mûsâ", "عصای موسی"), ("kalb-i insânî", "قلب انسانی"),
     ("emr-i Rabbânîyle", "امر ربانیله"), ("Talha’ dedi", "طلحه دیدی"), ("cüz’-i ihtiyârî", "جزء اختیاری"),
     ("Kur’an’ın", "قرآنڭ"), ("fıkh-ı ekber", "فقه اكبر"),
-    ("Bkz. Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.", "بقز. Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959."),
+    ("Bkz. Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.", "باقكز Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959."),
 ]
 hata = 0
 for latin, osm in BEKLENEN:

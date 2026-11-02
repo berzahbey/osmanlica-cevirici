@@ -8,6 +8,7 @@ import unicodedata
 import logging
 from langdetect import detect, DetectorFactory
 
+from . import openiti
 from . import dictionary
 from . import rules
 from . import kok
@@ -269,7 +270,8 @@ def draft_transliterate_sentence(sentence: str) -> str:
         if _vy:
             return _vy               # Tur N: yazım varyantı (müspet مثبت، fıkhî فقهی)
         o = rules.transliterate_word_with_suffix(word)
-        return kok.kokle(word, o) or o   # kök sözlüğü: kural motorunun kökü Hayrat yazımıyla (gizleyemezler كیزله‌یه‌مزلر)
+        # kök sözlüğü: kural motorunun kökü Hayrat yazımıyla (gizleyemezler كیزله‌یه‌مزلر); Tur W: yoksa OpenITI (nübüvve نبوه)
+        return kok.kokle(word, o) or openiti.kelime(word, hasattr(m, "string") and m.start() > 0 and m.string[m.start() - 1] in "-\u2010\u2013") or o
 
     def tirnak_eki(m):
         kelime, isaret, ek = m.group(1), m.group(2), m.group(3)
@@ -1810,6 +1812,12 @@ _KISALTMA = [
     (re.compile(r"(?<=\()\s*ra\s*(?=\))", re.I), "رضی الله عنه"),                          # (ra)
     (re.compile(r"(?<=\()\s*a\.\s?s\.?\s*(?=\))", re.I), "علیه السلام"),
     (re.compile(r"(?<![\w.])r\.\s?a\.?(?![\w])", re.I), "رضی الله عنه"),
+    # Tur X (2 Kasım 2026, Zahir onayı): kaynak kısaltmaları Osmanlı/Arap kaynak yazımıyla (harf harf بقز، ود، وب değil)
+    (re.compile(r"(?<![\w.])(?:bkz\.?|bk\.)(?!\w)", re.I), "باقكز"),                       # bakınız
+    (re.compile(r"(?<![\w.])(?:vb\.?|vs\.)(?!\w)", re.I), "الخ"),                           # ve benzeri, vesaire
+    (re.compile(r"(?<![\w.])vd\.?(?!\w)", re.I), "و مابعدی"),                               # ve devamı
+    (re.compile(r"(?<![\w.])ss?\.\s*(?=\d)"), "ص "),                                      # s. 12 / ss. 12-15 sayfa
+    (re.compile(r"(?<![\w.])[cC]\.\s*(?=(?:\d|[IVXLC]+\b))"), "ج "),                     # c. 2 / C. II cilt
 ]
 
 

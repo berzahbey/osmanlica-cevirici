@@ -45,7 +45,7 @@ CUMLE = {
     "“O”dur.": "\"او\"در.",
     "“Hak”tan geldi.": "\"حقّ\"دن كلدی.",
     "Bkz. Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.":
-        "بقز. Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.",
+        "باقكز Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.",
     "Sokrates “Know thyself, said Socrates.” demiştir.": "سقراط \"Know thyself, said Socrates.\" دیمشدر.",
     "ne zarar ne fayda, her an": "نه ضرر نه فائده، هر آن",
     "Hz. Muhammed (s.a.v)'in sözü": "حضرت محمّد (صلّی الله علیه وسلّم)ڭ سوزی",
