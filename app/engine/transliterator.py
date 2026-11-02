@@ -1866,7 +1866,53 @@ def _sayilari_ayir(metin: str) -> str:
     return re.sub(r"(?<![^\W\d_])[A-Za-zÇçĞğİıÖöŞşÜü]{%d,}(?![^\W\d_'’])" % (4 if _os.environ.get("OSM_TUR_V", "1") != "0" else 5), f, metin)   # Tur V: onüç (4 harf)
 
 
+# Tur Z (2 Kasım 2026), Hayrat verisiyle:
+# 1) Arap harfli kelimeden ya da kapanan tırnaktan sonra boşlukla ayrılmış ek ("قُلْ ün", "“ Kāf ” ın") Türkçe kelime gibi (اون، این)
+#    değil, Osmanlıca ek biçimiyle ve AYRI yazılır. Biçimler Hayrat'ın tek başına duran ek yazımlarından (kelime_ciftleri.tsv):
+#    nin/nın/nün/nun نڭ (172), in/ın/ün/un ڭ (106), ye یه (48), e ه (18), yi/yı/yü/yu یی (37), i/ı ی (26), den/dan/tan دن (138),
+#    ten تن, deki/daki دهكی (258), dir/dır در (166), le/la له, sı/si سی, ni نی. İki türlü kullanılanlar (ya یا/یه, a, de/da, ne,
+#    ki, su, te) bu kurala girmez.
+# 2) Sebîl’ür-Reşâd (kesme ekten önce) = Sebîlü’r-Reşâd: harf-i tarif kalıbına çevrilir.
+# 3) Cümle içinde "163. madde" sıra sayısıdır: rakam + نجی (Hayrat Risale'de cümle içinde 75'te 74). Satır başı (liste: "1. Nota")
+#    ve tarih (27. 05. 1950) dokunulmaz.
+_Z_EK = {"nın": "نڭ", "nin": "نڭ", "nun": "نڭ", "nün": "نڭ", "ın": "ڭ", "in": "ڭ", "un": "ڭ", "ün": "ڭ",
+         "ye": "یه", "e": "ه", "dan": "دن", "den": "دن", "tan": "دن", "ten": "تن", "yı": "یی", "yi": "یی", "yu": "یی",
+         "yü": "یی", "ı": "ی", "i": "ی", "deki": "ده\u200cكی", "daki": "ده\u200cكی", "dır": "در", "dir": "در",
+         "la": "له", "le": "له", "sı": "سی", "si": "سی", "ni": "نی"}
+_Z_EK_RE = re.compile(r"([\u0600-\u06FF][\u0600-\u06FF\u064B-\u065F\u0670]*[ \t]*[”\"’»]?|[”\"’»])[ \t]+("
+                      + "|".join(sorted(_Z_EK, key=len, reverse=True)) + r")(?=[\s,.;:!?)\]”\"]|$)")
+_Z_TARIF_RE = re.compile(r"(\w)[’']([üuıi])([lrsştdnz])-(?=\w)")
+_Z_SIRA_RE = re.compile(r"(?<![\d.])(\d{1,4})\.(?=[ \t]+[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû])")
+
+
+def _tur_z(metin: str) -> str:
+    if _os.environ.get("OSM_TUR_Z", "1") == "0":
+        return metin
+
+    def ek(m):
+        once = m.group(1)
+        if not re.search("[\u0600-\u06FF]", once) and not re.search("[\u0600-\u06FF][ \t]*$", metin[:m.start(1)]) \
+                and not re.search(r"\w[ \t]*$", metin[:m.start(1)]):
+            return m.group(0)
+        return once.rstrip(" \t") + " " + _Z_EK[m.group(2)]
+    if _os.environ.get("OSM_TUR_Z_EK", "1") != "0":
+        metin = _Z_EK_RE.sub(ek, metin)
+    if _os.environ.get("OSM_TUR_Z_TARIF", "1") != "0":
+        metin = _Z_TARIF_RE.sub(lambda m: m.group(1) + m.group(2) + "’" + m.group(3) + "-", metin)
+
+    def sira(m):
+        once = metin[:m.start()].rstrip(" \t")
+        if not once or once[-1] in ".:;!?)\n" or re.search(r"\d[ \t]*\.?$", once):
+            return m.group(0)
+        sonra = metin[m.end():].lstrip(" \t")[:1]
+        if sonra.isupper() and int(m.group(1)) >= 1000:
+            return m.group(0)        # cümle sonundaki yıl (… 1950. Sonra): sıra sayısı değil
+        return m.group(1) + " \u0646\u062c\u06cc"
+    return _Z_SIRA_RE.sub(sira, metin) if _os.environ.get("OSM_TUR_Z_SIRA", "1") != "0" else metin
+
+
 def _kisaltmalar(metin: str) -> str:
+    metin = _tur_z(metin)
     metin = _sayilari_ayir(metin)
     metin = re.sub(r"\bHz\.\s*", "Hazret ", metin)          # Hz. Muhammed -> حضرت محمّد
     # Tur E: iki özel ad arasındaki "b." ibn (oğlu) kısaltmasıdır: Ahmed b. Hanbel -> احمد بن حنبل
@@ -2777,6 +2823,8 @@ def _yabanci_ayir(metin, saklanan):
 
 
 def transliterate_text(turkish_text, *args, **kwargs):
+    if isinstance(turkish_text, str):
+        turkish_text = _tur_z(turkish_text)   # Tur Z bütün metin üzerinde (iç katmanlar metni parçalara bölüyor); tekrar uygulanması zararsız
     if not isinstance(turkish_text, str) or not _YABANCI_HARF_RE.search(turkish_text):
         return _transliterate_text_yabancisiz(turkish_text, *args, **kwargs)
     saklanan = []
