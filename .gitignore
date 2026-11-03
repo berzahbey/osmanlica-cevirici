@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 *.yedek-*
+
+# yamalar kurulduktan sonra silinir; depoya girmez
+*_yama.py
