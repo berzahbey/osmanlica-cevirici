@@ -35,6 +35,8 @@ D = [
     ("ermelerine", "ایرمه‌لرینه"), ("erler", "ارلر"), ("yiyesiniz", "ییه‌سڭز"), ("saptırdıkları", "صاپدیردقلری"),
     ("kuşatıverdi", "قوشاتیویردی"), ("onda yara yara giden", "اونده یارا یارا كیدن"), ("yara", "یاره"),
     ("diriltileceklerini", "دیریلتیله‌جكلرینی"), ("öldürülecekleri", "ئولدیریله‌جكلری"), ("yapılacakları", "یاپیلاجقلری"),
+    # 9) Hayrat'ta olmayan, Osmanlıca meale göre (Zahir kararı, 11 Kasım 2026): katırları قاطیرلری، ısıtıcı ایصیتیجی
+    ("katırları", "قاطیرلری"), ("ısıtıcı", "ایصیتیجی"), ("yaratıcı", "یارادیجی"),
 ]
 
 
