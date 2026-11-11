@@ -390,6 +390,8 @@ def _kalin_unsuz(word: str, i: int, ch: str) -> bool:
         return True
     if ch == "s" and i != 0 and word[0] == "s" and not _SUS_FIIL_RE.match(word):
         return False  # aynı kelimedeki 2. kalın s -> س (sıska, susam, saksı); istisna: sus- fiili -> صوص
+    if ch == "s" and i != 0 and word[0] in "td" and _kalin_unsuz(word, 0, word[0]) and word[i + 1:i + 2] != "t":   # pekiştirme tastamam طاصتامام kalır
+        return False  # Tur KM: ط ile başlayan kelimede içteki s -> س (Hayrat taslamamıştır طاسلامامشدر، doksan طقسان، dursun)
     if ch == "s" and i != 0:
         # Sadece kökteki s: ilk ünlünün hemen ardındaki (basmak, kısa, yosun). Daha ilerideki s çoğunlukla
         # ektir (-sa, -sınız, -sı) ve ekler kalın ünsüz almaz: olursanız, arasını -> س

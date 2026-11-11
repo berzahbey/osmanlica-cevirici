@@ -1282,6 +1282,21 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         i = osm.rfind("مز")
         if i > 0 and osm[i - 1] not in "اه\u200c":
             osm = osm[:i] + ("ا" if re.search(r"[^aeıioöuüâîû]amaz", l) else "ه") + osm[i:]
+    # Tur KM: yeterlik olumsuz + gelecek/-erek (ince): bilemeyecek بیله‌میه‌جك (Hayrat göremeyeceğim كوره‌میه‌جگم، erdiremeyerek
+    # ایردیره‌میه‌رك؛ Kur'an meali bilemeyeceğiniz بیله‌میه‌جكڭز). Kalın -amayacak (یاپامایاجق) zaten doğru.
+    if re.search(r"[^aeıioöuüâîûy]em[ea]y[ea](c|ğ|r[ea]k)", l) and not dictionary.lookup_with_suffix(l)[0] \
+            and not l.startswith(("yem", "dem")):
+        m_ = re.search("\u0645(\u06cc\u0647|\u0647\u200c?\u06cc\u0647)\u200c?[\u062c\u0631]", osm)
+        if m_ and m_.start() > 0 and osm[m_.start() - 1] not in "اه\u200c":
+            osm = osm[:m_.start()] + "ه" + osm[m_.start():]
+    # Tur KM: ettirgen -dür/-tür/-dur/-tur + edilgen -ül/-ul: دیریل (Hayrat öldürülen ئولدیریلن، söndürülmez سوندیریلمز،
+    # durdurulmuş طوردیریلمش، koşturuluyor قوشدیریلییور): döndürüleceksiniz دوندیریله‌جكسڭز (دوندوروله değil)
+    m_ = re.match(r"^(.{2,}?)[dt][uü]r[uü]l", l)
+    if m_ and _fiil_koku_mu(m_.group(1)) and not dictionary.lookup_with_suffix(l)[0]:
+        osm = re.sub("[\u062f\u062a][\u0648\u06cc]\u0631[\u0648\u06cc]\u0644", "\u062f\u06cc\u0631\u06cc\u0644", osm, count=1)
+        if re.match(r"^.{2,}?[dt][uü]r[uü]l[uü]r", l):
+            osm = osm.replace("\u062f\u06cc\u0631\u06cc\u0644\u0648\u0631", "\u062f\u06cc\u0631\u06cc\u0644\u06cc\u0631", 1)   # öldürülür ئولدیریلیر
+        osm = osm.replace("\u062f\u06cc\u0631\u06cc\u0644\u0648\u06cc\u0648\u0631", "\u062f\u06cc\u0631\u06cc\u0644\u06cc\u06cc\u0648\u0631", 1)   # gördürülüyor كوردیریلییور
     # 2. kişi -sın/-sin (fiilde), -sınız: دوشرسڭ، گورونورسڭ، ییمزسڭز
     # geniş zaman 2. tekil (düşersin, görünürsün, yetişemezsin) سڭ; 3. tekil emir (geçirsin, çıkarsın, yazsın) سین kalır
     if re.search(r"([eüu]r|m[ea]z)s[ıiuü]n$", l):
@@ -1509,8 +1524,9 @@ def _bilesik_fiil(word: str):
         kuyruk = w[k:]
         if not kuyruk.startswith(("et", "ed")) or not re.match(r"^(et[mst]|ed[eiı])", kuyruk):
             continue
-        if kuyruk.startswith(("edeb", "edep", "edib", "edip")):
-            continue
+        if kuyruk.startswith(("edeb", "edep", "edib", "edip")) and not (
+                kuyruk in ("edip", "edib") and len(w) > 6 and not dictionary.lookup_exact(w) and _bilesik_kok().get(w[:k])):
+            continue                       # Tur KM: edîb (ادیب) kelimesi değil; Hayrat birleşik kökü + edip (kasdedip قصد ایدوب)
         if not _ET_KUYRUK.match(kuyruk):
             continue                       # Tur C: geçerli et-/ed- çekimi değil (de+medikçe -> dem + edikçe, sad+edindeki değil)
         # -et ile biten isim + hâl eki/ek-fiil (âhiret+te, rahmet+ten, rahmet+tir, mâhiyet+e+dir) fiil değildir
@@ -1538,6 +1554,10 @@ def _bilesik_fiil(word: str):
             adaylar.append(kok[:-1])       # hiss+etmek -> his, zann+etmek -> zan, redd -> red
         if len(kok) >= 4 and kok[-1] == "t" and kok[-2] not in "aeıioöuüâîû":
             adaylar.append(kok[:-1] + "d")  # Tur C: kast+etmek -> kasd قصد
+        if not any(dictionary.lookup_exact(a) for a in adaylar) and _bilesik_kok().get(kok) and len(kok) >= 3 \
+                and not dictionary.lookup_with_suffix(w)[0]:
+            isim = _bilesik_kok()[kok]     # Tur KM: kök yalnız Hayrat birleşik fiillerinde (lütf: لطف ایت) — lütfettiği لطف ایتدیكی
+            return isim + " " + draft_transliterate_sentence(kuyruk).strip()
         for a in adaylar:
             h = dictionary.lookup_exact(a)
             if h and h[1] in ("ar", "fa", "ar-fa", "fa-ar") and len(a) >= 2 and " " not in h[0]:
@@ -1566,6 +1586,10 @@ def _ol_bilesik(w: str):
         if bk:
             ek = rules.transliterate_word_with_suffix(kuyruk)
             return bk + " " + _kuyruk_he(ek, kuyruk) if ek.startswith("\u0627\u0648\u0644") else None
+        if not any(dictionary.lookup_exact(a) for a in adaylar) and _bilesik_kok().get(kok) and len(kok) >= 3 \
+                and not dictionary.lookup_with_suffix(w)[0]:
+            isim = _bilesik_kok()[kok]     # Tur KM: kök yalnız Hayrat birleşik fiillerinde (lütf: لطف ایت) — lütfettiği لطف ایتدیكی
+            return isim + " " + draft_transliterate_sentence(kuyruk).strip()
         for a in adaylar:
             h = dictionary.lookup_exact(a)
             if h and h[1] in ("ar", "fa", "ar-fa", "fa-ar") and len(a) >= 3 and " " not in h[0]:
@@ -2859,3 +2883,16 @@ def transliterate_text(turkish_text, *args, **kwargs):
     for i, y in enumerate(saklanan):
         out = out.replace(chr(0xee00 + i), y)
     return out
+
+
+# ---- Tur KM (11 Kasım 2026, Kur'an meali karşılaştırması): kelimeye parantezle eklenmiş ilgi eki
+# "onları(n ayaklarını)": ünlüden sonra parantezli tek "n" ilgi eki, düşenler(in hâli) (ڭ gibi yazılır (Tur ek parçası kararı):
+# اونلری(ڭ آیاقلرینی). Önceden اونلری(ن çıkıyordu.
+_PARANTEZ_EK_RE = re.compile(r"(?<=[aeıioöuüâîû])\(n\s+")
+_transliterate_text_km_onceki = transliterate_text
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    if isinstance(turkish_text, str) and "(" in turkish_text:
+        turkish_text = _PARANTEZ_EK_RE.sub("(ın ", turkish_text)
+    return _transliterate_text_km_onceki(turkish_text, *args, **kwargs)
