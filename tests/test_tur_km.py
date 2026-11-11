@@ -26,6 +26,10 @@ D = [
     ("erdirir", "ایردیرر"), ("erdirmez", "ایردیرمز"), ("açıklarsanız", "آچیقلارسه‌ڭز"), ("açıkladı", "آچیقلادی"),
     # 6) parantezle ayrılmış ilgi eki (Tur ek parçası kararı gibi (ڭ)
     ("onları(n ayaklarını)", "اونلری(ڭ آیاقلرینی)"),
+    # 7) Bakara 84-105 testi: pınar (Hayrat pınarlar پیڭارلر)، ard arda، idiyseniz، Arapça kök + ettikleri، ince olumsuz emir
+    ("pınar", "پیڭار"), ("ard arda", "آرد آرده"), ("idiyseniz", "ایدیسه‌ڭز"),
+    ("emrettiklerimizi", "امر ایتدكلریمزی"), ("demeyin", "دیمه‌یڭ"), ("gelmeyin", "كلمه‌یڭ"), ("söylemeyin", "سویله‌مه‌یڭ"),
+    ("demeyiniz", "دیمه‌ییڭز"), ("etmeyin", "ایتمه‌یڭ"), ("yapmayın", "یاپمایڭ"),
 ]
 
 

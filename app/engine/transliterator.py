@@ -1297,6 +1297,10 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         if re.match(r"^.{2,}?[dt][uü]r[uü]l[uü]r", l):
             osm = osm.replace("\u062f\u06cc\u0631\u06cc\u0644\u0648\u0631", "\u062f\u06cc\u0631\u06cc\u0644\u06cc\u0631", 1)   # öldürülür ئولدیریلیر
         osm = osm.replace("\u062f\u06cc\u0631\u06cc\u0644\u0648\u06cc\u0648\u0631", "\u062f\u06cc\u0631\u06cc\u0644\u06cc\u06cc\u0648\u0631", 1)   # gördürülüyor كوردیریلییور
+    # Tur KM: ince olumsuz emir -meyin/-meyiniz: مه‌یڭ / مه‌ییڭز (Hayrat etmeyin ایتمه‌یڭ، vermeyin ویرمه‌یڭ، demeyiniz دیمه‌ییڭز)
+    if re.search(r"meyin(iz)?$", l) and _fiil_koku_mu(re.sub(r"meyin(iz)?$", "", l)):
+        osm = re.sub("\u0645\u06cc\u06ad$", "\u0645\u0647\u200c\u06cc\u06ad", osm)
+        osm = re.sub("\u0645\u06cc(\u06cc)?\u06ad\u0632$", "\u0645\u0647\u200c\u06cc\u06cc\u06ad\u0632", osm)
     # 2. kişi -sın/-sin (fiilde), -sınız: دوشرسڭ، گورونورسڭ، ییمزسڭز
     # geniş zaman 2. tekil (düşersin, görünürsün, yetişemezsin) سڭ; 3. tekil emir (geçirsin, çıkarsın, yazsın) سین kalır
     if re.search(r"([eüu]r|m[ea]z)s[ıiuü]n$", l):
@@ -1566,6 +1570,9 @@ def _bilesik_fiil(word: str):
                     isim = h[0]                                # şedde korunur (ردّ، عدّ، ظنّ)
                 if a != kok[:len(a)]:
                     return isim + " " + draft_transliterate_sentence(kuyruk)   # Tur C yeni yol (kast -> kasd): kuyruk tam kelime gibi
+                if re.match(r"^et(tik|tiğ)", kuyruk) and (dictionary.lookup_exact(kuyruk) or dictionary.lookup_with_suffix(kuyruk)[0]):
+                    return isim + " " + draft_transliterate_sentence(kuyruk).strip()   # Tur KM: sözlükteki etmek çekimi
+                    #   (emrettiklerimizi امر ایتدكلریمزی؛ Hayrat ettikleri ایتدكلری)
                 return isim + " " + _kuyruk_he(rules.transliterate_word_with_suffix(kuyruk), kuyruk)   # Tur G2: ZWNJ
     return _ol_bilesik(w)
 
