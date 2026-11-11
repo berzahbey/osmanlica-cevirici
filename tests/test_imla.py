@@ -45,8 +45,8 @@ CUMLE = {
     "“O”dur.": "\"او\"در.",
     "“Hak”tan geldi.": "\"حقّ\"دن كلدی.",
     "Bkz. Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.":
-        "باقكز Essai de Chronologie des oeuvres de al-Ghazali, Paris 1959.",
-    "Sokrates “Know thyself, said Socrates.” demiştir.": "سقراط \"Know thyself, said Socrates.\" دیمشدر.",
+        "باقكز اسه دو قرونولوژی ده اوویر دو غزالی، پاریس ١٩٥٩.",   # Tur KM6: Latin harf kalmaz (Zahir kararı)
+    "Sokrates “Know thyself, said Socrates.” demiştir.": "سقراط \"نو طایسلف، سد سقراط.\" دیمشدر.",   # Tur KM6
     "ne zarar ne fayda, her an": "نه ضرر نه فائده، هر آن",
     "Hz. Muhammed (s.a.v)'in sözü": "حضرت محمّد (صلّی الله علیه وسلّم)ڭ سوزی",
     "İsa (a.s) ve Ali (r.a.) geldi.": "عیسی (علیه السلام) و علی (رضی الله عنه) كلدی.",

@@ -22,8 +22,8 @@ DURUMLAR = [
     ("Habe\u015f\u00ee'ye", "\u062d\u0628\u0634\u06cc \u06cc\u0647"),
     ("Maturidi\u2019ye", "\u0645\u0627\u062a\u0648\u0631\u06cc\u062f\u06cc \u06cc\u0647"),
     ("L\u00e9vi", "\u0644\u0648\u06cc"),
-    ("Trait\u00e9", "\u062a\u0631\u0627\u06cc\u062a\u0647"),
-    ("da\u00df", "\u062f\u0627\u0633\u0633"),
+    ("Trait\u00e9", "\u062a\u0631\u0647\u200c\u062a\u0647"),   # Tur KM6: Fransızca okunuş (Treté)
+    ("da\u00df", "\u062f\u0627\u0633"),   # Tur KM6: Almanca okunuş (das)
     ("\u00cdsl\u00e2m", "\u0627\u0633\u0644\u0627\u0645"),
     ("Ras\u00fblallah", "\u0631\u0633\u0648\u0644 \u0627\u0644\u0644\u0651\u0647"),
     ("\u00dcmeyye", "\u0627\u0645\u06cc\u0651\u0647"),
@@ -69,9 +69,10 @@ DURUMLAR = [
     ("tanr\u0131ya", "\u0637\u0627\u06ad\u0631\u06cc \u06cc\u0647"),
     ("nokta", "\u0646\u0642\u0637\u0647"),
 ]
-# Tamamen Latin kalan yabanci ibare (kaynakca) oldugu gibi kalir
-LATIN_KALIR = ["Brunschvig, La Berb\u00e9rie orientale sous les Hafsides", "Soci\u00e9t\u00e9 de Droit Compar\u00e9, lix"]
-LATIN_YOK = ["L\u00e9vi-Proven\u00e7al", "Gewi\u00dfheit", "Encyclop\u00e9die de l\u2019Isl\u00e2m"]
+# Tur KM6 (12 Kasım 2026, Zahir kararı): Osmanlıcada Latin harf kalmaz; yabancı ibare (kaynakça dahil) okunuşuyla yazılır
+LATIN_KALIR = []
+LATIN_YOK = ["L\u00e9vi-Proven\u00e7al", "Gewi\u00dfheit", "Encyclop\u00e9die de l\u2019Isl\u00e2m",
+             "Brunschvig, La Berb\u00e9rie orientale sous les Hafsides", "Soci\u00e9t\u00e9 de Droit Compar\u00e9, lix"]
 
 
 def main():

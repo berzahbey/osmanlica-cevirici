@@ -435,8 +435,27 @@ def draft_transliterate_sentence(sentence: str) -> str:
             o = o[:-1] + ("\u0648\u0646" if wl[-2] in "uü" else "\u06cc\u0646")   # Tur N: -In ile biten kök kelime ilgi eki değil (bilgin بیلكین، seçkin، olgun)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
-    return WORD_RE.sub(lambda m: _tur_t(_tur_s(_nisbe_iye(_tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), sentence)
+    return WORD_RE.sub(lambda m: _tur_km(_tur_t(_tur_s(_nisbe_iye(_tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), sentence)
 
+
+
+def _tur_km(o: str, latin: str) -> str:
+    """Tur KM6 (Fransız Devrimine Bakış denetimi): -i ile biten isim + ilgi -nin: ی kalır (Hayrat vâlinin والینڭ، nebînin نبینڭ):
+    monarşinin مونارشینڭ، demokrasinin دموقراسینڭ. Gövde -i ile biten sözlük kaydı olmalı; ünsüzle biten gövde + -ın (kadın+ın) değil."""
+    if not o or " " in o:
+        return o
+    l = turkish_lower(latin).replace("\u2019", "'")
+    if re.search(r"st[iı]k", l) and l not in dictionary.HAYRAT_ANAHTAR and not dictionary.lookup_exact(l):
+        o = o.replace("\u0633\u062f\u0643", "\u0633\u062a\u06cc\u0643").replace("\u0633\u062f\u0642", "\u0633\u062a\u06cc\u0642")
+        # Batı kökenli -stik (plastik، Helenistik، monastik): پلاستیك (-dik eki sanılıp سدك yazılmaz)
+    if "'" in l or l in dictionary.HAYRAT_ANAHTAR or dictionary.lookup_exact(l) or len(l) < 7:
+        return o
+    if re.search(r"[iı]n[iı]n$", l) and not dictionary.lookup_exact(l[:-2]) and not dictionary.lookup_with_suffix(l[:-2])[0]:
+        h_ = dictionary.lookup_exact(l[:-3])
+        if h_ and " " not in h_[0] and h_[0].endswith("\u06cc") and str(h_[1]) in ("ar", "fa", "fr", "ar-fa", "fa-ar", "sozlukler") \
+                and not dictionary.lookup_exact(l[:-4]) and not re.search(r"ğ[ıi]$", l[:-3]):   # iyelikli gövde değil (ilcââtı, kullanılması, -ciği)
+            return h_[0] + "\u0646\u06ad"
+    return o
 
 
 def _tur_s(o: str, latin: str) -> str:
@@ -1297,6 +1316,31 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         if re.match(r"^.{2,}?[dt][uü]r[uü]l[uü]r", l):
             osm = osm.replace("\u062f\u06cc\u0631\u06cc\u0644\u0648\u0631", "\u062f\u06cc\u0631\u06cc\u0644\u06cc\u0631", 1)   # öldürülür ئولدیریلیر
         osm = osm.replace("\u062f\u06cc\u0631\u06cc\u0644\u0648\u06cc\u0648\u0631", "\u062f\u06cc\u0631\u06cc\u0644\u06cc\u06cc\u0648\u0631", 1)   # gördürülüyor كوردیریلییور
+    # Tur KM7 (Şair ve Patron / Ortaçağ denetimi): ince yeterlik olumsuz -eme- (Hayrat edemedi ایده‌مدی، edememiş ایده‌مه‌مش):
+    # getirememiş كتیره‌مه‌مش، bilemedi بیله‌مدی
+    m_ = re.match(r"^(.{2,}?[^aeıioöuüâîû])em(e)(m[iı]ş|d[iı])", l)
+    if m_ and _fiil_koku_mu(m_.group(1)) and not dictionary.lookup_exact(l) and not dictionary.lookup_with_suffix(l)[0] \
+            and not l.startswith(("yem", "dem")):
+        kv_ = _KOK_MOD.KOK.get(m_.group(1), {}).get("V")
+        g_ = kv_[0].replace("\u06af", "\u0643") if kv_ else None
+        if g_ and osm.startswith(g_ + "\u0645"):
+            osm = g_ + "\u0647\u200c" + osm[len(g_):]
+            if m_.group(3).startswith("m"):
+                osm = osm.replace(g_ + "\u0647\u200c\u0645\u0645", g_ + "\u0647\u200c\u0645\u0647\u200c\u0645", 1)
+    # Tur KM6 (Fransız Devrimine Bakış denetimi): Hayrat kalıpları
+    # a) -ştı/-ştığ: شد (Hayrat çalıştığı چالیشدیغی، yetiştiği یتیشدیگی): ulaştığımızı اولاشدیغمزی
+    m_ = re.match(r"^(.+ş)t[ıiuü]", l)
+    if m_ and _fiil_koku_mu(m_.group(1)) and not dictionary.lookup_exact(l):
+        osm = re.sub("\u0634\u062a(?=[\u06cc\u0648])", "\u0634\u062f", osm)
+    # b) mastar + -mız: مه‌مز (Hayrat almamız آلمه‌مز، olmamız اولمه‌مز): saptamamızın صاپتامه‌مزڭ
+    m_ = re.match(r"^(.+?)m([ae])m[ıi]z", l)
+    if m_ and _fiil_koku_mu(m_.group(1)) and not dictionary.lookup_exact(l):
+        osm = re.sub("\u0645[\u0627\u0647]\u200c?\u0645\u06cc?\u0632", "\u0645\u0647\u200c\u0645\u0632", osm, count=1)
+    # c) -leyici/-layıcı: له‌ییجی (Hayrat işleyici ایشله‌ییجی، ağlayıcı آغلاییجی): etkileyici اتكیله‌ییجی
+    if re.search(r"leyic[iı]", l):
+        osm = re.sub("(?<=\u0644)\u06cc\u06cc\u062c", "\u0647\u200c\u06cc\u06cc\u062c", osm)
+    # d) üç lâm yazılmaz (paralel+lik): güzellik كوزللك
+    osm = osm.replace("\u0644\u0644\u0644", "\u0644\u0644")
     # Tur KM3: edilgen -il + -ecekler: ه yazılır (Hayrat diriltilecektir دیریلتیله‌جكدر؛ Nahl diriltileceklerini دیریلتیله‌جكلرینی)
     if re.search(r"[ıiuü]lecekl", l):
         osm = osm.replace("\u06cc\u0644\u062c\u0643\u0644", "\u06cc\u0644\u0647\u200c\u062c\u0643\u0644")
@@ -2900,9 +2944,21 @@ def transliterate_text(turkish_text, *args, **kwargs):
 # اونلری(ڭ آیاقلرینی). Önceden اونلری(ن çıkıyordu.
 _PARANTEZ_EK_RE = re.compile(r"(?<=[aeıioöuüâîû])\(n\s+")
 _transliterate_text_km_onceki = transliterate_text
+from . import yabanci as _yabanci   # noqa: E402
+_YABANCI_ACIK = __import__("os").environ.get("OSM_YABANCI", "1") != "0"
 
 
 def transliterate_text(turkish_text, *args, **kwargs):
     if isinstance(turkish_text, str) and "(" in turkish_text:
         turkish_text = _PARANTEZ_EK_RE.sub("(ın ", turkish_text)
-    return _transliterate_text_km_onceki(turkish_text, *args, **kwargs)
+    if isinstance(turkish_text, str) and _YABANCI_ACIK:
+        turkish_text = _yabanci.yeniden_yaz(turkish_text)   # Tur KM6: yabancı kelime Türkçe okunuşla (Latin harf kalmaz)
+    out = _transliterate_text_km_onceki(turkish_text, *args, **kwargs)
+    if _YABANCI_ACIK and isinstance(out, str) and _yabanci.latin_kalan_var(out):
+        # yine de Latin harfle kalan (yabancı diye saklanan) kelime: kaba okunuşla tek tek çevrilir
+        out = _yabanci._LATIN_KALAN.sub(lambda m: _transliterate_text_km_onceki(_yabanci.kural_okunus(m.group(0))).strip()
+                                        if re.search("[A-Za-z]", m.group(0)) else m.group(0), out)
+        if _yabanci.latin_kalan_var(out):   # hâlâ kalan (tireli, bozuk OCR): harf harf kural motoruyla
+            out = _yabanci._LATIN_KALAN.sub(lambda m: draft_transliterate_sentence(
+                _yabanci.kural_okunus(m.group(0)).replace("-", " ").translate(str.maketrans("xwqXWQ", "ksvKSV"))).strip(), out)
+    return out
