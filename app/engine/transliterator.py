@@ -1297,6 +1297,9 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         if re.match(r"^.{2,}?[dt][uü]r[uü]l[uü]r", l):
             osm = osm.replace("\u062f\u06cc\u0631\u06cc\u0644\u0648\u0631", "\u062f\u06cc\u0631\u06cc\u0644\u06cc\u0631", 1)   # öldürülür ئولدیریلیر
         osm = osm.replace("\u062f\u06cc\u0631\u06cc\u0644\u0648\u06cc\u0648\u0631", "\u062f\u06cc\u0631\u06cc\u0644\u06cc\u06cc\u0648\u0631", 1)   # gördürülüyor كوردیریلییور
+    # Tur KM3: edilgen -il + -ecekler: ه yazılır (Hayrat diriltilecektir دیریلتیله‌جكدر؛ Nahl diriltileceklerini دیریلتیله‌جكلرینی)
+    if re.search(r"[ıiuü]lecekl", l):
+        osm = osm.replace("\u06cc\u0644\u062c\u0643\u0644", "\u06cc\u0644\u0647\u200c\u062c\u0643\u0644")
     # Tur KM: ince olumsuz emir -meyin/-meyiniz: مه‌یڭ / مه‌ییڭز (Hayrat etmeyin ایتمه‌یڭ، vermeyin ویرمه‌یڭ، demeyiniz دیمه‌ییڭز)
     if re.search(r"meyin(iz)?$", l) and _fiil_koku_mu(re.sub(r"meyin(iz)?$", "", l)):
         osm = re.sub("\u0645\u06cc\u06ad$", "\u0645\u0647\u200c\u06cc\u06ad", osm)

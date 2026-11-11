@@ -30,6 +30,11 @@ D = [
     ("pınar", "پیڭار"), ("ard arda", "آرد آرده"), ("idiyseniz", "ایدیسه‌ڭز"),
     ("emrettiklerimizi", "امر ایتدكلریمزی"), ("demeyin", "دیمه‌یڭ"), ("gelmeyin", "كلمه‌یڭ"), ("söylemeyin", "سویله‌مه‌یڭ"),
     ("demeyiniz", "دیمه‌ییڭز"), ("etmeyin", "ایتمه‌یڭ"), ("yapmayın", "یاپمایڭ"),
+    # 8) Nahl 1-42 testi (kitap + Hayrat: sabahleyin صباحلین، atalara آتالره، ermelerini ایرمه‌لرینی، itâatkârâne، diriltilecektir)
+    ("akşamleyin", "آقشاملین"), ("itâatkâr", "اطاعتكار"), ("atalarımız", "آتالریمز"), ("ataların", "آتالرڭ"), ("ata", "آته"),
+    ("ermelerine", "ایرمه‌لرینه"), ("erler", "ارلر"), ("yiyesiniz", "ییه‌سڭز"), ("saptırdıkları", "صاپدیردقلری"),
+    ("kuşatıverdi", "قوشاتیویردی"), ("onda yara yara giden", "اونده یارا یارا كیدن"), ("yara", "یاره"),
+    ("diriltileceklerini", "دیریلتیله‌جكلرینی"), ("öldürülecekleri", "ئولدیریله‌جكلری"), ("yapılacakları", "یاپیلاجقلری"),
 ]
 
 
