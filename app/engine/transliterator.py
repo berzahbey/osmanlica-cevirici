@@ -2945,12 +2945,16 @@ def transliterate_text(turkish_text, *args, **kwargs):
 _PARANTEZ_EK_RE = re.compile(r"(?<=[aeıioöuüâîû])\(n\s+")
 _transliterate_text_km_onceki = transliterate_text
 from . import yabanci as _yabanci   # noqa: E402
+from . import onisle as _onisle   # noqa: E402
+from . import yz_kayit as _yz_kayit   # noqa: E402,F401  (Tur YZ1: yapay zekâ köken kaydı yüklenir: sözlüğe kök, okunuş tablosuna)
 _YABANCI_ACIK = __import__("os").environ.get("OSM_YABANCI", "1") != "0"
 
 
 def transliterate_text(turkish_text, *args, **kwargs):
     if isinstance(turkish_text, str) and "(" in turkish_text:
         turkish_text = _PARANTEZ_EK_RE.sub("(ın ", turkish_text)
+    if isinstance(turkish_text, str):
+        turkish_text = _onisle.duzelt_metin(turkish_text)   # Tur YZ1: şapka farkı ve baş+ birleşik kelime (sözlükte bulunsun)
     if isinstance(turkish_text, str) and _YABANCI_ACIK:
         turkish_text = _yabanci.yeniden_yaz(turkish_text)   # Tur KM6: yabancı kelime Türkçe okunuşla (Latin harf kalmaz)
     out = _transliterate_text_km_onceki(turkish_text, *args, **kwargs)

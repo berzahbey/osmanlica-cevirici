@@ -135,4 +135,29 @@ async def download(job_id: str):
     return FileResponse(path, filename=os.path.basename(path), media_type=media_type)
 
 
+# ---- Tur YZ1 (12 Kasım 2026): yapay zekâ köken kaydı. Stüdyo bilinmeyen kelimeleri alır, Gemini'ye sorar, cevabı buraya yazar.
+@app.post("/api/bilinmeyen")
+async def bilinmeyen(text: str = Form(...)):
+    """Metinde hiçbir sözlükte / kayıtta bulunmayan ve henüz sorulmamış kelimeler."""
+    from engine import yz_kayit
+    return {"kelimeler": yz_kayit.bilinmeyenler(text)}
+
+
+@app.post("/api/yz-kayit")
+async def yz_kayit_ekle(govde: dict):
+    """Yapay zekâ cevapları: {"kayitlar": [{kelime, koken, kok, yazilis, okunus, anlam, model}]}. Denetlenip kalıcı dosyaya yazılır."""
+    from engine import yz_kayit
+    onayli, kontrol = yz_kayit.ekle(govde.get("kayitlar") or [])
+    return {"onayli": onayli, "kontrol": kontrol, "toplam": len(yz_kayit.KAYIT)}
+
+
+@app.get("/api/yz-kayit")
+async def yz_kayit_indir():
+    """Birikmiş kayıt dosyası (yedek / GitHub'a eklemek için)."""
+    from engine import yz_kayit
+    if not yz_kayit.KALICI.exists():
+        raise HTTPException(404, "Henüz kayıt yok")
+    return FileResponse(str(yz_kayit.KALICI), filename="yz_sozluk.tsv", media_type="text/tab-separated-values")
+
+
 app.mount("/", StaticFiles(directory=str(APP_DIR / "static"), html=True), name="static")
