@@ -62,18 +62,28 @@ def harf_uyumu(latin: str, osm: str) -> bool:
 
 
 def _uygula(r):
-    """Kaydı çeviriciye işler (sözlük / yabancı okunuş)."""
+    """Kaydı çeviriciye işler. Tur YZ2 (12 Kasım 2026, ilk gerçek deneme: Fransız Devrimine Bakış, 1186 kayıt):
+    ücretsiz Flash-Lite modeli modern Türkçe kelimeleri (dönem, olay, toplum, etki, katkı) Arapça sayıyor, yazılış yerine eş anlamlı
+    veriyordu (deprem -> زلزله، ilgi -> علق، karşın -> قرص). Bu yüzden:
+      - ar/fa kaydı ÇEVİRİYE UYGULANMAZ, yalnız saklanır (her kelime yine bir kez sorulur; ileride daha güçlü modelle yeniden bakılır)
+      - Batı dili okunuşu yalnız şu durumda uygulanır: kelime = kök (ekli değil), Türkçe harf (çğıöşü) yok, Türkçe sözlükte yok,
+        okunuş kelimeden farklı ve bir kelime (çeviri değil: uluslararası -> internasyonal reddedilir)."""
     if r.get("durum") != "onayli":
         return
     k = r.get("koken", "")
-    if k in ("ar", "fa") and r.get("kok") and r.get("yazilis"):
-        kl = turkish_lower(r["kok"])
-        if not dictionary.lookup_exact(kl):
-            dictionary.DICTIONARY[kl] = (r["yazilis"], "yz-" + k)
-    elif k not in ("tr", "ar", "fa", "") and r.get("okunus"):
-        yabanci._TABLO.setdefault(r["kelime"].lower(), r["okunus"])
-        if r.get("kok") and r["kok"].lower() != r["kelime"].lower():
-            yabanci._TABLO.setdefault(r["kok"].lower(), r["okunus"])
+    if k in ("tr", "ar", "fa", "") or not r.get("okunus"):
+        return
+    w, kok, ok = r["kelime"], r.get("kok") or "", r["okunus"]
+    if w.lower() != kok.lower() or re.search(r"[çğıöşüÇĞİÖŞÜ]", w) or " " in ok:
+        return
+    if yabanci._turkce_mi(w) or ok.lower() == w.lower():
+        return
+    if not (w[:1].isupper() or re.search(r"[xwq]", w.lower())):
+        return                                   # küçük harfli Türkçeleşmiş kelime (liberal, reform): Türkçe kurallar
+    from difflib import SequenceMatcher
+    if SequenceMatcher(None, w.lower(), ok.lower()).ratio() < 0.3:
+        return                                   # okunuş kelimeye hiç benzemiyor: çeviri ya da yanlış
+    yabanci._TABLO.setdefault(w.lower(), ok)
 
 
 def _oku(yol):
