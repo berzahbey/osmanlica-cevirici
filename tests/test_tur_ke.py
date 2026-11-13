@@ -41,6 +41,16 @@ def main():
         if olan != beklenen:
             kalan += 1
             print("KALDI bilinmeyen", w, olan, "(beklenen", beklenen, ")")
+    # Tur KE4: Batı özel adı, yazılışı yoksa yeniden sorulur; yazılış gelince okunuş yerine o kullanılır
+    yz_kayit.ekle([{"kelime": "Schopenhauerq", "koken": "de", "kok": "Schopenhauerq", "okunus": "Şopenhauerk", "model": "gemini-4-hydrogen"}])
+    if yz_kayit.bilinmeyenler("Bunu Schopenhauerq dedi.") != ["Schopenhauerq"]:
+        kalan += 1
+        print("KALDI Batı adı yazılışsız yeniden sorulmalı")
+    yz_kayit.ekle([{"kelime": "Schopenhauerq", "koken": "de", "kok": "Schopenhauerq", "okunus": "Şopenhauerk",
+                    "yazilis": "شوپنهاورق", "model": "gemini-4-hydrogen"}])
+    if "شوپنهاورقڭ" not in T("Bunu Schopenhauerq'in dedi."):
+        kalan += 1
+        print("KALDI Batı adı yazılışı", T("Bunu Schopenhauerq'in dedi."))
     yz_kayit.ekle([{"kelime": "çorbazlarımız", "koken": "tr", "kok": "çorbaz", "model": "gemini-3.5-flash-lite"}])
     if yz_kayit.bilinmeyenler("çorbazdı") != ["çorbazdı"]:
         kalan += 1

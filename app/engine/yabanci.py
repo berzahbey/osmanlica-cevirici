@@ -127,6 +127,11 @@ def _roma(w: str):
     return str(t) if t else None
 
 
+def _adlar():
+    from . import yz_kayit
+    return yz_kayit.ADLAR
+
+
 def yeniden_yaz(metin: str) -> str:
     """Metindeki yabancı kelimeleri Türkçe okunuşla yeniden yazar (Latin harfle kalacak kelime bırakmaz)."""
     if not isinstance(metin, str) or not re.search(r"[A-Za-z]", metin):
@@ -146,6 +151,9 @@ def yeniden_yaz(metin: str) -> str:
             continue
         if any(c in "‘ʻ`" for c in w):
             karar.append((None, False, False, None))
+            continue
+        if w[:1].isupper() and k in _adlar():
+            karar.append((None, False, False, None))   # Tur KE4: yapay zekânın Osmanlıca yazılışı olan özel ad (Schopenhauer) okunuşa çevrilmez
             continue
         if k in _TABLO:
             if _baglam_gerekir(k) and not (w[:1].isupper() and not _turkce_mi(w)):

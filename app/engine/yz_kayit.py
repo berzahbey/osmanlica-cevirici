@@ -84,8 +84,14 @@ def yeniden_sorulur(r) -> bool:
     yeniden sorulmaz: yalnız Arapça/Farsça dediği (ya da denetimden geçmeyen) kelimeler. Lite'ın 'tr' kaydı zararsızdır (Türkçe
     kurallar yazar), Batı dili kaydı da Tur YZ2 süzgeciyle uygulanır."""
     if guvenilir(r.get("model")):
-        return False
+        return _bati_adi_eksik(r)          # Tur KE4: yazılışı olmayan Batı özel adı bir kez daha sorulur
     return r.get("koken") in ("ar", "fa") or r.get("durum") == "kontrol"
+
+
+def _bati_adi_eksik(r) -> bool:
+    """Tur KE4: büyük harfli Batı dili özel adının kaydında Osmanlıca yazılış yok (eski istem yalnız okunuş istiyordu)."""
+    w = r.get("kelime") or ""
+    return w[:1].isupper() and r.get("koken") not in ("tr", "ar", "fa", "") and not (r.get("yazilis") or "").strip()
 
 
 def _ar_fa_uygula(r):
@@ -143,6 +149,11 @@ def _uygula(r):
     if k in ("ar", "fa") and guvenilir(r.get("model")) and w[:1].isupper() and r.get("yazilis") \
             and turkish_lower(r.get("kok") or "") == turkish_lower(w):
         ADLAR[turkish_lower(w)] = r["yazilis"].translate(_OSM_HARF).strip()
+    elif k not in ("tr", "ar", "fa", "") and guvenilir(r.get("model")) and w[:1].isupper() and r.get("yazilis") \
+            and turkish_lower(r.get("kok") or w) == turkish_lower(w):
+        y = r["yazilis"].translate(_OSM_HARF).strip()
+        if harf_uyumu(r.get("okunus") or w, y):
+            ADLAR[turkish_lower(w)] = y      # Tur KE4: Batı özel adı (Schopenhauer شوپنهاور), okunuşla harf uyumu denetlenir
     if k in ("ar", "fa") and guvenilir(r.get("model")):
         _ar_fa_uygula(r)
         return
@@ -348,7 +359,7 @@ def bilinmeyenler(metin: str, en_fazla: int = 100000):
             # (Halime -> halim + e حلیم، Naim -> nâim)
             k = KAYIT.get(wl) or KAYIT.get(w.lower())
             if not (k and not yeniden_sorulur(k) or (dictionary.lookup_exact(wl) and not _ekli_bicim(wl))
-                    or w.lower() in yabanci._TABLO or yabanci._roma(w)):
+                    or wl in ADLAR or yabanci._roma(w)):
                 g, p = puan.get(w, (0, 0))
                 puan[w] = (0, p + sayi[wl])
             continue
