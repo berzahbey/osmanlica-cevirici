@@ -25,7 +25,7 @@ _kilit = threading.Lock()
 
 # Latin ünsüz -> Osmanlıcada karşılığı olabilecek harfler (harf uyumu denetimi için)
 _UNSUZ = {"b": "بپ", "c": "جچ", "ç": "چج", "d": "دذضط", "f": "ف", "g": "غگكق", "ğ": "غگك", "h": "حهخ", "j": "ژج", "k": "كقخ",
-          "l": "ل", "m": "م", "n": "نڭ", "p": "پب", "r": "ر", "s": "سصث", "ş": "ش", "t": "تطث", "v": "و", "y": "ی", "z": "زذضظ"}
+          "l": "ل", "m": "م", "n": "نڭ", "p": "پب", "r": "ر", "s": "سصث", "ş": "ش", "t": "تطثدض", "v": "و", "y": "ی", "z": "زذضظ"}
 _HARF_DISI = set("اوىیهعءأإآؤئةًٌٍَُِّْٰ‌")     # ünlü harfleri, ayın, hemze, harekeler: karşılaştırmada atlanır
 
 
@@ -61,6 +61,27 @@ def harf_uyumu(latin: str, osm: str) -> bool:
     return es(0, 0)
 
 
+def guvenilir(model: str) -> bool:
+    """Tur YZ3 (13 Kasım 2026, model denemesi): Flash-Lite modelleri köken işinde güvenilmez (Türkçeyi Arapça sayıyor, yazılış
+    yerine anlamdaş veriyor); gemini-4-hydrogen ve gemini-3.5-flash 35 kelimelik denemede hepsini doğru bildi. Lite kaydı
+    uygulanmaz ve kelime güçlü modelle yeniden sorulur."""
+    m = (model or "").lower()
+    return bool(m) and "lite" not in m and "sahte" not in m
+
+
+def _ar_fa_uygula(r):
+    """Güvenilir modelin onaylı Arapça/Farsça kaydı: kök, aslî yazılışıyla sözlüğe eklenir (sözlükte varsa dokunulmaz;
+    ekleri çevirici yazar: kahramanları -> قهرمانلری)."""
+    kok = turkish_lower(r.get("kok") or "")
+    osm = (r.get("yazilis") or "").replace("\u064a", "\u06cc").replace("\u06a9", "\u0643")
+    if len(kok) < 3 or not osm or dictionary._get(kok):
+        return
+    dictionary.DICTIONARY[kok] = (osm, r["koken"])
+    duz = dictionary._flat(kok)
+    if duz != kok and duz not in dictionary.DICTIONARY:
+        dictionary.DICTIONARY[duz] = (osm, r["koken"])
+
+
 def _uygula(r):
     """Kaydı çeviriciye işler. Tur YZ2 (12 Kasım 2026, ilk gerçek deneme: Fransız Devrimine Bakış, 1186 kayıt):
     ücretsiz Flash-Lite modeli modern Türkçe kelimeleri (dönem, olay, toplum, etki, katkı) Arapça sayıyor, yazılış yerine eş anlamlı
@@ -71,6 +92,9 @@ def _uygula(r):
     if r.get("durum") != "onayli":
         return
     k = r.get("koken", "")
+    if k in ("ar", "fa") and guvenilir(r.get("model")):
+        _ar_fa_uygula(r)
+        return
     if k in ("tr", "ar", "fa", "") or not r.get("okunus"):
         return
     w, kok, ok = r["kelime"], r.get("kok") or "", r["okunus"]
@@ -98,12 +122,18 @@ def _oku(yol):
             KAYIT[r["kelime"].lower()] = r
 
 
+def _onbellek_sil():
+    from . import onisle
+    onisle._yeni_bicim.cache_clear()
+
+
 def yukle():
     KAYIT.clear()
     for yol in (PAKET, KALICI):
         _oku(yol)
     for r in KAYIT.values():
         _uygula(r)
+    _onbellek_sil()
 
 
 def denetle(r):
@@ -140,13 +170,15 @@ def ekle(satirlar):
                 f.write("# " + "\t".join(ALANLAR) + "\n")
             for r in satirlar:
                 r = denetle(r)
-                if not r["kelime"] or r["kelime"].lower() in KAYIT:
-                    continue
+                eski = KAYIT.get(r["kelime"].lower())
+                if not r["kelime"] or eski and (guvenilir(eski.get("model")) or not guvenilir(r["model"])):
+                    continue                     # Tur YZ3: Lite kaydının yerine güçlü modelin cevabı yazılır (son satır geçerli)
                 f.write("\t".join(r[a] for a in ALANLAR) + "\n")
                 KAYIT[r["kelime"].lower()] = r
                 _uygula(r)
                 on += r["durum"] == "onayli"
                 ko += r["durum"] == "kontrol"
+        _onbellek_sil()
     return on, ko
 
 
@@ -154,7 +186,7 @@ _KELIME = re.compile(r"[A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû][A-Za-zÇĞİ
 
 
 def bilinmeyenler(metin: str, en_fazla: int = 100000):
-    """Metindeki, hiçbir sözlükte / kayıtta bulunmayan ve henüz sorulmamış kelimeler (kesmeden önceki kök biçimiyle, tekil)."""
+    """Metindeki, hiçbir sözlükte / kayıtta bulunmayan ve henüz (güvenilir modele) sorulmamış kelimeler (tekil)."""
     from .onisle import _yeni_bicim
     gor, out = set(), []
     for m in _KELIME.finditer(metin or ""):
@@ -163,7 +195,8 @@ def bilinmeyenler(metin: str, en_fazla: int = 100000):
             continue
         gor.add(w)
         wl = turkish_lower(w)
-        if wl in KAYIT or w.lower() in yabanci._TABLO or yabanci._roma(w):
+        kayit = KAYIT.get(wl) or KAYIT.get(w.lower())
+        if kayit and guvenilir(kayit.get("model")) or w.lower() in yabanci._TABLO or yabanci._roma(w):
             continue
         if wl in dictionary.HAYRAT_ANAHTAR or dictionary.lookup_exact(wl) or dictionary.lookup_with_suffix(wl)[0]:
             continue
