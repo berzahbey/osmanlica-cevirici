@@ -35,5 +35,12 @@ bak("guclu uygulanir", "مهمیز" in transliterate_text("mahmuzzuyla"), True)
 # Türkçe kelime Lite'ın Arapça sandığı yazılışla bozulmaz
 yz_kayit.ekle([{"kelime": "sonuçtanz", "koken": "ar", "kok": "sonuçtanz", "yazilis": "سنوچتانز", "model": "gemini-3.5-flash-lite"}])
 bak("lite uygulanmaz", "sonuçtanz" in yz_kayit.dictionary.DICTIONARY, False)
+# Tur YZ4: Lite'ın tr kaydı yeniden sorulmaz; Arapça imla Osmanlıcaya çevrilir ve denetimden geçer
+yz_kayit.ekle([{"kelime": "yansıtanzz", "koken": "tr", "kok": "yansıt", "model": "gemini-3.1-flash-lite"}])
+bak("lite tr sorulmaz", yz_kayit.bilinmeyenler("yansıtanzz"), [])
+r = yz_kayit.denetle({"kelime": "tarihçilerce", "koken": "ar", "kok": "tarih", "yazilis": "تاريخ", "model": "gemini-4-hydrogen"})
+bak("arapca imla", (r["yazilis"], r["durum"]), ("تاریخ", "onayli"))
+r = yz_kayit.denetle({"kelime": "kargaşa", "koken": "ar", "kok": "kargaşa", "yazilis": "غرقشه", "model": "gemini-3.5-flash"})
+bak("kargasa kontrol", r["durum"], "kontrol")
 os.remove(os.environ["YZ_SOZLUK"])
 print("SONUC:", "HEPSI GECTI" if not hata else f"{hata} HATA")

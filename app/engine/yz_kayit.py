@@ -29,10 +29,12 @@ _UNSUZ = {"b": "بپ", "c": "جچ", "ç": "چج", "d": "دذضط", "f": "ف", "g
 _HARF_DISI = set("اوىیهعءأإآؤئةًٌٍَُِّْٰ‌")     # ünlü harfleri, ayın, hemze, harekeler: karşılaştırmada atlanır
 
 
-def _unsuzler_latin(w):
+def _unsuzler_latin(w, tekle=True):
     s = turkish_lower(w)
     s = re.sub(r"[^a-zçğıöşü]", "", s.translate(str.maketrans("âîû", "aiu")))
     out = [c for c in s if c in _UNSUZ]
+    if not tekle:
+        return out
     return [c for i, c in enumerate(out) if i == 0 or c != out[i - 1] or c in "y"]       # çift ünsüz (şedde) tek sayılır
 
 
@@ -43,7 +45,13 @@ def harf_uyumu(latin: str, osm: str) -> bool:
         return False
     a = [c for c in osm.replace(" ", "").replace("\u200c", "") if c not in "ًٌٍَُِّْٰ"]
     a = [c for i, c in enumerate(a) if i == 0 or c != a[i - 1]]
-    lat = _unsuzler_latin(latin)
+    tek, cift = _unsuzler_latin(latin), _unsuzler_latin(latin, tekle=False)
+    if tek != cift and harf_uyumu_lat(cift, a):          # Tur YZ4: tamam تمام (iki ayrı mim), şedde değil
+        return True
+    return harf_uyumu_lat(tek, a)
+
+
+def harf_uyumu_lat(lat, a):
     atlanir = set("اوىیهعءأإآؤئة")
     from functools import lru_cache
 
@@ -69,11 +77,20 @@ def guvenilir(model: str) -> bool:
     return bool(m) and "lite" not in m and "sahte" not in m
 
 
+def yeniden_sorulur(r) -> bool:
+    """Tur YZ4 (13 Kasım 2026): güçlü modellerin ücretsiz günlük sınırı küçük (ilk gün ~700 kelime). Lite'ın 22 bin kaydının hepsi
+    yeniden sorulmaz: yalnız Arapça/Farsça dediği (ya da denetimden geçmeyen) kelimeler. Lite'ın 'tr' kaydı zararsızdır (Türkçe
+    kurallar yazar), Batı dili kaydı da Tur YZ2 süzgeciyle uygulanır."""
+    if guvenilir(r.get("model")):
+        return False
+    return r.get("koken") in ("ar", "fa") or r.get("durum") == "kontrol"
+
+
 def _ar_fa_uygula(r):
     """Güvenilir modelin onaylı Arapça/Farsça kaydı: kök, aslî yazılışıyla sözlüğe eklenir (sözlükte varsa dokunulmaz;
     ekleri çevirici yazar: kahramanları -> قهرمانلری)."""
     kok = turkish_lower(r.get("kok") or "")
-    osm = (r.get("yazilis") or "").replace("\u064a", "\u06cc").replace("\u06a9", "\u0643")
+    osm = (r.get("yazilis") or "").translate(_OSM_HARF)
     if len(kok) < 3 or not osm or dictionary._get(kok):
         return
     dictionary.DICTIONARY[kok] = (osm, r["koken"])
@@ -131,20 +148,31 @@ def yukle():
     KAYIT.clear()
     for yol in (PAKET, KALICI):
         _oku(yol)
+    for k, r in list(KAYIT.items()):
+        if guvenilir(r.get("model")) and r.get("koken") in ("ar", "fa"):
+            KAYIT[k] = denetle(r)        # Tur YZ4: eski kayıtlar da Osmanlıca harfle yeniden denetlenir (تاريخ -> تاریخ)
     for r in KAYIT.values():
         _uygula(r)
     _onbellek_sil()
 
 
+_OSM_HARF = str.maketrans({"\u064a": "\u06cc", "\u0649": "\u06cc", "\u06a9": "\u0643", "\u0629": "\u0647", "\u0623": "\u0627",
+                           "\u0625": "\u0627"})   # Tur YZ4: Arapça imla -> Osmanlıca (تاريخ -> تاریخ، صناعة -> صناعه، إعمال -> اعمال)
+
+
 def denetle(r):
     """Yapay zekâ cevabını düzene sokar ve denetler; durum alanını 'onayli' ya da 'kontrol' yapar."""
     r = {a: str(r.get(a) or "").strip().replace("\t", " ").replace("\n", " ") for a in ALANLAR}
+    r["yazilis"] = r["yazilis"].translate(_OSM_HARF)
     r["koken"] = r["koken"].lower()[:5]
     w = turkish_lower(r["kelime"])
     if r["koken"] in ("ar", "fa"):
         kok = turkish_lower(r["kok"] or r["kelime"])
         sade = lambda x: x.translate(str.maketrans("âîû", "aiu"))
-        if not sade(w).startswith(sade(kok)[:max(3, len(kok) - 1)]):     # kök kelimenin başında olmalı (mahmuz+uyla)
+        parcalar = [sade(x) for x in w.split("-") if x]                  # orta-sınıfların, tarih-yazımının: herhangi bir parça
+        ks = sade(kok)
+        dusen = re.sub(r"[aeıioöuü](?=[^aeıioöuü]$)", "", ks)           # ünlü düşmesi: seyir -> seyr(ederken), atıf -> atf(etmek)
+        if not any(ws.startswith(k[:max(3, len(k) - 1)]) for k in (ks, dusen) for ws in parcalar):     # kök kelimenin başında olmalı (mahmuz+uyla)
             r["durum"] = "kontrol"
         elif not harf_uyumu(kok, r["yazilis"]):
             r["durum"] = "kontrol"
@@ -171,7 +199,7 @@ def ekle(satirlar):
             for r in satirlar:
                 r = denetle(r)
                 eski = KAYIT.get(r["kelime"].lower())
-                if not r["kelime"] or eski and (guvenilir(eski.get("model")) or not guvenilir(r["model"])):
+                if not r["kelime"] or eski and (not yeniden_sorulur(eski) or not guvenilir(r["model"])):
                     continue                     # Tur YZ3: Lite kaydının yerine güçlü modelin cevabı yazılır (son satır geçerli)
                 f.write("\t".join(r[a] for a in ALANLAR) + "\n")
                 KAYIT[r["kelime"].lower()] = r
@@ -196,7 +224,7 @@ def bilinmeyenler(metin: str, en_fazla: int = 100000):
         gor.add(w)
         wl = turkish_lower(w)
         kayit = KAYIT.get(wl) or KAYIT.get(w.lower())
-        if kayit and guvenilir(kayit.get("model")) or w.lower() in yabanci._TABLO or yabanci._roma(w):
+        if kayit and not yeniden_sorulur(kayit) or w.lower() in yabanci._TABLO or yabanci._roma(w):
             continue
         if wl in dictionary.HAYRAT_ANAHTAR or dictionary.lookup_exact(wl) or dictionary.lookup_with_suffix(wl)[0]:
             continue
