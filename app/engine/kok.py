@@ -73,7 +73,7 @@ _D = r"[dt]([ae]($|n|ki|y)|[ıiuü]($|r|m|n|k|y|s|l[ae]r))"            # -de/-de
 # ünlüyle biten isim + -la/-laş/-lan/-lı/-lık: Hayrat kökü değiştiriyor (yaka+la یاقالا، karşı+lık قارشیلق): alınmaz
 _N = r"n($|l[ae]$|c[ıiuü]|[ıiuü]($|n|z)|[ae]$|d|t)"                       # -n/-nle/-ncı/-nı/-nın/-nız/-na/-nda (yara+nan, yara+nır değil)
 _EK_N_UNLU = re.compile(r"^(y|" + _N + r"|s[ıiuü]|l[ae]r|" + _D + r"|m|c|k[ie]|k[ae]n|ş)")
-_EK_N_UNSUZ = re.compile(r"^([aeıioöuü]|l|" + _D + r"|c|ç|s[ıiuü]z|k[ie]|k[ae]n)")
+_EK_N_UNSUZ = re.compile(r"^([aeıioöuü]|l|" + _D + r"|c|ç|s[ıiuü]z|k[ie]|k[ae]n|s[ae]($|m|n|k|l[ae]r))")   # Tur KE: -sa/-se (sadık+sa)
 
 
 _IYELIK_COGUL = re.compile(r"^[ıiuü](m[ıiuü]z|n[ıiuü]z)")
@@ -115,6 +115,30 @@ def _turev(r: str):
     return None
 
 
+# Tur KE (13 Kasım 2026, kök+ek turu): Hayrat kök sözlüğünde olmayan kök, sözlükteki Arapça/Farsça kayıttan da alınır (yapay zekâ köken
+# adımının eklediği kökler dahil: talip طالب، teşvik تشویق، sadık صادق). Ekler yine kural motorundan. Kısa ve belirsiz kökler alınmaz.
+_SOZLUK_KOKEN = {"ar", "fa", "ar-fa", "fa-ar"}
+
+
+def _sozluk_kok(r: str):
+    if os.environ.get("OSM_KOK_EK", "1") == "0" or len(r) < 4:
+        return None
+    from . import dictionary
+    h = dictionary._get_soft(r)
+    if not h or " " in h[0] or "\u060c" in h[0] or len(h[0]) < 2:
+        return None
+    if h[1] in _SOZLUK_KOKEN or (h[1] == "sozlukler" and len(r) >= 5 and os.environ.get("OSM_KE_SOZ", "1") == "1"):
+        if r[-1] in _UNLU + "y" or re.search("[îû]n$|ât$", r):
+            return None                    # ünlüyle/y ile biten kök (gele, kata, hâsiy+et) ya da Arapça çoğul (muvahhidîn): başka yollar yazıyor
+        return {"N": (h[0], 1)}
+    return None
+
+
+# Tur KE: Arapça/Farsça isim + (isim ekleri) + ek-fiil; kural motoru fiil çekimi sanıyor (talip+tiler, hazır+lıklı+ydılar, vakıf+tılar).
+_ISIM_KOPULA = re.compile(r"^(l[ıiuü][kğ]|l[ıiuü]|s[ıiuü]z|l[ae]r|c[ıiuü]|ç[ıiuü])*"
+                          r"(y?[dt][ıiuü](m|n|k|n[ıiuü]z|l[ae]r)?|y?s[ae](m|n|k|n[ıiuü]z|l[ae]r)?|y?m[ıiuü]ş(t[ıiuü]r)?)$")
+
+
 def _aday(w: str, r: str, kalan: str, f):
     h = KOK.get(r) or _turev(r)
     if not h or not _uyum(r, kalan):
@@ -140,14 +164,54 @@ def kok_bul(w: str):
     if "N" in KOK.get(w, {}):
         return None                        # kelimenin kendisi kök sözlüğünde: bölünmez (aşırı آشیری، aşır+ı değil)
     f = rules._fiil_ayir(w)
+    if f:
+        for L in range(len(w) - 1, 3, -1):     # Tur KE: fiil değil, isim + ek-fiil (talip+tiler, hazır+lıklı+ydılar)
+            r = w[:L]
+            h = KOK.get(r) or (None if _turkce_turev(w, L) else _sozluk_kok(r))
+            if h and "N" in h and "V" not in h and r[-1] not in _UNLU and _ISIM_KOPULA.match(w[L:]) and _uyum(r, w[L:]) \
+                    and not _uzun_kok_engeli(w, L):
+                return [(r, h["N"][0], "N")]
     sinir = len(f[0]) if f else len(w) - 1
     adaylar = [a for L in range(min(sinir, len(w) - 1), 2, -1) for a in [_aday(w, w[:L], w[L:], f)] if a]
     if not adaylar:
-        return None
+        return _sozluk_adayi(w, f)
     for a in adaylar[1:]:
         if _IYELIK_COGUL.match(w[len(a[0]):]):
             return [a[:3]]                 # kısa kök + -ımız/-ınız: dil+imize (dilim+ize değil), iç+imiz
     return [a[:3] for a in adaylar]        # sırayla denenir: yerine koyma tutmazsa bir sonraki (hizmetçi -> hizmet)
+
+
+_ESDEGER = str.maketrans({"\u0637": "\u062a", "\u0635": "\u0633", "\u0642": "\u0643", "\u063a": "\u0643", "\u0636": "\u0632",
+                          "\u0638": "\u0632", "\u062d": "\u0647", "\u062e": "\u0647", "\u062b": "\u0633", "\u0630": "\u0632"})
+
+
+def _esdeger(s: str) -> str:
+    """Kural motorunun aynı sesi farklı harfle yazdığı yerler (ط/ت، ص/س، ق/ك...) eşit sayılır; harf sayısı değişmez."""
+    return s.translate(_ESDEGER)
+
+
+def _turkce_turev(w: str, L: int) -> bool:
+    """w[:L] Türkçe bir kökten yapım ekiyle türemiş mi (ağla+t, kapa+n, bas+ar): sözlükteki Arapça kelimeyle tesadüfen aynı (اغلاط، بصر)."""
+    return any(w[:L2] in ZKOK and _YAPIM.match(w[L2:L]) for L2 in range(3, L))
+
+
+def _sozluk_adayi(w: str, f):
+    """Tur KE: Hayrat kök sözlüğünde hiç aday yoksa sözlükteki Arapça/Farsça kök (en uzun). Fiil çekimi diye ayrılan kelimede alınmaz
+    (isim + ek-fiil durumuna kok_bul başta bakar); -nız/-nız'lı ekler başka yolda yazılıyor (tahmîn+iniz تخمینڭز)."""
+    if f:
+        return None
+    for L in range(len(w) - 1, 3, -1):
+        r, kalan = w[:L], w[L:]
+        h = _sozluk_kok(r)
+        if not h or re.search("n[ıiuü]z|ğ|[âîû]", kalan) or not _uyum(r, kalan) or _uzun_kok_engeli(w, L):
+            continue                       # -nız, yumuşamış ek, Arapça çoğul (-în, -ât): başka yollar yazıyor
+        if _FIIL_IPUCU.match(kalan) or (kalan[0] in _UNLU and not re.match("[aeıioöuü]($|n|m|y|s|l[ae]r|d|t|z)", kalan)):
+            continue                       # fiil eki (silk+er, ineb+ilir) ya da ek olmayan kalan (muhât+ab, müsâb+aka)
+        if _turkce_turev(w, L):
+            continue
+        if _ek_gecerli(r, kalan, "N"):
+            return [(r, h["N"][0], "N")]
+    return None
 
 
 def kokle(word: str, o: str):
@@ -172,7 +236,8 @@ def _kokle1(w: str, o: str, r: str, yazim: str, tur: str):
         for son in (False, True):
             adaylar.append(rules.transliterate_word(kok_l, treat_last_as_final=son, devam=kalan))
     for a in sorted(set(adaylar), key=len, reverse=True):
-        if a and o.startswith(a):
+        if a and (o.startswith(a) or (o[1:len(a)] == a[1:] and _esdeger(o[:1]) == _esdeger(a[:1]))):
+            # Tur KE: kural motoru kökün ilk harfini bağlama göre ط/ت، ص/س ile yazabilir (tarih: تاریه / طاریه)
             ek = o[len(a):]
             if yazim.endswith("\u0647") and ek.startswith("\u0647"):
                 ek = ek[1:]                # kural motoru kök sonu ünlüsünü ekin başında yazmış (gizle-yen)

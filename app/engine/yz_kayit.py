@@ -21,6 +21,7 @@ ALANLAR = ["kelime", "koken", "kok", "yazilis", "okunus", "anlam", "durum", "mod
 PAKET = Path(__file__).parent.parent / "data" / "yz_sozluk.tsv"
 KALICI = Path(os.environ.get("YZ_SOZLUK", "/data/yz_sozluk.tsv"))
 KAYIT = {}          # kelime (küçük harf) -> satır sözlüğü
+TR_KOK = set()      # Tur KE: Türkçe (ve Batı dili) kayıtların kökleri: aynı kökün yeni ekli hâli yeniden sorulmaz
 _kilit = threading.Lock()
 
 # Latin ünsüz -> Osmanlıcada karşılığı olabilecek harfler (harf uyumu denetimi için)
@@ -99,6 +100,33 @@ def _ar_fa_uygula(r):
         dictionary.DICTIONARY[duz] = (osm, r["koken"])
 
 
+def _kok_ekle(r):
+    """Tur KE (13 Kasım 2026): Türkçe ya da Batı dili kaydının kökü bilinen sayılır (yorumla: yorumladığı, yorumlamaktan sorulmaz).
+    Yalnız güvenilir modelin kaydı; kök kelimenin başında olmalı (Latince kök 'applicatio' alınmaz) ve en az 4 harf. Arapça/Farsça kökler zaten sözlüğe girer."""
+    if r.get("koken") in ("ar", "fa", "") or not guvenilir(r.get("model")):
+        return                           # Lite'ın köken etiketi güvenilmez (Arapça kelimeye de tr diyor): yalnız güçlü modelin kökü
+    kok, w = turkish_lower(r.get("kok") or ""), turkish_lower(r.get("kelime") or "")
+    if len(kok) >= 4 and w.startswith(kok) and re.fullmatch(r"[a-zçğıöşüâîû]+", kok):
+        TR_KOK.add(kok)
+
+
+_SERT = {"ğ": "k", "b": "p", "c": "ç", "d": "t"}
+
+
+def bilinen_kok(wl: str) -> bool:
+    """Kelime, kaydı olan bir Türkçe kökle + geçerli bir ekle mi başlıyor (yumuşama dahil: yorumla+dığı, çocuğ+u -> çocuk)."""
+    if not TR_KOK:
+        return False
+    from . import kok as _kok
+    for L in range(len(wl) - 1, 3, -1):
+        r, kalan = wl[:L], wl[L:]
+        if r not in TR_KOK and not (r[-1] in _SERT and r[:-1] + _SERT[r[-1]] in TR_KOK):
+            continue
+        if _kok._ek_gecerli(r, kalan, "N") or _kok._ek_gecerli(r, kalan, "V"):
+            return True
+    return False
+
+
 def _uygula(r):
     """Kaydı çeviriciye işler. Tur YZ2 (12 Kasım 2026, ilk gerçek deneme: Fransız Devrimine Bakış, 1186 kayıt):
     ücretsiz Flash-Lite modeli modern Türkçe kelimeleri (dönem, olay, toplum, etki, katkı) Arapça sayıyor, yazılış yerine eş anlamlı
@@ -109,6 +137,7 @@ def _uygula(r):
     if r.get("durum") != "onayli":
         return
     k = r.get("koken", "")
+    _kok_ekle(r)
     if k in ("ar", "fa") and guvenilir(r.get("model")):
         _ar_fa_uygula(r)
         return
@@ -146,6 +175,7 @@ def _onbellek_sil():
 
 def yukle():
     KAYIT.clear()
+    TR_KOK.clear()
     for yol in (PAKET, KALICI):
         _oku(yol)
     for k, r in list(KAYIT.items()):
@@ -226,6 +256,8 @@ def bilinmeyenler(metin: str, en_fazla: int = 100000):
         kayit = KAYIT.get(wl) or KAYIT.get(w.lower())
         if kayit and not yeniden_sorulur(kayit) or w.lower() in yabanci._TABLO or yabanci._roma(w):
             continue
+        if not kayit and bilinen_kok(wl):
+            continue                     # Tur KE: Türkçe kökü daha önce sorulmuş (yorumladığı -> yorumla)
         if wl in dictionary.HAYRAT_ANAHTAR or dictionary.lookup_exact(wl) or dictionary.lookup_with_suffix(wl)[0]:
             continue
         if _yeni_bicim(w):
