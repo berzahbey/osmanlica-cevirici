@@ -161,6 +161,26 @@ def _nisbe_koku_mu(r):
     return bool(re.fullmatch(r".{3,}[aâ]n", r)) and ar(r[:-2])
 
 
+def _yz_adi(word: str):
+    """Tur KE3: büyük harfli kelime yapay zekânın özel ad kaydındaysa onun yazılışı (Halime حلیمه، Übeyde عبیده); kesmeli ek
+    Osmanlıca ek olarak (Halime'nin حلیمه‌نڭ). Sözlükteki eşsesli kelimeden (hâlime حالمه) önce gelir."""
+    if not word[:1].isupper():
+        return None
+    from . import yz_kayit
+    if not yz_kayit.ADLAR:
+        return None
+    parca = word.replace("\u2019", "'").split("'")
+    b = turkish_lower(parca[0])
+    a = yz_kayit.ADLAR.get(b)
+    if not a or len(parca) > 2 or (len(parca) == 2 and not _ek_mi(turkish_lower(parca[1]))):
+        return None
+    if len(parca) == 1:
+        return a
+    e = turkish_lower(parca[1])
+    ek = rules.ekleri_yaz(b, [], [e], rules._harmony_class(b + e))
+    return a + ("\u200c" if a.endswith("\u0647") and not ek.startswith("\u200c") else "") + ek
+
+
 def draft_transliterate_sentence(sentence: str) -> str:
     """Cümledeki her kelimeyi önce sözlükte arar, bulamazsa kural motoruna düşer."""
     def repl(m):
@@ -168,6 +188,9 @@ def draft_transliterate_sentence(sentence: str) -> str:
         _ed = _eddin_adi(word)
         if _ed:
             return _ed
+        _ad = _yz_adi(word)
+        if _ad:
+            return _ad
         _mk = re.fullmatch(r"Kur[aâ]n(?:['\u2019]?([a-zçğıöşü]{1,8}))?", word)
         if _mk and (not _mk.group(1) or _ek_mi(_mk.group(1)) or (_mk.group(1).endswith("ki") and _ek_mi(_mk.group(1)[:-2]))):
             # Tur L: kesmesiz büyük harfli "Kuran" (Kuran'da, Kuranı) Kur'ân'dır: قرآن (küçük harfli "kuran" kurmak fiilidir)

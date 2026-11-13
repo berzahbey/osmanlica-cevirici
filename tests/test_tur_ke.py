@@ -34,7 +34,9 @@ def main():
         kalan += 1
         print("KALDI", a, "->", c, "(beklenen", b + ")")
     yz_kayit.ekle([{"kelime": "yorumlazmaktan", "koken": "tr", "kok": "yorumlaz", "model": "gemini-4-hydrogen"}])
-    for w, beklenen in (("yorumlazdığı", []), ("yorumlazmış", []), ("yorumlaz", ["yorumlaz"]), ("yorumlazkqx", ["yorumlazkqx"])):
+    for w, beklenen in (("yorumlazdığı", []), ("yorumlazmış", []),
+                        # Tur KE3: kök başına sorulur, Türkçe fiil çekimi sorulmaz, özel ad (cümle ortasında büyük harf) önce
+                        ("kemirdi kemirecekler", []), ("Dün Halimezq geldi, qorbazlar qorbazları gördü.", ["Halimezq", "qorbazlar"])):
         olan = yz_kayit.bilinmeyenler(w)
         if olan != beklenen:
             kalan += 1

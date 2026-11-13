@@ -21,6 +21,7 @@ ALANLAR = ["kelime", "koken", "kok", "yazilis", "okunus", "anlam", "durum", "mod
 PAKET = Path(__file__).parent.parent / "data" / "yz_sozluk.tsv"
 KALICI = Path(os.environ.get("YZ_SOZLUK", "/data/yz_sozluk.tsv"))
 KAYIT = {}          # kelime (küçük harf) -> satır sözlüğü
+ADLAR = {}          # Tur KE3: yapay zekânın verdiği özel ad yazılışları (büyük harfli kelime için sözlükten önce: Halime حلیمه)
 TR_KOK = set()      # Tur KE: Türkçe (ve Batı dili) kayıtların kökleri: aynı kökün yeni ekli hâli yeniden sorulmaz
 _kilit = threading.Lock()
 
@@ -138,6 +139,10 @@ def _uygula(r):
         return
     k = r.get("koken", "")
     _kok_ekle(r)
+    w = r.get("kelime") or ""
+    if k in ("ar", "fa") and guvenilir(r.get("model")) and w[:1].isupper() and r.get("yazilis") \
+            and turkish_lower(r.get("kok") or "") == turkish_lower(w):
+        ADLAR[turkish_lower(w)] = r["yazilis"].translate(_OSM_HARF).strip()
     if k in ("ar", "fa") and guvenilir(r.get("model")):
         _ar_fa_uygula(r)
         return
@@ -176,6 +181,7 @@ def _onbellek_sil():
 def yukle():
     KAYIT.clear()
     TR_KOK.clear()
+    ADLAR.clear()
     for yol in (PAKET, KALICI):
         _oku(yol)
     for k, r in list(KAYIT.items()):
@@ -243,29 +249,131 @@ def ekle(satirlar):
 _KELIME = re.compile(r"[A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû][A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû\-]*")
 
 
-def bilinmeyenler(metin: str, en_fazla: int = 100000):
-    """Metindeki, hiçbir sözlükte / kayıtta bulunmayan ve henüz (güvenilir modele) sorulmamış kelimeler (tekil)."""
+def _bilinmeyen_mi(w: str) -> bool:
+    """Kelime hiçbir sözlükte / kayıtta yok ve henüz (güvenilir modele) sorulmamış mı."""
     from .onisle import _yeni_bicim
-    gor, out = set(), []
+    wl = turkish_lower(w)
+    kayit = KAYIT.get(wl) or KAYIT.get(w.lower())
+    if kayit and not yeniden_sorulur(kayit) or w.lower() in yabanci._TABLO or yabanci._roma(w):
+        return False
+    if not kayit and bilinen_kok(wl):
+        return False                     # Tur KE: Türkçe kökü daha önce sorulmuş (yorumladığı -> yorumla)
+    if wl in dictionary.HAYRAT_ANAHTAR or dictionary.lookup_exact(wl) or dictionary.lookup_with_suffix(wl)[0]:
+        return False
+    return not _yeni_bicim(w)
+
+
+_UNLU = set("aeıioöuüâîû")
+_ISIM_TUREV = ("sızlık", "sizlik", "suzluk", "süzlük", "lık", "lik", "luk", "lük", "sız", "siz", "suz", "süz", "lı", "li", "lu", "lü",
+               "cı", "ci", "cu", "cü", "çı", "çi", "çu", "çü", "ca", "ce", "ça", "çe", "cık", "cik", "çık", "çik")
+_TUREV_EKI = ("landır", "lendir", "laştır", "leştir", "lan", "len", "laş", "leş", "lat", "let", "la", "le")
+
+
+def _kok_biliniyor(r: str) -> bool:
+    from . import kok as _kok
+    k = KAYIT.get(r)
+    return bool(dictionary._get_soft(r) or r in _kok.KOK or r in TR_KOK or (k and not yeniden_sorulur(k)))
+
+
+def _soru_ogesi(w: str):
+    """Tur KE3 (13 Kasım 2026): yapay zekâya kelime değil KÖK sorulur (Alamut: 9.840 bilinmeyen kelime 2.574 kökten).
+    Dönen (grup, öğe) ya da None (sorulmaz):
+      - Zemberek kökü bulunur; kök biliniyorsa (sözlük, Hayrat kökü, kayıt) sorulmaz: yazımı belli, ekleri kurallar yazar.
+      - Türkçe fiil çekimi (kıvrıl-, kızar-, belir-) sorulmaz; isimden türemiş fiilde (sakinleş-, kırbaçla-) isim kökü sorulur.
+      - Bilinmeyen kök sorulur (grup 2); Zemberek'in tanımadığı kelime (özel ad, yabancı kelime) olduğu gibi sorulur (grup 1)."""
+    from . import kok as _kok
+    from . import rules
+    wl = turkish_lower(w)
+    z = _kok.ZKOK
+
+    def zk(x):
+        """Zemberek kökü (yumuşama: eşiğ -> eşik; ünlü düşmesi: kayb -> kayıp, ağz -> ağız) ya da None."""
+        if x in z:
+            return x
+        if len(x) >= 3 and x[-1] in _SERT and x[:-1] + _SERT[x[-1]] in z:
+            return x[:-1] + _SERT[x[-1]]
+        if len(x) >= 3 and x[-1] not in _UNLU and x[-2] not in _UNLU:
+            for v in "ıiuü":
+                if x[:-1] + v + x[-1] in z:
+                    return x[:-1] + v + x[-1]
+        return None
+    f = rules._fiil_ayir(wl)
+    if f and zk(f[0]) and not any(f[0].endswith(e) for e in _TUREV_EKI):
+        return None                      # Türkçe fiil çekimi (eğ+iyorsunuz, ol+mayabilirim): kurallar yazar
+    r = zk(wl) or next((zk(wl[:L]) for L in range(len(wl) - 1, 2, -1) if zk(wl[:L])
+                        and (_kok._ek_gecerli(wl[:L], wl[L:], "N") or _kok._ek_gecerli(wl[:L], wl[L:], "V"))), None)
+    if not r:
+        return 1, w
+    while True:                          # türemiş kök tabanına iner: yastıkla -> yastık, belirsiz -> belir, kolla -> kol
+        e = next((e for e in _TUREV_EKI + _ISIM_TUREV if r.endswith(e) and len(r) - len(e) >= 3 and zk(r[:-len(e)])), None)
+        if not e:
+            break
+        r = zk(r[:-len(e)])
+    if f and len(f[0]) >= len(r) - 1:
+        ek = next((e for e in _TUREV_EKI if r.endswith(e) and len(r) - len(e) >= 3), None)
+        if not ek:
+            return None                  # Türkçe fiil (kök + çekim): kurallar yazar, yapay zekâya gerek yok
+        r = r[:-len(ek)]                 # isim + -la/-leş fiili: isim kökü sorulur (sakinleş -> sakin)
+    if _kok_biliniyor(r):
+        return None
+    return 2, r
+
+
+def _ekli_bicim(wl: str) -> bool:
+    """Sözlükteki kelime aynı zamanda sözlükteki bir kökün ekli hâli mi (halime = hâl+im+e حالمه، adi = ad+i): büyük harfle geçtiğinde
+    özel ad olabilir (Halime حلیمه، Adî عدی), sözlük kaydına güvenilmez."""
+    return any(wl.endswith(e) and len(wl) - len(e) >= 3 and dictionary._get(wl[:-len(e)])
+               for e in ("e", "a", "i", "ı", "u", "ü", "ye", "ya", "im", "ım", "in", "ın", "de", "da", "le", "la"))
+
+
+def bilinmeyenler(metin: str, en_fazla: int = 100000):
+    """Yapay zekâya sorulacak öğeler, önem sırasıyla (Tur KE3): önce Zemberek'in tanımadığı kelimeler (özel adlar başta), sonra
+    bilinmeyen kökler; her grupta kitapta en sık geçen önce. Kota dolarsa en önemlileri sorulmuş olur."""
+    sayi, ilk, kucuk, ortada = {}, {}, set(), set()
     for m in _KELIME.finditer(metin or ""):
         w = m.group(0).strip("-")
-        if len(w) < 3 or w in gor:
+        if len(w) < 3:
             continue
-        gor.add(w)
         wl = turkish_lower(w)
-        kayit = KAYIT.get(wl) or KAYIT.get(w.lower())
-        if kayit and not yeniden_sorulur(kayit) or w.lower() in yabanci._TABLO or yabanci._roma(w):
+        sayi[wl] = sayi.get(wl, 0) + 1
+        ilk.setdefault(wl, w)
+        if w[:1].islower():
+            kucuk.add(wl)
+        elif not re.search(r"(^|[.!?…:;\n])[\s\"'“”‘’«»(\[\-–—]*$", metin[max(0, m.start() - 12):m.start()]):
+            ortada.add(wl)               # cümle ortasında büyük harfle: özel ad adayı
+    puan = {}
+    for wl, w in ilk.items():
+        if w[:1].isupper() and wl not in kucuk and wl in ortada:
+            # özel ad (hep büyük harfle geçiyor): yalnız tam eşleşme bilinir sayılır; ek ayırmayla bulunan kök tesadüftür
+            # (Halime -> halim + e حلیم، Naim -> nâim)
+            k = KAYIT.get(wl) or KAYIT.get(w.lower())
+            if not (k and not yeniden_sorulur(k) or (dictionary.lookup_exact(wl) and not _ekli_bicim(wl))
+                    or w.lower() in yabanci._TABLO or yabanci._roma(w)):
+                g, p = puan.get(w, (0, 0))
+                puan[w] = (0, p + sayi[wl])
             continue
-        if not kayit and bilinen_kok(wl):
-            continue                     # Tur KE: Türkçe kökü daha önce sorulmuş (yorumladığı -> yorumla)
-        if wl in dictionary.HAYRAT_ANAHTAR or dictionary.lookup_exact(wl) or dictionary.lookup_with_suffix(wl)[0]:
+        if not _bilinmeyen_mi(w):
             continue
-        if _yeni_bicim(w):
+        o = _soru_ogesi(w)
+        if not o:
             continue
-        out.append(w)
-        if len(out) >= en_fazla:
-            break
-    return out
+        grup, oge = o
+        if grup == 1 and w[:1].isupper() and wl not in kucuk:
+            grup = 0                     # hep büyük harfle geçen: özel ad (Halime, Übeyde, Huzistan)
+        anahtar = turkish_lower(oge) if grup == 2 else oge
+        g, p = puan.get(anahtar, (grup, 0))
+        puan[anahtar] = (min(g, grup), p + sayi[wl])
+    # Zemberek'in tanımadığı küçük harfli kelimelerin ekli hâlleri birleşir (qorbazları -> qorbazlar): kök bir kez sorulur
+    tek = {k for k, (g, _) in puan.items() if g == 1 and k[:1].islower()}
+    for k in sorted(tek, key=len, reverse=True):
+        kok = next((k[:-len(e)] for e in sorted(dictionary.LOOKUP_SUFFIXES, key=len, reverse=True)
+                    if k.endswith(e) and k[:-len(e)] in tek and len(k) - len(e) >= 4), None)
+        if kok and k in puan:
+            g, p = puan.pop(k)
+            g2, p2 = puan[kok]
+            puan[kok] = (min(g, g2), p + p2)
+    sirali = sorted(puan.items(), key=lambda x: (x[1][0], -x[1][1]))
+    return [k for k, _ in sirali[:en_fazla]]
 
 
 yukle()

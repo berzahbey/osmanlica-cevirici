@@ -424,11 +424,29 @@ _ILE = ("la", "le", "yla", "yle")
 _KOPULA = {"dır", "dir", "dur", "dür", "tır", "tir", "tur", "tür"}   # ile + -dır (tedâhülüyledir) olur
 
 
+def _turkce_uzun_kok(w, hit, sufs):
+    """Tur KE3: Arapça/Farsça kısa kök + ek ayrımında kelimenin başı daha uzun bir Türkçe (Zemberek) kökse ve o kök sözlükte yoksa
+    ayrım tesadüftür: halının = halı + nın. KAPALI (OSM_UZUN_KOK=1 açar): Hayrat ölçümünde 17 düzelen, 30 bozulan —
+    Zemberek kök listesi Arapça alıntıları da içeriyor (hava, mana, sır, pahalı)."""
+    if _os.environ.get("OSM_UZUN_KOK", "0") == "0" or str(hit[1]) not in _DERIN_KOKEN | {"sozlukler"}:
+        return False
+    from . import kok as _kok
+    r = len(w) - len("".join(sufs))
+    for L2 in range(len(w) - 1, r, -1):
+        p = w[:L2]
+        if p in _kok.ZKOK and not _get(p) and p not in HAYRAT_ANAHTAR and len(p) >= 4 \
+                and (_kok._ek_gecerli(p, w[L2:], "N") or _kok._ek_gecerli(p, w[L2:], "V")):
+            return True
+    return False
+
+
 def lookup_with_suffix(word: str):
     """Tur A/B (13 Ekim): -la/-le (ile) ekinden sonra yalnız -dır ya da y'li ek gelebilir (fayda + la + nın, açık + la + sın, buda + la + lar
     değil: fiil; tedâhülüyledir, süsleyici kalır). Öyle bir ayırma bulunursa
     sözlük yolu kullanılmaz (kural motoru + kök sözlüğü)."""
     hit, sufs = _lookup_with_suffix_ic(word)
+    if hit and sufs and _turkce_uzun_kok(turkish_lower(word).strip(), hit, sufs):
+        return None, []                    # Tur KE3: halı+nın (حالنڭ değil), kural motoru + kök sözlüğü
     if hit and len(sufs) > 1 and any(e in _ILE and n not in _KOPULA and n[:1] != "y" for e, n in zip(sufs, sufs[1:])):
         return None, []
     if hit and len(sufs) > 1 and any(n in _T_EKLER_SES and e[-1:] in "aeıioöuü" for e, n in zip(sufs, sufs[1:])):

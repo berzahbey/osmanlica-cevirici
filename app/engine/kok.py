@@ -28,6 +28,8 @@ def _yukle():
             if line.startswith("#"):
                 continue
             p = line.rstrip("\n").split("\t")
+            if len(p) >= 2:
+                p[1] = p[1].replace("\u06a9", "\u0643").replace("\u064a", "\u06cc")   # Tur KE3: Farsça kef/Arapça ye (silk سلک، zeker ذکر)
             if len(p) >= 3:
                 d.setdefault(p[0], {})[p[2]] = (p[1], int(p[3]) if len(p) > 3 and p[3].isdigit() else 1)   # kök -> {"N"/"V": (yazım, kanıt)}
     return d
