@@ -19,7 +19,9 @@ D = [("taliptiler", "طالبدیلر"), ("hassastılar", "حساسدیلر"), (
      ("hazırlıklıydılar", "حاضر", "bas"), ("eyaletindeki", "ایالتنده‌كی"),
      # dokunulmaması gerekenler (Türkçe türev, fiil, ünlüyle biten kök)
      ("ağlattı", "آغلاتدی"), ("basarsa", "باصارسه"), ("veremem", "ویره‌مم"), ("geleyim", "كله‌یم"), ("katan", "قاتان"),
-     ("karardı", "قراردی"), ("kürsüye", "كرسی یه")]
+     ("karardı", "قراردی"), ("kürsüye", "كرسی یه"),
+     # Tur KE2: mi/ki ünlü he'den sonra ZWNJ ile bitişir (Hayrat البسه‌می); ünsüz h bitişik (günah mı)
+     ("şişe mi", "شیشه‌می"), ("ince ki", "اینجه‌كه"), ("kazayla mı", "قضایله‌می"), ("günah mı", "كناهمی"), ("bilmem ki", "بیلممكه")]
 
 
 def main():

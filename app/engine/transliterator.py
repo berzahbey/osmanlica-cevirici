@@ -2126,7 +2126,7 @@ def transliterate_text(
         if i < len(separators):
             result.append("\n" if "\n" in separators[i] else " ")
     sonuc = _ottoman_punctuation("".join(result))
-    sonuc = re.sub(r"(?<=[\u0621-\u06D3]) كه(?=[\s،.!؟:؛\"”]|$)", "كه", sonuc)   # ki öncesine bitişik: ناصلكه، واردركه
+    sonuc = re.sub(r"([\u0621-\u06D3\u0651]+) (كه)(?=[\s،.!؟:؛\"”]|$)", _ek_bitistir, sonuc)   # ki öncesine bitişik: ناصلكه، واردركه
     sonuc = _rakamlar(sonuc)                      # 1911 -> ١٩١١ (Latin harfli yabancı metindeki rakam kalır)
     return _yabancilari_geri_koy(sonuc, _saklanan)
 
@@ -2269,7 +2269,18 @@ def _ifade_alanlari(metin):
     return [(m.start(), m.end()) for m in _IFADE_RE.finditer(kucuk)
             if _IFADE.get(_ifade_anahtar(m.group(1))) or _IFADE.get(_ifade_anahtar(m.group(1)).translate(_SAPKA_TR))]
 _BERI_RE = re.compile(r"(?<=دن|تن) (?:برو|بری)(?=$|[\s،.؛:!؟»)\]])")
-_SORU_RE = re.compile(r" (می(?:دیر|در|سڭ|سڭز|سین|یز|ییز|یم|یدی|یدیر|كه)?)(?=$|[\s،.؛:!؟?»)\]])")
+_SORU_RE = re.compile(r"([\u0621-\u06D3\u0651\u200c]*) (می(?:دیر|در|سڭ|سڭز|سین|یز|ییز|یم|یدی|یدیر|كه)?)(?=$|[\s،.؛:!؟?»)\]])")
+
+
+def _sesli_he(w: str) -> bool:
+    """Kelime ünlü (e/a) karşılığı ه ile mi bitiyor: şişe شیشه، de ده. اه/آه ile biten (günah گناه، ah) ve الله ünsüz h'dir."""
+    return w.endswith("\u0647") and not w.endswith(("\u0627\u0647", "\u0622\u0647", "\u0644\u0644\u0647", "\u0644\u0651\u0647"))
+
+
+def _ek_bitistir(m):
+    """mi/ki bitişir; ünlü he'den sonra ZWNJ ile (Hayrat: البسه‌می؛ şişe mi شیشه‌می، ince ki اینجه‌كه). Eskiden شیشهمی bitişik basılıyordu."""
+    w = m.group(1)
+    return w + ("\u200c" if _sesli_he(w) else "") + m.group(2)
 _transliterate_text_ifadesiz = transliterate_text
 
 
@@ -2277,7 +2288,7 @@ def _bitisik(out, latin=None, beri=True):
     out = out.replace("\u201c", '"').replace("\u201d", '"').replace("\u201e", '"')   # Hayrat düz tırnak
     if beri:
         out = _beri_bitistir(out, latin)
-    return _SORU_RE.sub(r"\1", out)           # var mıdır -> وارمیدر، olmaz mı -> اولمازمی
+    return _SORU_RE.sub(_ek_bitistir, out)    # var mıdır -> وارمیدر، olmaz mı -> اولمازمی
 
 
 def _beri_bitistir(out, latin):
