@@ -587,3 +587,12 @@ def _derin_kok(w: str):
             continue
         return hit, ekler
     return yedek or (None, [])
+
+
+# Tur TV (14 Kasım 2026): sözlükte olmayan Arapça/Farsça türev (mucizevi -> معجزوی) kökün yazılışıyla kurulur (engine/turev.py).
+from . import turev as _turev
+_get_turevsiz = _get
+
+
+def _get(key: str):
+    return _get_turevsiz(key) or (None if key in _CIKAR else _turev.turet(key, _get_turevsiz))
