@@ -1,5 +1,7 @@
 """Tur TV (14 Kasım 2026): sözlükte olmayan, Arapça/Farsça kökten türemiş kelime kökün aslî yazılışıyla kurulur.
 Örnek (Stüdyo ölçümü): mucizevi موجیزوی yazılıyordu -> mucize معجزه + -vî = معجزوی (medresevî مدرسوی، midevî معدوی gibi).
+Tur TV2 (14 Kasım, kitap sayımından): kök harf uyumu (yz_kayit.harf_uyumu), "kadar" ve Türkçe geniş zaman (ışıldar) kurulmaz,
+-vî: Latin -a + ه kök kurulmaz (Tahâvî), -iyet: i ile biten ی kök + ت (kat'iyyet قطعیت).
 Kural sözlüğün kendi türemiş kelimelerinden çıkarıldı ve onlarla sınandı (her kelime kendisi sözlükten çıkarılarak kurulur):
 -iyet %96, -âne %96, -kâr/-dâr %92-97, -nâk %100, -vî yalnız ه/ت ile biten kökte (elifle biten kökte iki yol var: semâvî سماوی / kuravî قروی, kurulmaz); sayılar tests/test_tur_tv.py. Yanlışların çoğu sözlükte zaten
 bulunan kalıplaşmış kelimeler (masdar, haydar, revnak): kural yalnız kelime HİÇBİR sözlükte yoksa çalışır.
@@ -41,10 +43,15 @@ def _kok_al(r, bul):
     if not h or h[1] not in KOKEN or " " in h[0].strip() or not h[0].strip() or h[0].strip()[-1] in "ڭ‌" \
             or re.search("[A-Za-z]", h[0]):
         return None
+    from . import yz_kayit
+    if not yz_kayit.harf_uyumu(r, h[0].strip()):
+        return None          # bozuk sözlük kaydı (müste -> مستحاثه): kök kullanılmaz
     return h[0].strip()
 
 
 def _turet(k, bul):
+    if k.endswith("kadar") or (k[-2:] in ("ar", "er") and _turkce_soz(k[:-1])):
+        return None              # bukadar (bu kadar), ışıldar / yazar (Türkçe fiil + geniş zaman -r)
     # -vî / -vi (nisbe): kök -e/-a ile biter (mucize+vî, kura+vî) ya da -at (luğat+vî); -âvî'de elif kalır (safrâvî صفراوی)
     for ek in ("vî", "vi"):
         if k.endswith(ek) and len(k) > 5:
@@ -57,13 +64,18 @@ def _turet(k, bul):
                     continue
                 if o.endswith("ا"):
                     return None              # elifle biten kökte iki yol var (semâvî سماوی / kuravî قروی): kurulmaz
+                if g.endswith("a") and o[-1:] in "هة":
+                    return None              # Latin -a, Osmanlıca ه: özel ad nisbesi olabilir (Tahâvî طحاوی ≠ طه+وی)
                 if g[-1:] in "ea" and o[-1:] in "هةىیت":
                     return o[:-1] + "وی"     # mucize معجزه -> معجزوی، luğat لغت -> لغوی
             return None
     # -iyet / -iyyet: kök + یت; -yet: ی ile biten kök + ت (medenî+yet)
     for ek in ("iyyet", "iyet"):
         if k.endswith(ek):
-            o = _kok_al(k[: -len(ek)], bul)
+            g = k[: -len(ek)]
+            o = _kok_al(g, bul)
+            if o and o.endswith("ی") and g[-1:] in "iî":
+                return o + "ت"               # kat'î قطعی + iyet = قطعیت (قطعییت değil)
             if o and o[-1] not in "هةا":
                 return o + "یت"
     if k.endswith("yet") and k[-4:-3] in "iî":

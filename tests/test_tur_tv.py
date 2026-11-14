@@ -38,7 +38,8 @@ def test_ornekler():
     beklenen = {"mucizevi": "معجزوی", "mucizevî": "معجزوی", "ananevi": "عنعنوی", "efsanevi": "افسانوی"}
     for w, o in beklenen.items():
         assert D.lookup_exact(w)[0] == o, w
-    for w in ("kitabevi", "imamevi", "yayınevi", "huzurevi", "dersane", "hapisane", "postane", "kadar", "yazar", "çıkar"):
+    assert D.lookup_exact("katiiyet")[0] == "قطعیت" and D.lookup_exact("vakiiyyet")[0] == "واقعیت"
+    for w in ("bukadar", "ışıldar", "tahavî", "müstekar", "kitabevi", "imamevi", "yayınevi", "huzurevi", "dersane", "hapisane", "postane", "kadar", "yazar", "çıkar"):
         h = D.lookup_exact(w)
         assert not h or h[1] != "turev", (w, h)
 
