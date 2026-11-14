@@ -21,6 +21,12 @@ def n(s):
     return re.sub('^\u0626\u0648', '\u0627\u0648', s)
 
 
+def n_esit(s):
+    """14 Kasım 2026 (Zahir onayı): izafet hemzesinin iki yazımı eşit sayılır: Hayrat ەء (he + ayrı hemze), çevirici هٔ (he üstünde
+    hemze). Fark ayrı satırda sayılır ("izafet hemzesi")."""
+    return re.sub('\u0647\u0621$', '\u0647', n(s))
+
+
 TOK = re.compile('[\u0600-\u06ff\u200c]+')
 
 
@@ -116,11 +122,12 @@ for slug in eserler:
                         hk.append(w)
                         etiket.append(lk)
             ck = kelimeler(tt(latin))
-            sm = difflib.SequenceMatcher(None, [n(w) for w in hk], [n(w) for w in ck], autojunk=False)
+            sm = difflib.SequenceMatcher(None, [n_esit(w) for w in hk], [n_esit(w) for w in ck], autojunk=False)
             for op, i1, i2, j1, j2 in sm.get_opcodes():
                 say['kelime'] += i2 - i1
                 if op == 'equal':
                     say['ayni'] += i2 - i1
+                    say['izafet_hemzesi'] += sum(1 for a, b in zip(hk[i1:i2], ck[j1:j2]) if n(a) != n(b))
                     continue
                 h, c = hk[i1:i2], ck[j1:j2]
                 lk = ' '.join(dict.fromkeys(x for x in etiket[i1:i2] if x))
@@ -148,6 +155,7 @@ for slug in eserler:
     GENEL.update(say)
 hesap = GENEL['kelime'] - GENEL['dua']
 print(f"TOPLAM {len(eserler)} eser, kelime {GENEL['kelime']} | HATA {GENEL['hata']} | Hayrat çeşidi {GENEL['hayrat_cesidi']} | dua {GENEL['dua']}"
+      f" | izafet hemzesi (ەء = هٔ, doğru sayıldı) {GENEL['izafet_hemzesi']}"
       f" | DOĞRULUK %{100 * (GENEL['ayni'] + GENEL['hayrat_cesidi']) / max(1, hesap):.2f} ({time.time() - t0:.0f} sn)")
 print('En sık 60 hata (Latin | Hayrat | çevirici):')
 for (lk, h, c), k in [x for x in HATA.most_common() if TUR[x[0]] == 'hata'][:60]:
