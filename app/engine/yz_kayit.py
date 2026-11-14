@@ -337,6 +337,25 @@ def _ekli_bicim(wl: str) -> bool:
                for e in ("e", "a", "i", "ı", "u", "ü", "ye", "ya", "im", "ım", "in", "ın", "de", "da", "le", "la"))
 
 
+_DUZ_YAZIM = None
+_HAREKESIZ = re.compile("[\u064B-\u0652\u0670\u200c ]")
+
+
+def ad_belirsiz(wl: str) -> bool:
+    """Tur AD (14 Kasım 2026): hep büyük harfle geçen kelime sözlükte bulunsa da sözlük yazımı ad için güvenilmez mi:
+    yalnız şapkasız eşleşmeyle bulunuyor (Naim -> nâim نائم; ad نعیم) ya da şapkasız hâli sözlükte birden çok yazıma gidiyor
+    (Emir امر/امیر, Hakim حاكم/حكیم, Ali عالی/علی). Öyleyse ad olarak yapay zekâya sorulur; tek yazımlılar (Kemal, Osman) sorulmaz."""
+    global _DUZ_YAZIM
+    if _DUZ_YAZIM is None:
+        d = {}
+        for k, (o, _) in dictionary.DICTIONARY.items():
+            d.setdefault(dictionary._flat(k), set()).add(_HAREKESIZ.sub("", o))
+        _DUZ_YAZIM = d
+    if wl not in dictionary.DICTIONARY:
+        return True
+    return len(_DUZ_YAZIM.get(dictionary._flat(wl), ())) > 1
+
+
 def bilinmeyenler(metin: str, en_fazla: int = 100000):
     """Yapay zekâya sorulacak öğeler, önem sırasıyla (Tur KE3): önce Zemberek'in tanımadığı kelimeler (özel adlar başta), sonra
     bilinmeyen kökler; her grupta kitapta en sık geçen önce. Kota dolarsa en önemlileri sorulmuş olur."""
@@ -358,7 +377,7 @@ def bilinmeyenler(metin: str, en_fazla: int = 100000):
             # özel ad (hep büyük harfle geçiyor): yalnız tam eşleşme bilinir sayılır; ek ayırmayla bulunan kök tesadüftür
             # (Halime -> halim + e حلیم، Naim -> nâim)
             k = KAYIT.get(wl) or KAYIT.get(w.lower())
-            if not (k and not yeniden_sorulur(k) or (dictionary.lookup_exact(wl) and not _ekli_bicim(wl))
+            if not (k and not yeniden_sorulur(k) or (dictionary.lookup_exact(wl) and not _ekli_bicim(wl) and not ad_belirsiz(wl))
                     or wl in ADLAR or yabanci._roma(w)):
                 g, p = puan.get(w, (0, 0))
                 puan[w] = (0, p + sayi[wl])

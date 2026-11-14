@@ -161,7 +161,7 @@ def _nisbe_koku_mu(r):
     return bool(re.fullmatch(r".{3,}[aâ]n", r)) and ar(r[:-2])
 
 
-def _yz_adi(word: str):
+def _yz_adi(word: str, bas: bool = False):
     """Tur KE3: büyük harfli kelime yapay zekânın özel ad kaydındaysa onun yazılışı (Halime حلیمه، Übeyde عبیده); kesmeli ek
     Osmanlıca ek olarak (Halime'nin حلیمه‌نڭ). Sözlükteki eşsesli kelimeden (hâlime حالمه) önce gelir."""
     if not word[:1].isupper():
@@ -172,6 +172,8 @@ def _yz_adi(word: str):
     parca = word.replace("\u2019", "'").split("'")
     b = turkish_lower(parca[0])
     a = yz_kayit.ADLAR.get(b)
+    if a and bas and len(parca) == 1 and dictionary.lookup_exact(b):
+        return None      # Tur AD: cümle başında kesmesiz büyük harf ad olmayabilir (Emir verdi = emir امر): sözlük yazar; kesmeli (Naim'in) addır
     if not a or len(parca) > 2 or (len(parca) == 2 and not _ek_mi(turkish_lower(parca[1]))):
         return None
     if len(parca) == 1:
@@ -188,7 +190,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
         _ed = _eddin_adi(word)
         if _ed:
             return _ed
-        _ad = _yz_adi(word)
+        _ad = _yz_adi(word, hasattr(m, "string") and bool(re.search(r"(^|[.!?…:;\n])[\s\"'“”‘’«»(\[\-–—]*$", m.string[max(0, m.start() - 12):m.start()])))
         if _ad:
             return _ad
         _mk = re.fullmatch(r"Kur[aâ]n(?:['\u2019]?([a-zçğıöşü]{1,8}))?", word)
@@ -572,7 +574,7 @@ def _tur_t_kopula(wl: str):
         _uzun = wl[:len(kok) + 1]
         if tur in "dts" and (dictionary.lookup_exact(_uzun) or _uzun in dictionary.HAYRAT_ANAHTAR or
                              (tur == "s" and _os.environ.get("OSM_TUR_T2", "1") != "0" and _uzun in _KOK_MOD.ZKOK)):
-            return None                          # baht+ı، bahtım، sırt+ı، redd+i، Tur T2: lisans+a (lisan+sa değil)
+            return None                          # baht+ı، bahtım، sırt+ı، redd+i، Tur AD: lisans+a (lisan+sa değil)
         if kok in _TUR_T_FIIL_ISIM or re.search(r"[ıiuü]?l[ae]n$", kok) or \
                 (re.search(r"[aeıiuü]r$", kok) and _tur_t_fiil(kok[:-2])):
             return None                          # aktar-، devir-، yenilen-، as+ar+sa (fiil)
@@ -638,7 +640,7 @@ _T2_LUK = re.compile(r"^(.{3,}l)([uü])ğ([aeıioöuü].*)$")
 
 
 def _tur_t2(o: str, latin: str, wl: str) -> str:
-    """Tur T2 (27 Ekim): (1) bitişik yazılmış herşey- ayrılır, şey kısmı Hayrat yazımıyla (herşeyi هر شیئی، herşeye هر شیئه);
+    """Tur AD (27 Ekim): (1) bitişik yazılmış herşey- ayrılır, şey kısmı Hayrat yazımıyla (herşeyi هر شیئی، herşeye هر شیئه);
     (2) -lUk + iyelik/hâl eki Hayrat kalıbıyla (yokluğu یوقلغی): sorumluluğu صوروملولغی، özgürlüğünü اوزكورلكنی (eskiden صوروملولوغو);
     (3) özel ad Cem جم (terim cem جمع sözlükte)."""
     if wl.startswith("herşey") and len(wl) > 6:
