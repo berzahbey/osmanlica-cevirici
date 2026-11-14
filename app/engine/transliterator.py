@@ -2986,7 +2986,40 @@ from . import yz_kayit as _yz_kayit   # noqa: E402,F401  (Tur YZ1: yapay zekâ k
 _YABANCI_ACIK = __import__("os").environ.get("OSM_YABANCI", "1") != "0"
 
 
+_IZAFET_IYE_RE = re.compile(r"(-y?[ıiuü]\s+)([A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû‘’ʻ']{2,}?)(i)ye(?=[a-zçğıöşüâîû]*\b)")   # şapkalı -îye yönelme hâli (maksad-ı hakîkîye): dokunulmaz
+
+
+def _izafet_iye(m):
+    """Tur IY (14 Kasım 2026): Farsça tamlamanın sıfatı -iye ise Arapça nisbe müennesidir (belâgat-i Arabiye بلاغت عربیه، cümle-i
+    fi'liye، kavâid-i külliyeden): yönelme hâli (Arabî'ye عربی یه) değil. Kök nisbe ise -iyye yazılır, türev kuralı عربیه kurar
+    (Hayrat sınavında 91 hata). Önce nisbesi sözlükte olan kök (kesmesiz: kat'iye -> katiyye قطعیه), yoksa ayın kesmeli kök
+    (fi'liye -> fi'liyye فعلیه; kesmesiz "fil" فیل olurdu). Kök Arapça/Farsça değilse dokunulmaz."""
+    from . import turev as _tv
+    ham = turkish_lower(m.group(2))
+    duz, kesmeli = re.sub("[‘’ʻ']", "", ham), re.sub("[‘’ʻ]", "'", ham)
+    bul = dictionary._get_turevsiz
+    for kok in (duz, kesmeli):
+        h = bul(kok + "i") or bul(kok + "î")
+        o = h[0].strip() if h else None
+        hb = bul(kok) if len(kok) >= 3 else None
+        b = hb[0].strip() if hb else None
+        if o and b and o.endswith("\u06cc") and _tv._sade(b) == _tv._sade(o[:-1]):
+            return m.group(1) + kok + "iyye"
+    # nisbesi sözlükte yok: Arapça/Farsça kök yeter (reşâd رشاد -> reşâdiyye). Ayın kesmeli kökte kesmeli biçim (fi'l; kesmesiz fil فیل olurdu)
+    kok = kesmeli if "'" in kesmeli else duz
+    if len(kok) >= 3 and _tv._kok_al3(kok, bul) and yz_harf(kok, _tv._kok_al3(kok, bul)):
+        return m.group(1) + kok + "iyye"
+    return m.group(0)
+
+
+def yz_harf(lat, osm):
+    from . import yz_kayit
+    return yz_kayit.harf_uyumu(lat.replace("'", ""), osm)
+
+
 def transliterate_text(turkish_text, *args, **kwargs):
+    if isinstance(turkish_text, str) and "-" in turkish_text and dictionary._turev.ACIK:
+        turkish_text = _IZAFET_IYE_RE.sub(_izafet_iye, turkish_text)
     if isinstance(turkish_text, str) and "(" in turkish_text:
         turkish_text = _PARANTEZ_EK_RE.sub("(ın ", turkish_text)
     if isinstance(turkish_text, str):

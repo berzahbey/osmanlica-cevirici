@@ -36,6 +36,12 @@ def _turkce_soz(x):
     return len(x) >= 2 and (x in _ZK or (x[-1:] in sert and x[:-1] + sert[x[-1]] in _ZK))
 
 
+def _kok_al3(r, bul):
+    """3 harfli Arapça kök (küll, ilm) yalnız nisbe denetimi için."""
+    h = bul(r)
+    return h[0].strip() if h and h[1] in KOKEN and h[0].strip() else None
+
+
 def _kok_al(r, bul):
     if len(r) < 4:
         return None
@@ -82,6 +88,26 @@ def _turet(k, bul):
         o = _kok_al(k[:-3], bul)
         if o and o.endswith("ی"):
             return o + "ت"
+    # Tur IY: -iye / -iyye (Arapça nisbe sıfatının müennesi): nisbe kökü ی ile biter, sonuna ه gelir:
+    # Arabî عربی -> Arabiye عربیه (عربی یه değil), küllî كلّی -> külliye كلّیه, fi'lî -> fi'liye. Kök gerçekten nisbe olmalı:
+    # ی'siz hâli de sözlükte Arapça ve aynı yazımla (arab عرب، küll كل) — böylece veli+ye (ولی یه) gibi yönelme hâli kurulmaz.
+    # Yalnız -iyye: tek başına -iye çoğu kez yönelme hâlidir (ciddiye ال-, birinciye, hakîkîye); tamlama sıfatındaki şapkasız -iye'yi
+    # transliterator._izafet_iye -iyye'ye çevirir (şapkalı -îye yönelmedir: maksad-ı hakîkîye مقصد حقیقی یه).
+    for ek in ("iyye",):
+        if k.endswith(ek) and not bul(k + "t"):      # keyfiyye+ten aslında keyfiyyet+en (كیفیّتًا): kurulmaz
+            g = k[: -len(ek)] + "i"
+            h = bul(g)
+            o = h[0].strip() if h and h[0].strip() else None    # nisbenin köken etiketi önemsiz (nûrî "tr" etiketli): yapı denetlenir
+            if o and o.endswith("ی"):
+                hb = bul(g[:-1]) if len(g) >= 4 else None
+                b = hb[0].strip() if hb else None              # yapı: nisbe = kök + ی (ikisi de sözlükte; köken etiketi önemsiz)
+                if b and _sade(b) == _sade(o[:-1]):
+                    return o + "ه"
+            if (not o or not o.endswith("ی")) and ek == "iyye":
+                b = _kok_al3(g[:-1], bul) if len(g) >= 4 else None
+                if b and b[-1] not in "هةاوی":
+                    return b + "یه"      # nisbesi sözlükte olmayan kök (fi'l فعل -> fi'liyye فعلیه); -iyye yalnız tamlama sıfatında üretilir
+            break
     # -âne / -ane (zarf/sıfat): kök + انه (ه ile biten kökte kurulmaz: bendegâne)
     for ek in ("âne", "ane"):
         if k.endswith(ek) and not k.endswith("hane") and not k.endswith("hâne") and k[: -len(ek)] not in _H_DUSEN:
@@ -98,6 +124,10 @@ def _turet(k, bul):
     return None
 
 
+def _sade(o):
+    return re.sub("[\u064B-\u0652\u0670\u200c]", "", o).replace("ي", "ی")
+
+
 @lru_cache(maxsize=50000)
 def _onbellekli(k, bul):
     return _turet(k, bul)
@@ -105,7 +135,7 @@ def _onbellekli(k, bul):
 
 def turet(k, bul):
     """(osm, köken) ya da None. bul: türetmesiz sözlük araması (kök için)."""
-    if not ACIK or not k or len(k) < 6 or not k.isalpha():
+    if not ACIK or not k or len(k) < 6 or not (k.isalpha() or (k.endswith("iyye") and k.replace("'", "").isalpha())):
         return None
     o = _onbellekli(k, bul)
     return (o, "turev") if o else None
