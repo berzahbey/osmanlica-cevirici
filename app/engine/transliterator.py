@@ -460,8 +460,36 @@ def draft_transliterate_sentence(sentence: str) -> str:
             o = o[:-1] + ("\u0648\u0646" if wl[-2] in "uü" else "\u06cc\u0646")   # Tur N: -In ile biten kök kelime ilgi eki değil (bilgin بیلكین، seçkin، olgun)
         return _iyelik_hal_yazimi(wl, _imiz_yazimi(wl, o))
 
-    return WORD_RE.sub(lambda m: _tur_km(_tur_t(_tur_s(_nisbe_iye(_tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), sentence)
+    return WORD_RE.sub(lambda m: _sedde_latin(_tur_km(_tur_t(_tur_s(_nisbe_iye(_tur_l(_tur_k(_tur_j(_he_ki(kelime(m), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0)), m.group(0), m.string[m.end():]), sentence)
 
+
+
+
+_UNLU = "aeıioöuüâîû"
+
+
+def _sedde_latin(o: str, latin: str, sonra: str = "") -> str:
+    """Kök sonu şeddesi yalnız ardından ünlü gelince okunur ve yazılır (Hayrat): hak حق، hakkı حقّی، haktır حقدر،
+    Rableri ربلری، tam تام. Kök sözlükte şeddeli (حقّ، ربّ، تامّ) ve Latin yazımda ikizleşmemişse şedde düşer."""
+    if "\u0651" not in o or "-" in latin or " " in o.strip():
+        return o
+    if re.match(r"\s+(te[aâ]l[aâ]|s[uü]bh[aâ]neh[uû])", turkish_lower(sonra[:16])):
+        return o                                      # Hak Teâlâ حقّ تعالی (Arapça kalıp, Hayrat)
+    wl = turkish_lower(latin).replace("\u2019", "'").replace("\u2018", "'")
+    if re.match(r"hayy'[^" + _UNLU + "]", wl) and o.startswith("\u062d\u06cc\u0651"):
+        return "\u062d\u06cc\u200c" + o[3:]          # Hayy'dır حی‌در (Haydar okunmasın)
+    w = wl.replace("'", "")
+    for n in range(len(w), 1, -1):
+        hit = dictionary.lookup_exact(w[:n])
+        if not hit:
+            continue
+        kok, sonraki = hit[0], w[n:n + 1]
+        if (kok.endswith("\u0651") and " " not in kok and str(hit[1]).startswith(("ar", "fa", "soz"))
+                and w[n - 1] not in _UNLU and w[n - 2:n - 1] != w[n - 1] and (not sonraki or (sonraki not in _UNLU and sonraki != w[n - 1]))
+                and o.startswith(kok)):
+            o = kok[:-1] + o[len(kok):]
+        break
+    return o
 
 
 def _tur_km(o: str, latin: str) -> str:
