@@ -3,6 +3,7 @@
 Ana orkestrasyon: girdi metnini alır, gerekiyorsa Türkçeye çevirir,
 sonra Osmanlıcaya (Arap harfli) çevirir: sözlük + kural motoru (yapay zekâ yok, çıktı her çalıştırmada aynı).
 """
+import os
 import re
 import unicodedata
 import logging
@@ -1924,6 +1925,17 @@ def _yabanci_mi(kelime: str) -> bool:
     return bool(re.search(r"[qwx]", k)) or not _sozlukte_turkce(kelime)
 
 
+# Tur AB5 (22 Kasım 2026): kesmeyle Türkçe ek almış büyük harfli ad (Paris'te, Descartes'ın) Türkçe cümlenin parçasıdır;
+# yabancı dizisine katılmaz, dizi orada biter (... 1638'de Paris'te Alpharabi philosophi ... -> پاریست değil پاریسده)
+_TR_KESME_EK_RE = re.compile(r"[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ]{2,}['’](?:[dt][ae]n?|y?[aeıiuü]|n?[ıiuü]n|l[ae]r?|[cç][ae]|[dt][ıiuü]r|ki|n[ae])"
+                             r"[a-zçğıöşü]*")
+_YB_AB5 = os.environ.get("OSM_TUR_AB5", "1") != "0"
+
+
+def _turkce_ekli_ad(kelime: str) -> bool:
+    return _YB_AB5 and bool(_TR_KESME_EK_RE.fullmatch(kelime))
+
+
 def _yabancilari_sakla(metin: str):
     """En az iki yabancı kelime içeren, kelimelerinin yarısından çoğu yabancı Latin dizilerini (ör. Fransızca/İngilizce
     kitap adı) çeviriye sokmadan ayırır; yerlerine işaret koyar. Tek tek özel adlar ve Türkçe yazılmış terimler çevrilir."""
@@ -1934,7 +1946,8 @@ def _yabancilari_sakla(metin: str):
     son = 0
     while i < len(kelimeler):
         j = i
-        while j + 1 < len(kelimeler) and re.fullmatch(r"[\s,;:\-–'’]*", metin[kelimeler[j].end():kelimeler[j + 1].start()]):
+        while (j + 1 < len(kelimeler) and not _turkce_ekli_ad(kelimeler[j].group(0)) and not _turkce_ekli_ad(kelimeler[j + 1].group(0))
+               and re.fullmatch(r"[\s,;:\-–'’]*", metin[kelimeler[j].end():kelimeler[j + 1].start()])):
             j += 1
         dizi = kelimeler[i:j + 1]
         # dizinin içinden yabancı çekirdeği bul: baştan/sondan Türkçe kelimeleri at

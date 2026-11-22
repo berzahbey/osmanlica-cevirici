@@ -99,7 +99,16 @@ def _ar_fa_uygula(r):
     ekleri çevirici yazar: kahramanları -> قهرمانلری)."""
     kok = turkish_lower(r.get("kok") or "")
     osm = (r.get("yazilis") or "").translate(_OSM_HARF)
-    if len(kok) < 3 or not osm or dictionary._get(kok):
+    if len(kok) < 3 or not osm:
+        return
+    w = turkish_lower(r.get("kelime") or "").split("-")[-1]
+    if _YZ_AB5 and kok.endswith(("\u00ee", "i")) and re.search(r"[ıi]y?ye$", w) and re.search("\u06cc\u0651?\u0647$", osm):
+        # Tur AB5 (22 Kasım 2026): nisbe müennesinin yazılışı (Eflâtuniye افلاطونیه) köke verilmez: kök eflâtunî -> افلاطونی;
+        # kelimenin kendisi yazılışıyla eklenir (önceden Eflâtuni -> افلاطونیه، Eflâtuniye -> افلاطونیه‌یه)
+        if not dictionary._get(w):
+            dictionary.DICTIONARY[w] = (osm, r["koken"])
+        osm = re.sub("\u0651?\u0647$", "", osm)
+    if dictionary._get(kok):
         return
     dictionary.DICTIONARY[kok] = (osm, r["koken"])
     duz = dictionary._flat(kok)
@@ -212,6 +221,7 @@ _OSM_HARF = str.maketrans({"\u064a": "\u06cc", "\u0649": "\u06cc", "\u06a9": "\u
 
 
 _YZ_AB4 = os.environ.get("OSM_YZ_AB4", "1") != "0"
+_YZ_AB5 = os.environ.get("OSM_TUR_AB5", "1") != "0"
 _SON_DEGIS = {"t": "d", "d": "t", "p": "b", "b": "p", "k": "ğg", "ç": "c", "c": "ç", "g": "k", "ğ": "k"}
 
 
