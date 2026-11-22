@@ -105,6 +105,10 @@ def _ar_fa_uygula(r):
     duz = dictionary._flat(kok)
     if duz != kok and duz not in dictionary.DICTIONARY:
         dictionary.DICTIONARY[duz] = (osm, r["koken"])
+    if _YZ_AB4:
+        g = kelime_govdesi(turkish_lower(r.get("kelime") or ""), kok)
+        if g and g != kok and g != duz and len(g) >= 4 and not dictionary._get(g) and g not in dictionary._zkok():
+            dictionary.DICTIONARY[g] = (osm, r["koken"])      # Tur AB4: kelimedeki gövde (redd, kayb) de kök yazımıyla bulunsun
 
 
 def _kok_ekle(r):
@@ -207,11 +211,52 @@ _OSM_HARF = str.maketrans({"\u064a": "\u06cc", "\u0649": "\u06cc", "\u06a9": "\u
                            "\u0625": "\u0627"})   # Tur YZ4: Arapça imla -> Osmanlıca (تاريخ -> تاریخ، صناعة -> صناعه، إعمال -> اعمال)
 
 
+_YZ_AB4 = os.environ.get("OSM_YZ_AB4", "1") != "0"
+_SON_DEGIS = {"t": "d", "d": "t", "p": "b", "b": "p", "k": "ğg", "ç": "c", "c": "ç", "g": "k", "ğ": "k"}
+
+
+def kok_varyantlari(kok: str):
+    """Tur AB4 (22 Kasım 2026): Arapça kökün Türkçe ses değişimli biçimleri (yapay zekâ kökü sözlük biçimiyle verir, kelimede değişik
+    geçer): ret -> redd(edilmesi), kayıp -> kayb(oluş), hak -> hakk, cübbe -> cüpp(e), seyir -> seyr. Şapkasız; uzundan kısaya."""
+    k = kok.translate(str.maketrans("âîû", "aiu")).replace("'", "")
+    tab = {k, re.sub(r"[aeıioöuü](?=[^aeıioöuü]$)", "", k)}
+    for t in list(tab):
+        if t and t[-1] in _SON_DEGIS:
+            for y in _SON_DEGIS[t[-1]]:
+                tab.add(t[:-1] + y)
+    for t in list(tab):
+        if t and t[-1] not in "aeıioöuü":
+            tab.add(t + t[-1])                                      # ikizleşme: ret -> redd, hak -> hakk, zan -> zann
+        if len(t) >= 2 and t[-1] == t[-2] and t[-1] not in "aeıioöuü":
+            tab.add(t[:-1])
+    for t in list(tab):
+        m = re.search(r"([bcçdgğkpt])([aeıioöuü]+)$", t)
+        if m and m.group(1) in _SON_DEGIS:
+            for y in _SON_DEGIS[m.group(1)]:
+                tab.add(t[:m.start(1)] + y + m.group(2))           # cübbe -> cüppe (iç ses)
+    return sorted((t for t in tab if len(t) >= 2), key=len, reverse=True)
+
+
+def kelime_govdesi(w: str, kok: str):
+    """Kelimenin, kökün ses değişimli biçimiyle başlayan gövdesi (en az 3 harf) ya da None: reddedilmesi + ret -> redd."""
+    ws = w.translate(str.maketrans("âîû", "aiu")).replace("'", "")
+    for v in kok_varyantlari(kok):
+        if len(v) >= 3 and ws.startswith(v):
+            return v
+    return None
+
+
 def denetle(r):
     """Yapay zekâ cevabını düzene sokar ve denetler; durum alanını 'onayli' ya da 'kontrol' yapar."""
     r = {a: str(r.get(a) or "").strip().replace("\t", " ").replace("\n", " ") for a in ALANLAR}
     r["yazilis"] = r["yazilis"].translate(_OSM_HARF)
     r["koken"] = r["koken"].lower()[:5]
+    if _YZ_AB4 and r["koken"] in ("ar", "fa") and " " not in r["yazilis"]:
+        _k = turkish_lower(r["kok"] or r["kelime"])
+        if r["yazilis"].startswith("\u0627\u0644") and len(r["yazilis"]) > 4 and not re.match(r"[ea]l", _k):
+            r["yazilis"] = r["yazilis"][2:]       # Tur AB4: harf-i tarifli cevap (القیاس -> قیاس): kök tarifsiz
+        if r["yazilis"].endswith("\u0627\u0621") and not _k.endswith(("'", "en")):
+            r["yazilis"] = r["yazilis"][:-1]      # sondaki hemze yazılmaz (ادعاء -> ادعا), sözlük yüklemesiyle aynı
     w = turkish_lower(r["kelime"])
     if r["koken"] in ("ar", "fa"):
         kok = turkish_lower(r["kok"] or r["kelime"])
@@ -219,7 +264,8 @@ def denetle(r):
         parcalar = [sade(x) for x in w.split("-") if x]                  # orta-sınıfların, tarih-yazımının: herhangi bir parça
         ks = sade(kok)
         dusen = re.sub(r"[aeıioöuü](?=[^aeıioöuü]$)", "", ks)           # ünlü düşmesi: seyir -> seyr(ederken), atıf -> atf(etmek)
-        if not any(ws.startswith(k[:max(3, len(k) - 1)]) for k in (ks, dusen) for ws in parcalar):     # kök kelimenin başında olmalı (mahmuz+uyla)
+        if not any(ws.startswith(k[:max(3, len(k) - 1)]) for k in (ks, dusen) for ws in parcalar) \
+                and not (_YZ_AB4 and kelime_govdesi(w, kok)):                                  # kök kelimenin başında olmalı (mahmuz+uyla)
             r["durum"] = "kontrol"
         elif not harf_uyumu(kok, r["yazilis"]):
             r["durum"] = "kontrol"
