@@ -4,13 +4,14 @@ import uuid
 import shutil
 import logging
 import threading
+import unicodedata
 from pathlib import Path
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from engine.transliterator import full_pipeline
+from engine.transliterator import full_pipeline, transliterate_text
 from extractors.extract import extract_text
 from renderers.render import render_for_format
 
@@ -48,7 +49,13 @@ def process_job(job_id: str, input_path: str, output_ext: str, orig_stem: str = 
         out_dir = WORK_DIR / job_id
         out_dir.mkdir(parents=True, exist_ok=True)
         out_path = str(out_dir / f"{orig_stem}{output_ext}")
-        render_for_format(result["ottoman_text"], output_ext, out_path, title=orig_stem)
+        # Tur AB3: kitap başlığı Osmanlıca (Latin harf kalmaz); dosya adı Mac'ten ayrışık (NFD) gelir: önce birleştirilir
+        baslik = job.get("baslik") or orig_stem
+        try:
+            baslik_osm = transliterate_text(baslik).strip() or baslik
+        except Exception:
+            baslik_osm = baslik
+        render_for_format(result["ottoman_text"], output_ext, out_path, title=baslik_osm)
 
         # jpg/png girdiler pdf olarak çıkıyor, gerçek yolu güncelle
         if output_ext.lower() in (".jpg", ".jpeg", ".png") and not os.path.exists(out_path):
@@ -78,10 +85,10 @@ async def upload(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, f)
 
     import re
-    raw_stem = os.path.splitext(file.filename)[0]
+    raw_stem = unicodedata.normalize("NFC", os.path.splitext(file.filename)[0])   # Mac dosya adı NFD (İ = I + nokta)
     safe_stem = re.sub(r"[^\w\-() ]", "_", raw_stem).strip() or "osmanlica_ceviri"
 
-    JOBS[job_id] = {"status": "kuyrukta", "progress": None, "error": None, "output_path": None}
+    JOBS[job_id] = {"status": "kuyrukta", "progress": None, "error": None, "output_path": None, "baslik": raw_stem}
     t = threading.Thread(target=process_job, args=(job_id, input_path, ext, safe_stem), daemon=True)
     t.start()
 

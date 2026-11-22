@@ -112,7 +112,7 @@ def render_epub(ottoman_text: str, out_path: str, title: str = "Osmanlica Ceviri
         paragraphs = "".join(
             f"<p>{_html_escape(line).translate(EASTERN_DIGITS)}</p>" for line in chunk
         )
-        chapter_title = title if total <= chapter_size else f"{title} - {idx}"
+        chapter_title = title if total <= chapter_size else f"{title} - " + str(idx).translate(str.maketrans("0123456789", "٠١٢٣٤٥٦٧٨٩"))   # Tur AB3: Latin rakam kalmaz
         chapter = epub.EpubHtml(title=chapter_title, file_name=f"chap_{idx}.xhtml", lang="ota")
         chapter.content = f"<html><body dir='rtl'>{paragraphs}</body></html>"
         chapter.add_item(css_item)
