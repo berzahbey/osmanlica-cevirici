@@ -100,6 +100,7 @@ _TUREV_KOKEN = {"ar", "fa", "ar-fa", "fa-ar", "hayrat", "sozlukler"}
 # Tur FT (22 Kasım 2026, yz kaydı ölçümü): Arapça/Farsça isim + -la/-laş/-lan fiili sözlük yazımıyla (sanayileşmiş صنایعلشمش،
 # Yahudileşmiş یهودیلشمش، silahlandırılmış سلاحلاندیریلمش، yağmalan- یغمالان، kiralan- كرالان، rastlan- راستلان). OSM_TUR_FT=0 kapatır.
 _FT = os.environ.get("OSM_TUR_FT", "1") != "0"
+_EK1 = os.environ.get("OSM_TUR_EK1", "1") != "0"
 _ARAPCA_HARF = re.compile("[\u062b\u062d\u062e\u0630\u0635\u0636\u0637\u0638\u0639\u063a]")   # ث ح خ ذ ص ض ط ظ ع غ
 
 
@@ -285,6 +286,9 @@ def _kokle1(w: str, o: str, r: str, yazim: str, tur: str):
                 ek = ek[1:]
             if not ek:
                 return None
+            _m = re.match("\u062a[\u06cc\u0648]?\u0631", ek)
+            if _EK1 and tur == "V" and r[-1] in "çfhkpsşt" and re.match("t[ıiuü]r", kalan) and _m:
+                ek = "\u062f\u06cc\u0631" + ek[_m.end():]   # yuvarlak ünlüde de دیر (Hayrat konuşturur قونوشدیرر)      # Tur EK1: sert ünsüzlü fiil kökü + ettirgen -tır د ile (Hayrat 605/666: çarptırdı چارپدیردی، kestir- كسدیر)
             if tur == "V" and r[-1] not in _UNLU and re.match("d[ıiuü]r", kalan) and ek.startswith("\u062f\u0631"):
                 ek = "\u062f\u06cc\u0631" + ek[2:]   # Tur C: fiil kökü + ettirgen -dır (Hayrat: şenlendiren شنلندیرن، rızıklandır رزقلاندیر)
             if tur == "N" and r[-1] in _UNLU and re.match("n($|l[ae]$)", kalan) and ek[:1] in ("\u0646", "\u06ad"):

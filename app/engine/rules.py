@@ -31,6 +31,7 @@ dondurulur. Bu liste zaman icinde, karsilasildikca genisletilmelidir;
 simdilik bilinen birkac ornekle baslar (TAM/KESIN degildir).
 """
 import re
+import os as _os
 from .alphabet import (
     ELIF, VAV, YE, HE, MEDD_ELIF, turkish_lower,
     KALIN_KEF, KALIN_GEF, INCE_KEF, INCE_GEF,
@@ -673,9 +674,15 @@ def _fiil_ekleri():
                 forms = [d + {"nız": "ı", "niz": "i", "nuz": "u", "nüz": "ü"}[son] + son]
             add(" ".join(forms), yaz, yaz_k, sart)
     # ortaç -dığı/-diği (Latin -duğu/-düğü önceden -dığı/-diği'ye çevriliyor)
-    for son, yaz in (("", "ی"), ("nı", "نی"), ("ni", "نی"), ("na", "نه"), ("ne", "نه"), ("nda", "نده"),
+    _ek1 = [] if _os.environ.get("OSM_TUR_EK1", "1") == "0" else [
+        # Tur EK1: iyelikli ortaç + hâl (Hayrat olmadığımdan اولمدیغمدن، bilmediğimi، yaptığımızı)
+        ("mı", "می"), ("mi", "می"), ("ma", "مه"), ("me", "مه"), ("mda", "مده"), ("mde", "مده"), ("mdan", "مدن"), ("mden", "مدن"),
+        ("mızı", "مزی"), ("mizi", "مزی"), ("mıza", "مزه"), ("mize", "مزه"), ("mızda", "مزده"), ("mizde", "مزده"),
+        ("mızdan", "مزدن"), ("mizden", "مزدن"), ("nızı", "ڭزی"), ("nizi", "ڭزی"), ("nıza", "ڭزه"), ("nize", "ڭزه"),
+        ("nızdan", "ڭزدن"), ("nizden", "ڭزدن")]
+    for son, yaz in [("", "ی"), ("nı", "نی"), ("ni", "نی"), ("na", "نه"), ("ne", "نه"), ("nda", "نده"),
                      ("nde", "نده"), ("ndan", "ندن"), ("nden", "ندن"), ("mız", "مز"), ("miz", "مز"),
-                     ("nız", "ڭز"), ("niz", "ڭز"), ("m", "م"), ("n", "ڭ")):
+                     ("nız", "ڭز"), ("niz", "ڭز"), ("m", "م"), ("n", "ڭ")] + _ek1:
         for d, sart in (("d", "yumusak"), ("t", "sert")):
             for kok, harf in (("ığı", "غ"), ("iği", "گ")):
                 f = d + kok + son
@@ -815,6 +822,31 @@ def _govde_yaz(stem, son_unlu, devam):
     return transliterate_word(stem, treat_last_as_final=son_unlu, devam=devam)
 
 
+def _sesli_kok_yor(word: str):
+    """Tur EK1: ünlüyle biten fiil kökü + -Iyor, kökün ünlüsü yazılır (Hayrat 68/71): tarıyor طارایور، arıyordun آرایوردڭ;
+    incede he: söylüyor سویله‌یور. Kök ünsüzle bitenle de fiilse (bağır-ıyor) dokunulmaz."""
+    if _os.environ.get("OSM_TUR_EK1", "1") == "0":
+        return None
+    m = re.match(r"^(.+[^aeıioöuü])([ıiuü])(yor.*)$", word)
+    if not m:
+        return None
+    from . import kok as _kok
+    gov = m.group(1)
+    kalin = m.group(2) in "ıu"
+    sesli = gov + ("a" if kalin else "e")
+    def fiil(k):
+        return "V" in _kok.KOK.get(k, {})
+    if fiil(gov) or not fiil(sesli) or len(gov) < 2:
+        return None
+    f = (gov, "\u06cc\u0648\u0631\u062f\u06ad") if m.group(3) == "yordun" else \
+        _fiil_ayir(gov + "ı" + m.group(3) if kalin else gov + "i" + m.group(3))
+    if not f or f[0] != gov:
+        return None
+    if kalin:
+        return transliterate_word(sesli, treat_last_as_final=False, devam="yor") + f[1]
+    return transliterate_word(sesli, treat_last_as_final=True, devam="") + "\u200c" + f[1]
+
+
 def transliterate_word_with_suffix(word: str) -> str:
     """Kelimeyi mumkunse kok+ek olarak ayirir. Kok normal (pozisyon
     farkinda) kurallarla, ek ise kendi kurallariyla cevrilir."""
@@ -831,6 +863,13 @@ def transliterate_word_with_suffix(word: str) -> str:
         return _fs
 
     _f = _fiil_ayir(word)
+    if _os.environ.get("OSM_TUR_EK1", "1") != "0" and _f and len(_f[0]) >= 5 and _f[0].endswith("ama") \
+            and _f[0][-4] not in "aeıioöuü" and _f[1].startswith("د"):
+        # Tur EK1: yeterlilik olumsuzu -(y)AmA + d'li ek (Hayrat 91/101: çıkaramadıkları چیقارامدقلری، yapamadı یاپامدی)
+        return transliterate_word(_tarihi_kok(_f[0][:-2]), treat_last_as_final=False, devam="ma") + "م" + _f[1]
+    _sy = _sesli_kok_yor(word)
+    if _sy:
+        return _sy
     if _f and len(_f[0]) >= 4 and _f[0][-2:] in ("me", "ma") and _f[0][-3] not in "aeıioöuü":
         # olumsuzluk eki -ma/-me ünlüsüyle yazılır: etmemek ایتمه‌مك, vermeyip ویرمه‌یوب, olmamakla اولمامقله
         taban = _f[0][:-2]
