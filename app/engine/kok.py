@@ -92,8 +92,43 @@ def _ek_gecerli(kok: str, kalan: str, tur: str) -> bool:
 # rızıklandır- رزقلاندیر، hoşlan- خوشلان). Kök sözlüğünde yoksa isim sözlükteki yazımıyla, ek Hayrat'taki gibi (kalında لا، incede له/ل).
 _TUREV = [("landır", "لاندیر"), ("lendir", "لندیر"), ("laş", "لاش"), ("leş", "لش"), ("lan", "لان"), ("len", "لن"), ("la", "لا"), ("le", "له")]
 # Türkçe fiil, Arapça/Farsça isimden türemiş değil (sunucu ölçümü, Tur A): dinle- دیڭله، ısmarla- ایصمارلا، filizlen-، havla-، horla-
+_TUREV_EKLER = {e for e, _ in _TUREV}
 _TUREV_DEGIL = {"din", "ısmar", "ismar", "filiz", "hav", "hor"}
 _TUREV_KOKEN = {"ar", "fa", "ar-fa", "fa-ar", "hayrat", "sozlukler"}
+
+
+# Tur FT (22 Kasım 2026, yz kaydı ölçümü): Arapça/Farsça isim + -la/-laş/-lan fiili sözlük yazımıyla (sanayileşmiş صنایعلشمش،
+# Yahudileşmiş یهودیلشمش، silahlandırılmış سلاحلاندیریلمش، yağmalan- یغمالان، kiralan- كرالان، rastlan- راستلان). OSM_TUR_FT=0 kapatır.
+_FT = os.environ.get("OSM_TUR_FT", "1") != "0"
+_ARAPCA_HARF = re.compile("[\u062b\u062d\u062e\u0630\u0635\u0636\u0637\u0638\u0639\u063a]")   # ث ح خ ذ ص ض ط ظ ع غ
+
+
+_SAPKALI = None
+
+
+def _sapkali(isim: str):
+    """Yalnız şapkası düşmüş kayıt (yağma = yağmâ); ı/i ya da başka harf farkıyla eşleşme alınmaz (kanıt ≠ kânit, sayı ≠ sa'yi)."""
+    global _SAPKALI
+    from . import dictionary
+    if _SAPKALI is None:
+        _SAPKALI = {}
+        for k in dictionary.DICTIONARY:
+            if any(c in k for c in "âîû"):
+                _SAPKALI.setdefault(k.translate(str.maketrans("âîû", "aiu")), k)
+    k = _SAPKALI.get(isim)
+    return dictionary.DICTIONARY.get(k) if k else None
+
+
+def _unlu_yazim_uyar(isim: str, yazim: str) -> bool:
+    """Ünlüyle biten Arapça/Farsça ismin yazımı uygun harfle bitiyor: -i/-î ی (Yahudi یهودی), -u/-û و, ayın/hemze (sanayi صنایع)."""
+    son = yazim.rstrip("\u0651\u064b-\u0652")[-1:]
+    if son in ("\u0639", "\u0621"):
+        return True
+    if son == "\u06cc":
+        return isim[-1] in "iîı"
+    if son == "\u0648":
+        return isim[-1] in "uûü"
+    return False
 
 
 def _turev(r: str):
@@ -105,13 +140,16 @@ def _turev(r: str):
             isim = r[:-len(ek)]
             if isim in _TUREV_DEGIL:
                 continue
-            h = dictionary.DICTIONARY.get(isim)
+            h = dictionary.DICTIONARY.get(isim) or (_sapkali(isim) if _FT and len(isim) >= 4 else None)
             if not h or h[1] not in _TUREV_KOKEN or " " in h[0] or "\u060c" in h[0] or "N" not in KOK.get(isim, {"N": 1}):
                 continue
-            if h[1] == "sozlukler" and isim not in KOK:
+            if h[1] == "sozlukler" and isim not in KOK and not (_FT and len(isim) >= 4 and _ARAPCA_HARF.search(h[0])):
                 continue                   # şapkası düşmüş sözlük kaydı (zıp زب، süs): Hayrat'ta isim olarak görülmeli (hoş, hatır)
-            if isim[-1] in _UNLU and not h[0].endswith(("\u0647", "\u0627")):
+                                           # Tur FT: 4+ harfli, yazımında Arapçaya özgü harf olan isim alınır (silah سلاح; kanıt قانت، istek استك alınmaz)
+            if isim[-1] in _UNLU and not h[0].endswith(("\u0647", "\u0627")) and not (_FT and _unlu_yazim_uyar(isim, h[0])):
                 continue                   # ünlüyle biten isim, yazımı ünlü harfiyle bitmiyor: belirsiz
+            if _FT and any(r[:k] in ZKOK and r[len(isim):k] not in _TUREV_EKLER for k in range(len(isim) + 1, len(r) + 1)):
+                continue                   # Tur FT: Türkçe fiil kökü (daral+an, dara+lan değil)
             ara = "\u200c" if h[0].endswith("\u0647") else ""
             return {"V": (h[0] + ara + yaz, 1)}
     return None
