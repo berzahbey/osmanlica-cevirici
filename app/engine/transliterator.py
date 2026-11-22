@@ -34,7 +34,7 @@ def detect_language(text: str) -> str:
 
 _AYIN_EKLERI = set("i ı u ü in ın un ün de da den dan te ta ten tan dir dır dur dür tir tır ini ını ine ına inde ında inden ından "
                    "iyle ıyla le la dı di".split())   # Tur L: ayınlı kelimeden sonra kesmeli ek (iye, a, anın: kelimenin parçası olabilir)
-_EDDIN_RE = re.compile(r"(.{2,}?)[eüuiı]dd[iî]n")
+_EDDIN_RE = re.compile(r"(.{2,}?)([eüuiıa])(dd|tt)[iî]n")
 
 
 def _eddin_adi(word: str):
@@ -43,12 +43,22 @@ def _eddin_adi(word: str):
     if "'" in word or "\u2019" in word:
         return None
     m = _EDDIN_RE.fullmatch(turkish_lower(word))
-    if not m:
-        return None
+    if not m or (m.group(3) == "tt" and not word[:1].isupper()) or (m.group(2) == "a" and m.group(3) == "dd"):
+        return None   # Tur AB2: -ettin yalnız büyük harfli adda (Şemsettin شمس الدّین; fethettin فتح ایتدڭ fiildir)
     ad = m.group(1)
+    if ad in ("vahd", "vahid", "vahîd"):
+        return "\u0648\u062d\u06cc\u062f \u0627\u0644\u062f\u0651\u06cc\u0646"   # Vahdettin, Vahîdeddin وحید الدّین
+    if ad in ("muh", "muhi") and m.group(3) == "tt":
+        return "\u0645\u062d\u06cc\u06cc \u0627\u0644\u062f\u0651\u06cc\u0646"   # Muhittin محیی الدّین (Muhyiddin)
+    if m.group(2) == "a" and (len(ad) <= 3 or not dictionary.lookup_exact(ad)):   # Bahattin: bahâ (باه değil)
+        ad = ad + "a"          # Bahattin = Bahâ + (e)ddin; Salahattin = Salâh + addin (صلاح)
+    if ad in ("ala",) and m.group(3) == "tt":
+        ad = "alâ"
     if ad in ("alâ", "ala"):
         return "\u0639\u0644\u0627\u0621 \u0627\u0644\u062f\u0651\u06cc\u0646"   # Alâeddin علاء الدّین
-    h = dictionary.lookup_exact(ad) or dictionary.lookup_exact(ad.replace("â", "a").replace("î", "i").replace("û", "u"))
+    h = dictionary.lookup_exact(ad) or dictionary.lookup_exact(ad.replace("â", "a").replace("î", "i").replace("û", "u")) \
+        or (dictionary.lookup_exact(ad[:-1] + "â") if ad.endswith("a") else None) \
+        or (dictionary.lookup_exact(ad.replace("a", "â", 1)) if m.group(3) == "tt" and "a" in ad else None)
     if not h or h[1] not in ("ar", "sozlukler", "ar-fa", "fa-ar", "hayrat") or " " in h[0]:
         return None
     y = h[0]
@@ -1414,7 +1424,8 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
         osm = re.sub("\u0645\u06cc(\u06cc)?\u06ad\u0632$", "\u0645\u0647\u200c\u06cc\u06cc\u06ad\u0632", osm)
     # 2. kişi -sın/-sin (fiilde), -sınız: دوشرسڭ، گورونورسڭ، ییمزسڭز
     # geniş zaman 2. tekil (düşersin, görünürsün, yetişemezsin) سڭ; 3. tekil emir (geçirsin, çıkarsın, yazsın) سین kalır
-    if re.search(r"([eüu]r|m[ea]z)s[ıiuü]n$", l):
+    if re.search(r"([eüu]r|m[ea]z)s[ıiuü]n$", l) and not (len(l) <= 7 and dictionary.lookup_exact(l)
+                                                          and dictionary.lookup_exact(l)[0] == osm):   # Tur AB2: Mersin مرسین (ad)
         osm = re.sub(r"(سین|سون|سن)$", "سڭ", osm)
     elif re.search(r"([eüuıia]r|m[ea]z)s[ıiuü]n[ıiuü]z$", l):
         osm = re.sub(r"(سینیز|سونوز|سیڭز|سنیز)$", "سڭز", osm)
@@ -1453,7 +1464,7 @@ def _matbaa_ekleri(latin: str, osm: str) -> str:
     if l.endswith(("makla", "mekle")) and osm.endswith(("ماقله", "مكله")):
         osm = osm[:-5] + "مقله" if osm.endswith("ماقله") else osm
     # Farsça -hâne: ماتمخانه
-    if "hane" in l and "هانه" in osm and not re.search(r"ş[aâ]h[aâ]ne", l):   # Tur G: şâhâne شاهانه (şah+âne, hane değil)
+    if "hane" in l and "هانه" in osm and not re.search(r"ş[aâ]h[aâ]ne", l) and not l.startswith("bahane"):   # Tur G: şâhâne شاهانه (şah+âne); Tur AB2: bahane بهانه (Farsça, -hâne değil)
         osm = osm.replace("هانه", "خانه")
     # -sız/-siz eki matbaada yesiz: sayısız صاییسز, şüphesiz شبهه‌سز
     if re.search(r"s[ıiuü]z(l[ıiuü][kğ]\w*|ca|ce|dır|dir|lar|ler)?$", l) and "سیز" in osm:
@@ -1501,7 +1512,7 @@ def _izafet_tarif(m):
     if _tam and str(_tam[1]) in ("ar", "fa") and " " in _tam[0].strip() and "'" in getattr(m, "m", m).group(0).replace("\u2019", "'"):
         return _tam[0].strip()   # Tur AB: sözlükte bütün olarak duran tamlama (İbnü'l-Esîr ابن الاثیر، Üsdü'l-Gâbe اسد الغابه)
     k = turkish_lower(kok)
-    bas = {"eb": "ابو", "ebu": "ابو", "ebü": "ابو", "ibn": "ابن", "b": "ب", "f": "فی", "l": "ل", "v": "و", "ul": "\u0627\u0648\u0644\u0648"}.get(k)
+    bas = {"eb": "ابو", "ebu": "ابو", "ebü": "ابو", "ibn": "ابن", "b": "ب", "f": "فی", "l": "ل", "v": "و", "ul": "\u0627\u0648\u0644\u0648", "z": "\u0630\u0648"}.get(k)   # Tur AB2: zü'l-acâib ذو العجائب
     if bas is None and m.group(2) in "ae\u00e2":
         # Tur U: Hayrat ale'l-husûs علی الخصوص، maa't-teessüf مع التأسّف، ile'l-merkeziye الی، aksa'l-gāyât اقصی؛ Mekke'l-Mükerreme مكّه
         bas = {("al", "e"): "\u0639\u0644\u06cc", ("ma", "a"): "\u0645\u0639", ("me", "a"): "\u0645\u0639", ("il", "e"): "\u0627\u0644\u06cc",
@@ -3085,7 +3096,23 @@ def yz_harf(lat, osm):
     return yz_kayit.harf_uyumu(lat.replace("'", ""), osm)
 
 
+_TENVIN_IBARE_RE = re.compile(r"(?<![\w'’‘ʻ])([A-Za-zÇçĞğİıÖöŞşÜüÂâÎîÛûĀāĪīŪū'’‘ʻ]{3,}?)([uü])n\s+(aleyh|aleyhi|bih|bihî|bihi|leh|lehû|lehu|fîh|fih|anh|minh)(?![\w])")
+
+
+def _tenvin_ibare(m):
+    """Tur AB2 (22 Kasım 2026, İşârâtü'l-İ'câz): Arapça nahiv terimi tenvinli: ma'tûfun aleyh معطوفٌ علیه، müşebbehün bih مشبّهٌ به،
+    mümesselün leh ممثّلٌ له (Hayrat). Kök sözlükte Arapça olmalı; yoksa dokunulmaz."""
+    kok = turkish_lower(m.group(1)).replace("\u2019", "'").replace("\u2018", "'").replace("\u02bb", "'")
+    h = dictionary.lookup_exact(kok) or dictionary.lookup_exact(kok.replace("'", "\u2018"))
+    if not h or " " in h[0].strip() or not str(h[1]).startswith(("ar", "soz")) or kok[-1:] in "aeıioöuüâîû'" \
+            or h[0].strip().endswith(("\u0627", "\u06cc")):
+        return m.group(0)
+    return h[0].strip() + "\u064c " + m.group(3)
+
+
 def transliterate_text(turkish_text, *args, **kwargs):
+    if isinstance(turkish_text, str) and ("un " in turkish_text or "ün " in turkish_text):
+        turkish_text = _TENVIN_IBARE_RE.sub(_tenvin_ibare, turkish_text)
     if isinstance(turkish_text, str) and "-" in turkish_text and dictionary._turev.ACIK:
         turkish_text = _IZAFET_IYE_RE.sub(_izafet_iye, turkish_text)
     if isinstance(turkish_text, str) and "(" in turkish_text:

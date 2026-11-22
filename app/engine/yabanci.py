@@ -28,6 +28,8 @@ _KELIME = re.compile(r"([A-Za-zÀ-ÿĞİŞığşÇçÖöÜüÂÎÛâîûœŒæÆ
 
 def _turkce_mi(w: str) -> bool:
     wl = turkish_lower(w)
+    if re.search(r"..[eüuiıaâ](dd|tt)[iî]n$", wl):
+        return True          # Tur AB2: -eddin/-ettin adı (Alaettin علاء الدّین; "ae" yabancı izi değil)
     return bool(dictionary.lookup_exact(wl) or dictionary.lookup_with_suffix(wl)[0])
 
 

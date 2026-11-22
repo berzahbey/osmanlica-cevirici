@@ -8,7 +8,7 @@ from functools import lru_cache
 from . import dictionary
 from .alphabet import turkish_lower
 
-_KELIME = re.compile(r"(?<![\w'’‘])([A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîû]{4,})(?=['’]|[^\w'’‘]|$)")
+_KELIME = re.compile(r"(?<![\w'’‘])([A-Za-zÇĞİÖŞÜçğıöşüÂÎÛâîûāĀ]{4,})(?=['’]|[^\w'’‘]|$)")
 _SAPKA = {"a": "â", "i": "î", "u": "û"}
 _ON_KELIME = ("baş",)   # yalnız baş + Arapça/Farsça kelime (başkahraman, başmüfettiş); ana+yasa, iç+erik gibi bölme yapılmaz
 
@@ -47,6 +47,12 @@ def _yeni_bicim(w: str):
             return ab
     if _bulunur(wl) or re.search(r"[çğışöü]", wl) and not re.search(r"[aiu]", wl):
         return None
+    # 0) Tur AB2: Hayrat transkripsiyonunda kā = ق, gā = غ (kelime başında 98/98 ve 53/53): kānûn قانون (kânûn كانون "ocak" değil)
+    if re.search("[kg]\u0101", wl):
+        v = re.sub("(?<=[kg])\u0101", "a", wl).replace("\u0101", "\u00e2")
+        h = dictionary.lookup_exact(v) or dictionary.lookup_with_suffix(v)[0]
+        if h and re.search("[\u0642\u063a]", str(h[0])):
+            return v if w[:1].islower() else v[:1].upper() + v[1:]
     # 1) tek şapka (en fazla ilk 4 a/i/u): tabiydi -> tâbiydi, mahkumu -> mahkûmu
     yerler = [i for i, c in enumerate(wl) if c in _SAPKA][:4]
     for i in yerler:
@@ -67,7 +73,15 @@ def _yeni_bicim(w: str):
     return None
 
 
+_MALAYANI_RE = re.compile(r"\b([Mm])[âa]l[âa]-ya[ʻ‘'’]n[îi]")
+_KESME_NORM = str.maketrans({"\u2018": "'", "\u2019": "'", "\u02bb": "'"})
+
+
 def duzelt_metin(metin: str) -> str:
     if not isinstance(metin, str):
         return metin
+    if "l" in metin and "-ya" in metin:
+        metin = _MALAYANI_RE.sub(lambda m: m.group(1) + "âlâya'nî", metin)   # Tur AB2: mâlâ-ya'nî مالایعنی (Hayrat)
+    if "seb" in metin.lower():
+        metin = re.sub(r"\b([Ss]eb)[ʻ‘’](a)", r"\1'\2", metin)                  # seb‘a / sebʻa -> seb'a (sözlük anahtarı)
     return _KELIME.sub(lambda m: _yeni_bicim(m.group(1)) or m.group(1), metin)

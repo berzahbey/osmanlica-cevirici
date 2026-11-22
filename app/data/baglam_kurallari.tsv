@@ -36,3 +36,4 @@ koru	قورو	C:(bizi|beni|onları|sizi|azab\w*|ateş\w*)
 kalın	قالڭ	L1:([a-zçğıöşüâîû]+[dt][ae]|orada|burada|şurada)
 vaz	واز	R1:geç.*
 men	منع	R1:@ETMEK
+arz-ı	عرض	R1:(ihtir[âa]m|h[âa]l|tebrik|ta.?ziyet|te[şs]ekk[üu]r|[şs][üu]kr[âa]n|ub[ûu]diyet|minnet|ihl[âa]s|ta.?z[îi]m|ma.?r[ûu]z[âa]t|hizmet|t[âa]zim|hulus|hul[ûu]s)\w*

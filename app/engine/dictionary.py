@@ -16,6 +16,7 @@ from .alphabet import turkish_lower
 DATA_FILE = Path(__file__).parent.parent / "data" / "ottoman_dict.tsv"
 # Türkçe kelime düzeltmeleri: sözlükten sonra okunur (sözlük kaydı Türkçe kelimeyle çakışınca Türkçe kazanır)
 DUZELTME_FILE = Path(__file__).parent.parent / "data" / "duzeltmeler.tsv"
+HAYRAT_DUZELT_FILE = Path(__file__).parent.parent / "data" / "hayrat_duzelt.tsv"
 KITAP_SOZLUK_FILE = Path(__file__).parent.parent / "data" / "kitap_sozlugu.tsv"  # Tur R: kitaplardan, Claude'un okuyarak secti (Hayrat ezer)
 MEAL_FILE = Path(__file__).parent.parent / "data" / "hayrat_meal.tsv"  # Tur KM5: Hayrat Osmanlıca Kur'an mealiyle doğrulanan kelimeler (Hayrat ezer)
 HAYRAT_FILE = Path(__import__("os").environ.get("HAYRAT_DOSYA") or Path(__file__).parent.parent / "data" / "hayrat.tsv")  # Risale-i Nur (Hayrat) eksik kelimeler
@@ -150,6 +151,12 @@ def _load_extra_from_tsv() -> dict:
                     extra[turkish_lower(latin)] = (osmanli, origin)
                     if dosya in (HAYRAT_FILE, HAYRAT_AZ_FILE):
                         HAYRAT_ANAHTAR.add(turkish_lower(latin))
+    # Tur AB2 (22 Kasım 2026): Hayrat'ın kendi kaynakları arasında çelişen ve dil bilgisine aykırı kayıt (sıfatına صفته = "sıfata";
+    # Hayrat sınavında aynı kelime صفتنه). Bu dosya Hayrat'tan SONRA okunur; yalnız doğrulanmış kayıt girer.
+    if HAYRAT_DUZELT_FILE.exists():
+        for row in csv.reader(open(HAYRAT_DUZELT_FILE, encoding="utf-8"), delimiter="\t"):
+            if len(row) >= 3 and not row[0].startswith("#") and row[1].strip():
+                extra[turkish_lower(row[0].strip())] = (row[1].strip(), row[2].strip())
     return extra
 
 
@@ -440,10 +447,41 @@ def _turkce_uzun_kok(w, hit, sufs):
     return False
 
 
+_IYYE_EK_RE = re.compile(r"^(.{3,}iyye)(m?)(nin|in|le|i|e|den|de|dir|dır)?$")
+_IYYE_EK_YAZ = {"nin": "نڭ", "in": "ڭ", "le": "له", "i": "ی", "e": "ه", "den": "دن", "de": "ده", "dir": "در", "dır": "در", None: ""}
+
+
+def _iyye_ekli(w: str):
+    """Tur AB2 (22 Kasım 2026, Hayrat sınavı): Arapça nisbe müennesi -iyye + ek. ebediyye+nin ابدیه‌نڭ (ebediyyen ابدیًّا + in değil);
+    iyelik -m: kat'iyye+m+le قطعیه‌مله، Kur'âniyye+m+i قرآنیه‌می، ebediyye+m+e ابدیه‌مه (Hayrat). -iyye kökü sözlükte ya da türevle bulunmalı."""
+    m = _IYYE_EK_RE.match(w)
+    if not m or (not m.group(2) and m.group(3) != "nin"):
+        return None
+    if m.group(2) and m.group(3) == "nin":
+        return None
+    h = _get(m.group(1))
+    if not h:
+        # ebediyyet/külliyyet sözlükte olduğu için türev kuralı ebediyye'yi kurmaz: nisbeden (ebedî ابدی + ه) kurulur
+        for g in (m.group(1)[:-4] + "\u00ee", m.group(1)[:-4] + "i"):
+            n = _get_turevsiz(g)
+            kb = _get_turevsiz(m.group(1)[:-4])
+            if n and kb and str(n[0]).strip().endswith("\u06cc") and str(kb[0]).strip() and \
+                    _turev._sade(str(n[0]).strip()[:-1]) == _turev._sade(str(kb[0]).strip()):
+                h = (str(n[0]).strip() + "\u0647", "turev")
+                break
+    if not h or not str(h[0]).strip().endswith("\u0647"):
+        return None
+    yazi = h[0].strip() + "\u200c" + ("\u0645" if m.group(2) else "") + _IYYE_EK_YAZ[m.group(3)]
+    return (yazi, h[1]), []
+
+
 def lookup_with_suffix(word: str):
     """Tur A/B (13 Ekim): -la/-le (ile) ekinden sonra yalnız -dır ya da y'li ek gelebilir (fayda + la + nın, açık + la + sın, buda + la + lar
     değil: fiil; tedâhülüyledir, süsleyici kalır). Öyle bir ayırma bulunursa
     sözlük yolu kullanılmaz (kural motoru + kök sözlüğü)."""
+    _iy = _iyye_ekli(turkish_lower(word).strip().replace("\u2019", "'").replace("\u2018", "'"))
+    if _iy:
+        return _iy
     hit, sufs = _lookup_with_suffix_ic(word)
     if hit and sufs and _turkce_uzun_kok(turkish_lower(word).strip(), hit, sufs):
         return None, []                    # Tur KE3: halı+nın (حالنڭ değil), kural motoru + kök sözlüğü

@@ -23,6 +23,16 @@ D = [
     # kesmeli ad
     ("Kayser'in", "قیصرڭ"), ("Berlin'e", "برلینه"), ("Miskeveyh'in", "مسكویهڭ"), ("Vâil'in", "وائلڭ"),
     ("Vâkıdî'ye", "واقدی یه"), ("Mustafa'ya", "مصطفی یه"), ("Hakk'a", "حقّه"), ("Gazetesi'nin", "غزته‌سنڭ"),
+    # Tur AB2 (Hayrat sınavı listesi)
+    ("saâdet-i ebediyenin", "سعادت ابدیه‌نڭ"), ("irâde-i külliyenin", "ارادهٔ كلّیه‌نڭ"), ("kanâat-ı kat‘iyemle", "قناعت قطعیّه‌مله"),
+    ("hizmet-i Kur’âniyemi", "خدمت قرآنیه‌می"), ("saâdet-i ebediyeme", "سعادت ابدیه‌مه"), ("ebediyyen", "ابدیّا"),
+    ("kānûn-u esâsîlerinin", "قانون اساسیلرینڭ"), ("kābil", "قابل"), ("kânûn", "كانون"), ("sıfatına", "صفتنه"), ("sıfata", "صفته"),
+    ("kaziye", "قضیه"), ("Mersin", "مرسین"), ("düşersin", "دوشرسڭ"), ("bahaneyi de", "بهانه‌یی ده"), ("kütüphaneyi", "كتابخانه‌یی"),
+    ("sıfât-ı seb‘aya", "صفات سبعه‌یه"), ("mâlâ-yaʻnî", "مالایعنی"), ("ma‘tûfun aleyh", "معطوفٌ علیه"), ("müşebbehün bih", "مشبّهٌ به"),
+    ("mümesselün leh", "ممثّلٌ له"), ("bunun aleyhinde", "بونڭ علیهنده"), ("arz-ı ihtirâm", "عرض احترام"), ("küre-i arz", "كرهٔ ارض"),
+    ("arz-ı mev'ûd", "ارض موعود"), ("Şemsettin", "شمس الدّین"), ("Alaettin", "علاء الدّین"), ("Bahattin", "بهاء الدّین"),
+    ("Salahattin", "صلاح الدّین"), ("Muhittin", "محیی الدّین"), ("fethettin", "فتح ایتدڭ"), ("zevâhir-i İslâmiyet", "ظواهر اسلامیّت"),
+    ("zü’l-acâib", "ذو العجائب"), ("İbnü’l-Fârıd", "ابن الفارض"), ("Hüseyin Avnî", "حسین عونی"), ("Binâen alâ hâzâ", "بناءً علی هذا"),
     # dokunulmaz
     ("esir aldılar", "اسیر آلدیلر"), ("enderü'l-vukû", "اندر الوقوع"), ("Ebu'l-Kasım", "ابو القاسم"),
 ]
