@@ -1580,3 +1580,27 @@ manastır	مناستر	fa
 teyit	تأیید	ar
 teyid	تأیید	ar
 eyalet	ایالت	ar
+# Tur AB (22 Kasım 2026, İslam Tarihi kaynak notları): sîre سیره (سیر kökü; sözlükteki صیرة "sıra" içindi), el-Bidâye بدایه,
+# müellif adları (İslam ansiklopedisi yazımı): Heysemî الهیثمی، Belâzurî البلاذری، İbnü'l-Esîr ابن الاثیر (esîr اسیر "tutsak" değil),
+# İbn Seyyidinnâs ابن سیّد الناس، Üsdü'l-Gâbe اسد الغابه
+sîre	سیره	ar
+bidâye	بدایه	ar
+heysemî	هیثمی	ar
+heysemi	هیثمی	ar
+belâzurî	بلاذری	ar
+belazuri	بلاذری	ar
+ibnü'l-esîr	ابن الاثیر	ar
+ibnü'l-esir	ابن الاثیر	ar
+seyyidinnâs	سیّد الناس	ar
+seyyidinnas	سیّد الناس	ar
+üsdü'l-gâbe	اسد الغابه	ar
+usdü'l-gâbe	اسد الغابه	ar
+# Tur AB: Arapça merfû -u (Allahu Ekber الله اكبر، Ahbâru Mekke اخبار مكّه; Hayrat allâhu اللّه), Kurtubî القرطبی (قرطبه), Tunus تونس (Hayrat), Siyâm صیام (Hayrat)
+allahu	اللّه	ar
+ahbâru	اخبار	ar
+ahbaru	اخبار	ar
+kurtubî	قرطبی	ar
+kurtubi	قرطبی	ar
+tunus	تونس	ar
+siyâm	صیام	ar
+siyam	صیام	ar

@@ -17,9 +17,34 @@ def _bulunur(wl: str) -> bool:
     return bool(wl in dictionary.HAYRAT_ANAHTAR or dictionary.lookup_exact(wl) or dictionary.lookup_with_suffix(wl)[0])
 
 
+_ABD_RE = re.compile(r"^abd([üu])(?:l(?!l)([a-zçğıöşüâîû]{2,})|([tdrzsşn])(\3[a-zçğıöşüâîû]{2,}))$")
+
+
+def _abd_bicim(w: str, wl: str):
+    """Tur AB (22 Kasım 2026, İslam Tarihi denetimi): sözlükte olmayan Abd- adı harf-i tarifle ayrılır: Abdülvehhab -> Abdü'l-Vehhab
+    (عبد الوهّاب)، Abdurrezzak -> Abdü'r-Rezzak (عبد الرزّاق)، Abduşşems، Abdüsselâm. Önceden fonetik yazılıyordu (آبدولوههاب، عبدوررززاق).
+    Önce ü/u değişik biçimi sözlükte aranır (Abdürrahman -> abdurrahman عبد الرحمن); ad kısmı sözlükte tam bulunmalı."""
+    m = _ABD_RE.match(wl)
+    if not m or dictionary.lookup_exact(wl):
+        return None
+    diger = wl[:3] + ("u" if m.group(1) == "ü" else "ü") + wl[4:]
+    if dictionary.lookup_exact(diger):
+        return w[:3] + ("u" if m.group(1) == "ü" else "ü") + w[4:]
+    ad = m.group(2) or m.group(4)
+    harf = "l" if m.group(2) else m.group(3)
+    if not dictionary.lookup_exact(ad):
+        return None
+    bas = len(w) - len(ad)
+    return w[:3] + "ü'" + harf + "-" + w[bas:bas + 1].upper() + w[bas + 1:]
+
+
 @lru_cache(maxsize=200000)
 def _yeni_bicim(w: str):
     wl = turkish_lower(w)
+    if wl.startswith("abd"):
+        ab = _abd_bicim(w, wl)
+        if ab:
+            return ab
     if _bulunur(wl) or re.search(r"[çğışöü]", wl) and not re.search(r"[aiu]", wl):
         return None
     # 1) tek şapka (en fazla ilk 4 a/i/u): tabiydi -> tâbiydi, mahkumu -> mahkûmu

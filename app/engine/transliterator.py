@@ -260,7 +260,18 @@ def draft_transliterate_sentence(sentence: str) -> str:
             hit, sufs = dictionary.lookup_with_suffix(base)
             b = turkish_lower(base).replace("'", "")
             tails_l = [turkish_lower(t) for t in tails if t]
-            if hit:
+            _tek = None
+            if "'" not in b and len(b) >= 3 and base[:1].isupper() and tails_l and all(_ek_mi(t) for t in tails_l) \
+                    and not dictionary.lookup_exact(b) and (not hit or (sufs and len(b) - len("".join(sufs)) <= 3)) \
+                    and _os.environ.get("OSM_TUR_AB", "1") != "0":
+                # Tur AB (22 Kasım 2026): kesmeli adın kökü, kesmesiz yazıldığındaki kaynaktan (Hayrat tek kelime, kök sözlüğü, OpenITI):
+                # Kayser'in قیصرڭ (قایسرڭ değil)، Berlin'e برلینه (برلڭه)، Miskeveyh'in مسكویهڭ، Vâil'in وائلڭ (والڭ)
+                _tek = dictionary.HAYRAT_TEK.get(b)
+                if not _tek:
+                    _tek = kok.kokle(base, rules.transliterate_word_with_suffix(base)) or openiti.kelime(base, False)
+                if _tek and " " in _tek.strip():
+                    _tek = None
+            if hit and not _tek:
                 root = b[: len(b) - len("".join(sufs))] if sufs else b
                 kok_yazi = hit[0]
                 if not sufs and tails_l and tails_l[0][:1] == "n" and kok_yazi.endswith("\u0633\u06cc") \
@@ -273,7 +284,7 @@ def draft_transliterate_sentence(sentence: str) -> str:
                         and " " not in kok_yazi and turkish_lower(word).replace("\u2019", "'").endswith(("'ya", "'ye")):
                     return kok_yazi + " یه"   # Tur J: i ile biten ad + kesmeli -ye ayri (Hayrat: Efendi'ye افندی یه): Elçi'ye
                 return _kesme_iyelik(kok_yazi + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs)), [turkish_lower(word.replace("\u2019", "'").split("'", 1)[1])])
-            _yazi = rules.transliterate_word_with_suffix(base)
+            _yazi = _tek.strip() if _tek else rules.transliterate_word_with_suffix(base)
             if tails_l in (["ya"], ["ye"]) and b.endswith(("i", "ı", "î")) and _yazi.endswith("ی") and " " not in _yazi \
                     and turkish_lower(word).replace("’", "'").endswith(("'ya", "'ye")):
                 return _yazi + " یه"   # Tur Q: sozlukte olmayan ad da (Tanri'ya, Habesi'ye) Tur J gibi ayri
@@ -1486,6 +1497,9 @@ def _izafet_tarif(m):
     kok, harf, sonraki = m.group(1), m.group(3).lower(), m.group(4)
     if not (harf == "l" or harf == turkish_lower(sonraki[:1])):
         return m.group(0)
+    _tam = dictionary.lookup_exact(turkish_lower(getattr(m, "m", m).group(0)).replace("\u2019", "'").replace("\u2013", "-"))
+    if _tam and str(_tam[1]) in ("ar", "fa") and " " in _tam[0].strip() and "'" in getattr(m, "m", m).group(0).replace("\u2019", "'"):
+        return _tam[0].strip()   # Tur AB: sözlükte bütün olarak duran tamlama (İbnü'l-Esîr ابن الاثیر، Üsdü'l-Gâbe اسد الغابه)
     k = turkish_lower(kok)
     bas = {"eb": "ابو", "ebu": "ابو", "ebü": "ابو", "ibn": "ابن", "b": "ب", "f": "فی", "l": "ل", "v": "و", "ul": "\u0627\u0648\u0644\u0648"}.get(k)
     if bas is None and m.group(2) in "ae\u00e2":
@@ -1868,11 +1882,35 @@ _LATIN_KELIME_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿĞğİıŞş]+(?:['’][A-
 _TURKCE_HARF_RE = re.compile(r"[çğıöşüÇĞİÖŞÜâîûÂÎÛ]")
 
 
+_ARAPCA_IZ_RE = re.compile(r"th|sh|ph|ea|ae")   # Arapça kelimenin Latin yazımında da olan diziler: feth, mesh, cephe, tearuz, Bahaeddin
+
+
+def _sozlukte_turkce(kelime: str) -> bool:
+    """Tur YB (22 Kasım 2026): sözlükte bulunan kelime yabancı sayılmaz (fethi, Feth, tearuz, Binaenaleyh, methiyesi, cephesine);
+    önceden th/sh/ea izi yüzünden yabancı dizisine katılıp okunuşla yazılıyordu (fethi -> فتی). Ek ayırmayla bulunan kelimede iz
+    gövdenin içinde olmalı ve gövde en az 4 harf (animae = an+im+a+e, saecula, Tableau yabancı kalır)."""
+    wl = turkish_lower(kelime.replace("’", "'").replace("‘", "'"))
+    kok = wl.split("'")[0]
+    if len(kok) < 3:
+        return False
+    if dictionary.lookup_exact(kok):
+        return True
+    hit, ekler = dictionary.lookup_with_suffix(kok)
+    if not hit or not ekler:
+        return False
+    govde = kok[:len(kok) - len("".join(ekler))]
+    return len(govde) >= 4 and bool(_ARAPCA_IZ_RE.search(govde))
+
+
 def _yabanci_mi(kelime: str) -> bool:
     k = kelime.lower()
     if _TURKCE_HARF_RE.search(kelime):
         return False
-    return k in _YABANCI_KELIME or bool(_YABANCI_IZ_RE.search(k)) or bool(re.search(r"[À-ÖØ-öø-ÿ]", kelime))
+    if k in _YABANCI_KELIME or re.search(r"[À-ÖØ-öø-ÿ]", kelime):
+        return True
+    if not _YABANCI_IZ_RE.search(k):
+        return False
+    return bool(re.search(r"[qwx]", k)) or not _sozlukte_turkce(kelime)
 
 
 def _yabancilari_sakla(metin: str):
@@ -1948,6 +1986,8 @@ _KISALTMA = [
     (re.compile(r"(?<![\w.])(?:vb\.?|vs\.)(?!\w)", re.I), "الخ"),                           # ve benzeri, vesaire
     (re.compile(r"(?<![\w.])vd\.?(?!\w)", re.I), "و مابعدی"),                               # ve devamı
     (re.compile(r"(?<![\w.])ss?\.\s*(?=\d)"), "ص "),                                      # s. 12 / ss. 12-15 sayfa
+    (re.compile(r"(?<![\w.])sh\.\s*(?=\d)", re.I), "ص "),                              # Tur AB: sh. 12 sahife (İslam Tarihi 1.642 kez)
+    (re.compile(r"(?<![\w.])(?:sh|ss?):\s*(?=\d)", re.I), "ص: "),                         # Tur AB: sh: 511 / s: 45 (c: II gibi iki noktalı)
     (re.compile(r"(?<![\w.])[cC]\.\s*(?=(?:\d|[IVXLC]+\b))"), "ج "),                     # c. 2 / C. II cilt
 ]
 
