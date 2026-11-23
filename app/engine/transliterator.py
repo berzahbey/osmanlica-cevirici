@@ -294,11 +294,17 @@ def draft_transliterate_sentence(sentence: str) -> str:
                 if not sufs and tails_l in (["ya"], ["ye"]) and b.endswith(("i", "ı", "î")) and kok_yazi.endswith("ی") \
                         and " " not in kok_yazi and turkish_lower(word).replace("\u2019", "'").endswith(("'ya", "'ye")):
                     return kok_yazi + " یه"   # Tur J: i ile biten ad + kesmeli -ye ayri (Hayrat: Efendi'ye افندی یه): Elçi'ye
+                if _KY and not sufs and tails_l in (["yi"], ["yı"]) and b.endswith(("i", "ı", "î")) and kok_yazi.endswith("ی") \
+                        and " " not in kok_yazi and turkish_lower(word).replace("\u2019", "'").endswith(("'yi", "'yı")):
+                    return kok_yazi + " یی"   # Tur KY: -yi de ayrı (Hayrat Ali'yi علی یی، Efendi'yi افندی یی): Farabî'yi فارابی یی
                 return _kesme_iyelik(kok_yazi + rules.ekleri_yaz(root, sufs, tails_l, harmony, rules.ek_guvenilir(root, sufs)), [turkish_lower(word.replace("\u2019", "'").split("'", 1)[1])])
             _yazi = _tek.strip() if _tek else rules.transliterate_word_with_suffix(base)
             if tails_l in (["ya"], ["ye"]) and b.endswith(("i", "ı", "î")) and _yazi.endswith("ی") and " " not in _yazi \
                     and turkish_lower(word).replace("’", "'").endswith(("'ya", "'ye")):
                 return _yazi + " یه"   # Tur Q: sozlukte olmayan ad da (Tanri'ya, Habesi'ye) Tur J gibi ayri
+            if _KY and tails_l in (["yi"], ["yı"]) and b.endswith(("i", "ı", "î")) and _yazi.endswith("ی") and " " not in _yazi \
+                    and turkish_lower(word).replace("’", "'").endswith(("'yi", "'yı")):
+                return _yazi + " یی"   # Tur KY
             return _kesme_iyelik(_yazi + rules.ekleri_yaz(b, [], tails_l, harmony), [turkish_lower(word.replace("\u2019", "'").split("'", 1)[1])])
 
         hit, sufs = dictionary.lookup_with_suffix(word)
@@ -1690,6 +1696,11 @@ def _bilesik_fiil(word: str):
             return isim + " " + draft_transliterate_sentence(kuyruk).strip()
         for a in adaylar:
             h = dictionary.lookup_exact(a)
+            if _KY and h and h[1] == "sozlukler" and len(a) >= 4 and not dictionary.lookup_exact(kok + "et"):
+                _s = _KOK_MOD._sapkali(a)    # Tur KY: şapkalı kaydı Arapça (ifsad = ifsâd افساد): ifsadetmesi افساد ایتمه‌سی
+                if (_s and str(_s[1]) in ("ar", "fa") and _s[0] == h[0]) or \
+                        re.search("[\u062b\u062d\u062e\u0630\u0635\u0636\u0637\u0638\u0639\u063a]", h[0]):
+                    h = (h[0], "ar")
             if h and h[1] in ("ar", "fa", "ar-fa", "fa-ar") and len(a) >= 2 and " " not in h[0]:
                 isim = _bilesik_kok().get(kok) or h[0]      # Tur C: Hayrat'taki birleşik fiilin isim yazımı (arz عرض، ارض değil)
                 if isim == h[0].replace("\u0651", ""):
@@ -1703,6 +1714,9 @@ def _bilesik_fiil(word: str):
     return _ol_bilesik(w)
 
 
+_KY = _os_env = __import__("os").environ.get("OSM_TUR_KY", "1") != "0"
+
+
 def _ol_bilesik(w: str):
     """Tur C: Arapça/Farsça isim + olmak bitişik yazılmışsa ayrı (emrolunduğunuz -> امر اولوندیغڭز). OSM_OL_BILESIK=0 kapatır."""
     if __import__("os").environ.get("OSM_OL_BILESIK", "1") == "0":
@@ -1712,6 +1726,10 @@ def _ol_bilesik(w: str):
         if not _OL_KUYRUK.match(kuyruk):
             continue
         kok = w[:k]
+        if _KY and kok == "var":
+            ek = draft_transliterate_sentence(kuyruk).strip()
+            if ek.startswith("\u0627\u0648\u0644") and " " not in ek:
+                return "وار " + ek          # Tur KY: varolmak وار اولمق (yokolmak gibi), kuyruk tek kelime gibi (olanın اولانڭ)
         if kok[-1] in "aeıioöuüâîû" or dictionary.lookup_exact(w[:k + 2]):
             continue                       # ünlüyle biten isim (kafa+ol değil) ya da "…ol" bir kelime (kontrol, petrol)
         adaylar = [kok] + ([kok[:-1]] if len(kok) >= 3 and kok[-1] == kok[-2] else [])
