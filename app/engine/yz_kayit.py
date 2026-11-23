@@ -206,8 +206,8 @@ def yukle():
     KAYIT.clear()
     TR_KOK.clear()
     ADLAR.clear()
-    for yol in (PAKET, KALICI):
-        _oku(yol)
+    for yol in ((KALICI,) if "YZ_SOZLUK" in os.environ else (PAKET, KALICI)):
+        _oku(yol)   # YZ_SOZLUK verilmişse (testler, Hayrat sınavı, ölçüm) paketteki yedek okunmaz: sonuçlar karşılaştırılabilir kalır
     for k, r in list(KAYIT.items()):
         if guvenilir(r.get("model")) and r.get("koken") in ("ar", "fa"):
             KAYIT[k] = denetle(r)        # Tur YZ4: eski kayıtlar da Osmanlıca harfle yeniden denetlenir (تاريخ -> تاریخ)

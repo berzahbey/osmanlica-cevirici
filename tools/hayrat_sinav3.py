@@ -2,6 +2,8 @@
 (ezber olcmemek icin; OSM_HAYRAT_TEK ile kapatilmaz). Hayrat sinavi 2: ceviriciyi Hayrat'in kendi Latin metniyle calistirir, Hayrat'in Osmanlicasiyla kelime kelime karsilastirir.
 Kullanim: python hayrat_sinav2.py <hayrat klasoru> <rapor.tsv> [eser slug ... | hepsi]
 Sayilmaz: noktalama, dua yazimi. Ayri sayilir: Hayrat'in kendi cift yazimi (ayni Latin kelime Hayrat'ta bu yazimla da geciyor)."""
+import os as _os_yz
+_os_yz.environ.setdefault("YZ_SOZLUK", "/yok")   # sınav yapay zekâ kaydını kullanmaz (paketteki yedek dahil)
 import json, os, re, sys, time, difflib, collections, unicodedata
 sys.path[:0] = [os.environ.get('SINAV_KOD', '/app')]   # yamali kodla: -e SINAV_KOD=/k/app
 from bs4 import BeautifulSoup, NavigableString
