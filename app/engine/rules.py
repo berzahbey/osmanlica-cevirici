@@ -335,6 +335,13 @@ def transliterate_word(word: str, treat_last_as_final: bool = True, devam: str =
                 letter = _vowel_letter(ch, "initial")
             elif is_last:
                 letter = _vowel_letter(ch, "final")
+            elif prev_is_vowel and ch == "a" and word[i - 1] == "e" and i >= 2 and not word.startswith(("müte", "mute", "müsa", "musa")) \
+                    and _os.environ.get("OSM_TUR_EA", "1") != "0":
+                # Tur EA (23 Kasım 2026): e+a yan yana (Batı kelimesi): e he, a medli elif (ideal ایده‌آل، kitap sözlüğü ideali
+                # ایده‌آلی); eskiden a düşüyordu (ایده‌ل). e kelime içinde yazılmamışsa (medial) he eklenir.
+                if out and out[-1] == "":
+                    out[-1] = HE
+                letter = "\u200c" + "آ"
             elif prev_is_vowel:
                 # hiatus: iki unlu yan yana - "final" kuraliyla yaz (her zaman gorunur olsun)
                 letter = _vowel_letter(ch, "final")
