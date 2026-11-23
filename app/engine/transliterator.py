@@ -2201,6 +2201,32 @@ def _lerin_eki(latin: str, osm: str) -> str:
     return osm
 
 
+_AYRIK_EL_RE = re.compile(r"(?<![^\W\d_])(El|EL)\s+([A-ZÂÎÛÇŞÖÜİ][^\W\d_]+(?:['’][^\W\d_]+)?)")
+
+
+def _ayrik_el(metin: str) -> str:
+    """Tur EL (23 Kasım 2026, İdeal Devlet künyesi): tiresiz yazılmış Arapça harf-i tarif "El X" (El Medinetü'l Fazıla, El Kanun)
+    el-X olarak okunur (önce ال ayrı kelime: ال مدینت). Yalnız büyük harfli El + büyük harfli Arapça kelime (sonu -ü'l tarifi ya da
+    sözlükte ar/fa kök): "El ele", "El Yazmaları" (Türkçe) dokunulmaz. OSM_TUR_EL=0 kapatır."""
+    if _os.environ.get("OSM_TUR_EL", "1") == "0":
+        return metin
+    if "'l " in metin or "’l " in metin:
+        # tiresiz tarifli tamlama: Medinetü'l Fazıla -> Medinetü'l-Fazıla (Ehli'l Beyt, Dâru'l Harb)
+        metin = re.sub(r"(?<![^\W\d_])([^\W\d_]{2,}[ıiuüa]['’]l) +(?=[^\W\d_])", "\\1-", metin)
+    if "El" not in metin and "EL" not in metin:
+        return metin
+
+    def degis(m):
+        k = m.group(2)
+        kl = turkish_lower(k).replace("’", "'")
+        arap = bool(re.search(r"[ıiuü]'l$", kl))
+        if not arap:
+            h = dictionary.lookup_exact(kl.split("'")[0]) or (dictionary.lookup_with_suffix(kl.split("'")[0]) or (None,))[0]
+            arap = bool(h) and str(h[1]) in ("ar", "fa", "ar-fa", "fa-ar")
+        return "el-" + k if arap else m.group(0)
+    return _AYRIK_EL_RE.sub(degis, metin)
+
+
 def transliterate_text(
     turkish_text: str,
     progress_callback=None,
@@ -2216,6 +2242,7 @@ def transliterate_text(
     turkish_text = _et_bin(turkish_text)
     turkish_text = _quran_phrases(turkish_text)
     turkish_text = _roma_rakam(turkish_text)
+    turkish_text = _ayrik_el(turkish_text)             # Tur EL: El Medinetü'l Fazıla -> el-Medinetü'l Fazıla
     turkish_text = _arapca_tarifler(turkish_text)      # Kitâbü't-Tevhîd, el-Bakara (tire silinmeden önce)
     turkish_text = _drop_izafet(turkish_text)
     turkish_text = _remove_hyphens(turkish_text)
@@ -3124,6 +3151,8 @@ def _tenvin_ibare(m):
 
 
 def transliterate_text(turkish_text, *args, **kwargs):
+    if isinstance(turkish_text, str):
+        turkish_text = _ayrik_el(turkish_text)   # Tur EL: yabancı kelime adımından önce (El = İspanyolca tanımlık sanılmasın)
     if isinstance(turkish_text, str) and ("un " in turkish_text or "ün " in turkish_text):
         turkish_text = _TENVIN_IBARE_RE.sub(_tenvin_ibare, turkish_text)
     if isinstance(turkish_text, str) and "-" in turkish_text and dictionary._turev.ACIK:
