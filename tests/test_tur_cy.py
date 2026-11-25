@@ -7,7 +7,7 @@ from app.engine.transliterator import transliterate_text as T
 B = []
 def ok(a, b):
     c = T(a); B.append(c == b); print(("GECTI " if c == b else "KALDI ") + f"{a} -> {c}" + ("" if c == b else f"  (beklenen {b})"))
-for lat, osm in [("kezâlik", "كذلك"), ("takvâ", "تقوی"), ("takvâsı", "تقواسی"), ("menşei", "منشئی"), ("numara", "نومره"),
+for lat, osm in [("kezâlik", "كذلك"), ("takvâ", "تقوی"), ("takvâsı", "تقواسی"), ("menşei", "منشأی"), ("menşe", "منشأ"), ("menşe'leri", "منشألری"), ("neş'et", "نشأت"), ("neş'etinde", "نشأتنده"), ("neş'et eden", "نشأت ایدن"), ("mebdei", "مبدأی"), ("numara", "نومره"),
                  ("numarası", "نومره‌سی"), ("İlâhiye", "الهیّه"), ("İlâhiyenin", "الهیّه‌نڭ"), ("mâhiyeti", "ماهیّتی"), ("hediye", "هدیّه"),
                  ("rubûbiyet", "ربوبیّت"), ("terbiye", "تربیه"), ("âliye", "عالیه"), ("tavsiye", "توصیه"),
                  # dokunulmayanlar (Hayrat kelime düzeyinde tutarlı)
