@@ -94,6 +94,51 @@ def _bati_adi_eksik(r) -> bool:
     return w[:1].isupper() and r.get("koken") not in ("tr", "ar", "fa", "") and not (r.get("yazilis") or "").strip()
 
 
+_YZ5 = os.environ.get("OSM_YZ5", "1") != "0"
+_TARIF = re.compile(r"^(?:[ae][ln]-|[ae][stdnrzş]-|[ül]{1,2}-|[a-zçğıöşü]{1,2}-)")
+SAYAC_YZ5 = {}
+
+
+def yz5_red(r):
+    """Tur YZ5 (25 Kasım 2026, ölçüm: Hayrat sözlüğü kapalı Muhâkemât'ta köken kayıtları 215 hatayı düzeltip 159 yeni hata yapıyordu):
+    güvenilir modelin Arapça/Farsça kök kaydı şu hâllerde KÖK OLARAK UYGULANMAZ (kayıt saklanır):
+      kayma - kök kelimenin başında değil: OCR bozuk kelimeye yaygın Türkçe kelime kök verilmiş (bulri -> bulur بلور, yakûn -> yakın
+              یقین, nondan -> neden ندن, Bedhem -> bedhn);
+      ozel  - büyük harfli kelimenin kendisi kök (özel ad: Aras ارس، Anas انس، Yala یلا، Damg دمگ): yalnız özel ad olarak kalır (ADLAR),
+              genel sözlüğe kök olarak girmez (yoksa arasında -> aras+ın+da ارسنده، anası -> انسی، yalana -> یلانه);
+      turkce - kök Hayrat kök sözlüğünde başka yazımla var (azal آزال fiili; kayıt ازل) ya da Hayrat fiil kökü + Türkçe fiil eki
+              (bulur = bul + ur)."""
+    from . import kok as _kok
+    kok = turkish_lower(r.get("kok") or "")
+    w = turkish_lower(r.get("kelime") or "").replace("\u2019", "'").replace("\u2018", "'")
+    w = _TARIF.sub("", w).replace("'", "").replace("-", "")
+    duz = lambda x: x.translate(str.maketrans("âîû", "aiu")).replace("'", "").replace("-", "")
+
+    def iskelet(x):                     # ünsüz iskeleti (belirsiz h, y, v, ğ sayılmaz; çift ünsüz tek)
+        out = []
+        for c in duz(x).translate(str.maketrans("bdcgğ", "ptçkk")):   # ses uyumu: kitap/kitab-ı, üslup/üslûbu, çeşit/çeşidi
+            if c not in "aeıioöuühyv" and (not out or out[-1] != c):
+                out.append(c)
+        return "".join(out)
+    ham = (r.get("kelime") or "").strip()
+    if ham[:1].isupper() and turkish_lower(_TARIF.sub("", turkish_lower(ham)).replace("'", "")) == turkish_lower(_TARIF.sub("", kok)):
+        return "ozel"
+    k_is = iskelet(_TARIF.sub("", kok))
+    if k_is and not iskelet(w).startswith(k_is):
+        return "kayma"
+    osm = (r.get("yazilis") or "").translate(_OSM_HARF).replace(" ", "")
+    for kk in {kok, duz(kok)}:
+        h = _kok.KOK.get(kk)
+        if h and all(re.sub("[\u064b-\u0652\u200c]", "", y) != re.sub("[\u064b-\u0652\u200c]", "", osm) for y, _ in h.values()):
+            return "turkce"
+    for L in range(len(kok) - 1, 1, -1):           # Hayrat fiil kökü + Türkçe fiil eki: bulur = bul+ur
+        h = _kok.KOK.get(kok[:L])
+        if h and "V" in h and kok[L:] in ("ur", "ür", "ır", "ir", "ar", "er", "r", "an", "en", "di", "dı", "du", "dü", "ti", "tı", "tu",
+                                          "tü", "miş", "mış", "muş", "müş"):
+            return "turkce"
+    return None
+
+
 def _ar_fa_uygula(r):
     """Güvenilir modelin onaylı Arapça/Farsça kaydı: kök, aslî yazılışıyla sözlüğe eklenir (sözlükte varsa dokunulmaz;
     ekleri çevirici yazar: kahramanları -> قهرمانلری)."""
@@ -101,6 +146,11 @@ def _ar_fa_uygula(r):
     osm = (r.get("yazilis") or "").translate(_OSM_HARF)
     if len(kok) < 3 or not osm:
         return
+    if _YZ5:
+        neden = yz5_red(r)
+        if neden:
+            SAYAC_YZ5[neden] = SAYAC_YZ5.get(neden, 0) + 1
+            return
     w = turkish_lower(r.get("kelime") or "").split("-")[-1]
     if _YZ_AB5 and kok.endswith(("\u00ee", "i")) and re.search(r"[ıi]y?ye$", w) and re.search("\u06cc\u0651?\u0647$", osm):
         # Tur AB5 (22 Kasım 2026): nisbe müennesinin yazılışı (Eflâtuniye افلاطونیه) köke verilmez: kök eflâtunî -> افلاطونی;
