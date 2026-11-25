@@ -97,6 +97,25 @@ def _bati_adi_eksik(r) -> bool:
 _YZ5 = os.environ.get("OSM_YZ5", "1") != "0"
 _TARIF = re.compile(r"^(?:[ae][ln]-|[ae][stdnrzş]-|[ül]{1,2}-|[a-zçğıöşü]{1,2}-)")
 SAYAC_YZ5 = {}
+RED = set()          # Tur YZ6: ikinci modelin onaylamadığı (kök, yazılış) — data/yz_red.tsv + /data/yz_red.tsv
+_RED_DOSYALAR = (PAKET.parent / "yz_red.tsv", Path(os.environ.get("YZ_RED", "/data/yz_red.tsv")))
+
+
+def _rnorm(o):
+    o = (o or "").replace("\u06d5", "\u0647").replace("\u200c", "").replace(" ", "").replace("\u06af", "\u0643").replace("\u06a9", "\u0643")
+    o = o.replace("\u064a", "\u06cc").replace("\u0649", "\u06cc").replace("\u0623", "\u0627").replace("\u0625", "\u0627").replace("\u0622", "\u0627")
+    o = o.replace("\u0629", "\u0647").replace("\u0624", "\u0648").replace("\u0626", "\u06cc").replace("\u0621", "")
+    return re.sub("[\u064b-\u065f\u0670\u0610-\u061a\u0640]", "", o)
+
+
+def _red_yukle():
+    RED.clear()
+    for yol in _RED_DOSYALAR:
+        if yol.exists():
+            for satir in open(yol, encoding="utf-8"):
+                p = satir.rstrip("\n").split("\t")
+                if len(p) >= 2 and not satir.startswith("#"):
+                    RED.add((turkish_lower(p[0]), _rnorm(p[1])))
 
 
 def yz5_red(r):
@@ -106,10 +125,13 @@ def yz5_red(r):
               یقین, nondan -> neden ندن, Bedhem -> bedhn);
       ozel  - büyük harfli kelimenin kendisi kök (özel ad: Aras ارس، Anas انس، Yala یلا، Damg دمگ): yalnız özel ad olarak kalır (ADLAR),
               genel sözlüğe kök olarak girmez (yoksa arasında -> aras+ın+da ارسنده، anası -> انسی، yalana -> یلانه);
+      ikinci_gorus - Tur YZ6: doğrulanamayan kök ikinci bir modele soruldu, aynı yazılışı vermedi (data/yz_red.tsv);
       turkce - kök Hayrat kök sözlüğünde başka yazımla var (azal آزال fiili; kayıt ازل) ya da Hayrat fiil kökü + Türkçe fiil eki
               (bulur = bul + ur)."""
     from . import kok as _kok
     kok = turkish_lower(r.get("kok") or "")
+    if RED and (kok, _rnorm(r.get("yazilis"))) in RED:
+        return "ikinci_gorus"            # Tur YZ6: ikinci model başka yazılış ya da Türkçe dedi (koken_ikinci.py)
     w = turkish_lower(r.get("kelime") or "").replace("\u2019", "'").replace("\u2018", "'")
     w = _TARIF.sub("", w).replace("'", "").replace("-", "")
     duz = lambda x: x.translate(str.maketrans("âîû", "aiu")).replace("'", "").replace("-", "")
@@ -253,6 +275,7 @@ def _onbellek_sil():
 
 
 def yukle():
+    _red_yukle()
     KAYIT.clear()
     TR_KOK.clear()
     ADLAR.clear()
