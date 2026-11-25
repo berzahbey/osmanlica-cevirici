@@ -3192,3 +3192,15 @@ def transliterate_text(turkish_text, *args, **kwargs):
             out = _yabanci._LATIN_KALAN.sub(lambda m: draft_transliterate_sentence(
                 _yabanci.kural_okunus(m.group(0)).replace("-", " ").translate(str.maketrans("xwqXWQ", "ksvKSV"))).strip(), out)
     return out
+
+
+# ---- Tur GF (25 Kasım 2026): kef/gef Hayrat gibi (ince ğ ve Farsça g گ, öteki g ك) — en son adım ----
+from . import gef as _gef
+_transliterate_text_gefsiz = transliterate_text
+
+
+def transliterate_text(turkish_text, *args, **kwargs):
+    out = _transliterate_text_gefsiz(turkish_text, *args, **kwargs)
+    if isinstance(turkish_text, str) and isinstance(out, str):
+        out = _gef.metin(turkish_text, out)
+    return out

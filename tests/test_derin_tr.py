@@ -13,16 +13,16 @@ DURUMLAR = [
     # duzelenler
     ("yurtlarınızdan", "یورتلریڭزدن"), ("başlarınızı", "باشلریڭزی"), ("günahlarınızdan", "كناهلریڭزدن"),
     ("âyetlerimizi", "آیتلریمزی"), ("gönderdiklerinize", "كوندردكلریڭزه"), ("yaratanınıza", "یارادانڭزه"),
-    ("gireceğinizi", "كیره‌جكڭزی"), ("içindekini", "ایچنده‌كینی"), ("yanındakini", "یاننده‌كینی"),
+    ("gireceğinizi", "كیره‌جگڭزی"), ("içindekini", "ایچنده‌كینی"), ("yanındakini", "یاننده‌كینی"),
     ("kavuşacağımı", "قاووشاجغمی"),
     # eskisi dogru olup degismemesi gerekenler
-    ("edinsin", "ایدینسین"), ("gördüğünde", "كوردیكنده"), ("hayvanlarınızın", "حیوانلریڭزڭ"),
+    ("edinsin", "ایدینسین"), ("gördüğünde", "كوردیگنده"), ("hayvanlarınızın", "حیوانلریڭزڭ"),
     ("ilahlarınızı", "الهلریڭزی"), ("kızlarınızı", "قیزلریڭزی"), ("toprağımızı", "طوپراغمزی"),
     ("yakınlarınız", "یاقینلریڭز"), ("ağacına", "آغاجنه"), ("kalbiniz", "قلبڭز"),
     # v2 (12 Ekim, sunucu olcumu 1'den sonra): bitismeyen harf kurali, iyelik koku, M1 cift ه
     ("varlığının", "وارلغنڭ"), ("dilimize", "دیلمزه"), ("delilimiz", "دلیلمز"), ("kararınızı", "قراریڭزی"),
     ("senedimiz", "سندیمز"), ("kapımız", "قاپومز"), ("köyümüz", "كویمز"), ("çayımız", "چایمز"),
-    ("kararını", "قرارینی"), ("yiyeceğin", "یییه‌جكڭ"), ("bilgimiz", "بیلكمز"), ("yokluğunun", "یوقلغنڭ"),
+    ("kararını", "قرارینی"), ("yiyeceğin", "یییه‌جگڭ"), ("bilgimiz", "بیلكمز"), ("yokluğunun", "یوقلغنڭ"),
     ("hayvanlarınızın", "حیوانلریڭزڭ"), ("ilahlarınızı", "الهلریڭزی"), ("miskini", "مسكینی"), ("kadının", "قادینڭ"),
 ]
 KOKEN = [("kork", "قورق", True), ("toplu", "طوپلی", True), ("sağlam", "صاغلام", True), ("kadın", "قادین", True),

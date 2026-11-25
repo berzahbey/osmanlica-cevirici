@@ -23,6 +23,11 @@ def n(s):
     return re.sub('^\u0626\u0648', '\u0627\u0648', s)
 
 
+def n_g(s):
+    """Tur GF: kef/gef farkı ayrıca sayılır (ana doğrulukta ك = گ eşit kalır)."""
+    return n(s.replace('\u06af', '\ue0af')).replace('\ue0af', '\u06af')
+
+
 def n_esit(s):
     """14 Kasım 2026 (Zahir onayı): izafet hemzesinin iki yazımı eşit sayılır: Hayrat ەء (he + ayrı hemze), çevirici هٔ (he üstünde
     hemze). Fark ayrı satırda sayılır ("izafet hemzesi")."""
@@ -87,6 +92,7 @@ for _slug in eserler:
 if SECIM != ['hepsi']:
     eserler = [e for e in eserler if e in SECIM]
 GENEL = collections.Counter()
+GEF = collections.Counter()   # Tur GF: (Hayrat, çevirici) kef/gef farkı
 HATA = collections.Counter()
 ORNEK = {}
 TUR = {}
@@ -130,6 +136,11 @@ for slug in eserler:
                 if op == 'equal':
                     say['ayni'] += i2 - i1
                     say['izafet_hemzesi'] += sum(1 for a, b in zip(hk[i1:i2], ck[j1:j2]) if n(a) != n(b))
+                    for a, b in zip(hk[i1:i2], ck[j1:j2]):
+                        if any(x in a + b for x in '\u0643\u06af') and n_g(a) != n_g(b) \
+                                and re.sub('\u0647\u0621$', '\u0647', n_g(a)) != re.sub('\u0647\u0621$', '\u0647', n_g(b)):
+                            say['gef'] += 1
+                            GEF[(n_g(a), n_g(b))] += 1
                     continue
                 h, c = hk[i1:i2], ck[j1:j2]
                 lk = ' '.join(dict.fromkeys(x for x in etiket[i1:i2] if x))
@@ -153,12 +164,14 @@ for slug in eserler:
     hesap = say['kelime'] - say['dua']
     dogru = say['ayni'] + say['hayrat_cesidi']
     print(f"{slug:28} kelime {say['kelime']:7d} | aynı %{100 * say['ayni'] / max(1, say['kelime']):.2f} | dua {say['dua']} | Hayrat çeşidi {say['hayrat_cesidi']}"
-          f" | HATA {say['hata']} (+fazla {say['fazla']}) | DOĞRULUK %{100 * dogru / max(1, hesap):.2f} (dışarıda: {len(cikarilan)})", flush=True)
+          f" | HATA {say['hata']} (+fazla {say['fazla']}) | kef/gef {say['gef']} | DOĞRULUK %{100 * dogru / max(1, hesap):.2f} (dışarıda: {len(cikarilan)})", flush=True)
     GENEL.update(say)
 hesap = GENEL['kelime'] - GENEL['dua']
 print(f"TOPLAM {len(eserler)} eser, kelime {GENEL['kelime']} | HATA {GENEL['hata']} | Hayrat çeşidi {GENEL['hayrat_cesidi']} | dua {GENEL['dua']}"
+      f" | kef/gef farkı {GENEL['gef']}"
       f" | izafet hemzesi (ەء = هٔ, doğru sayıldı) {GENEL['izafet_hemzesi']}"
       f" | DOĞRULUK %{100 * (GENEL['ayni'] + GENEL['hayrat_cesidi']) / max(1, hesap):.2f} ({time.time() - t0:.0f} sn)")
+print('En sık 25 kef/gef farkı (Hayrat | çevirici):', ', '.join(f"{a}|{b} {k}×" for (a, b), k in GEF.most_common(25)))
 print('En sık 60 hata (Latin | Hayrat | çevirici):')
 for (lk, h, c), k in [x for x in HATA.most_common() if TUR[x[0]] == 'hata'][:60]:
     print(f'  {k}× {lk} | {h} | {c}   [{ORNEK[(lk, h, c)][0]} s.{ORNEK[(lk, h, c)][1]}]')

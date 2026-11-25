@@ -11,24 +11,24 @@ BEKLENEN = {
     # sözlükteki asıl (şapkalı) kelimeler korunur
     "bâk": "باك", "köşk": "كوشك", "hâkdan": "خاكدان",
     # kural motoru: k/g yanındaki ünlüye göre (kalın: ق غ, ince: ك ك)
-    "bugün": "بوكون", "herhangi": "هر هانكی", "çıkabilir": "چیقابیلیر", "gidiyor": "كیدییور", "dergâh": "دركاه",
+    "bugün": "بوكون", "herhangi": "هر هانكی", "çıkabilir": "چیقابیلیر", "gidiyor": "كیدییور", "dergâh": "درگاه",
     # g sesi gaf, k sesi kef (sözlük düzeltmesi)
-    "hângâh": "خانكاه", "tengdil": None, "kedûret": "كدورت", "mürekkib": "مركّب",
+    "hângâh": "خانگاه", "tengdil": None, "kedûret": "كدورت", "mürekkib": "مركّب",
     # Arapça/Farsça kelimeler aslî imlâsıyla
     "Mustafa": "مصطفی", "yani": "یعنی", "fiil": "فعل", "fiilleri": "فعللری", "mümkün": "ممكن", "maksat": "مقصد",
     "galip": "غالب", "istidat": "استعداد", "tesir": "تأثیر", "cevap": "جواب", "talep": "طلب", "heyet": "هیئت",
     "miktar": "مقدار", "mükâşefe": "مكاشفه", "mükaşefe": "مكاشفه", "takip": "تعقیب", "Hz": "حضرت",
     # değişmemesi gerekenler
     "günah": "كناه", "kitap": "كتاب", "zevk": "ذوق", "teşvik": "تشویق", "kâr": "كار", "kâğıt": "كاغد",
-    "gelmek": "كلمك", "gece": "كیجه", "değil": "دكل", "doğru": "طوغری", "yirmi": "یكرمی", "bir": "بر",
-    "karargâh": "قراركاه", "tebliğ": "تبلیغ", "Kur'an": "قرآن", "Allah": "الله", "evet": "اوت", "yap": "یاپ",
+    "gelmek": "كلمك", "gece": "كیجه", "değil": "دگل", "doğru": "طوغری", "yirmi": "یگرمی", "bir": "بر",
+    "karargâh": "قرارگاه", "tebliğ": "تبلیغ", "Kur'an": "قرآن", "Allah": "الله", "evet": "اوت", "yap": "یاپ",
     # imlâ turu 2: sözlük denetleyicisinin bulduğu bozuk kayıtlar
     "mal": "مال", "malları": "ماللری", "dakika": "دقیقه", "mahlukat": "مخلوقات", "vehm": "وهم", "kabr": "قبر",
     "felsefe": "فلسفه", "irşad": "ارشاد", "oysa": "اویسه", "celal": "جلال", "zemin": "زمین", "elif": "الف",
     "Hakk'a": "حقّه", "Rabb'e": "ربّه", "Âdem'i": "آدمی", "nev'i": "نوعی", "O'nun": "اونڭ", "Kur'an'ın": "قرآنڭ",
     "Ali'lerdir": "علیلردر",
     # Türkçe fiillerin tarihî yazımı, kelime başında medli elif
-    "ettiği": "ایتدیكی", "edilmiştir": "ایدیلمشدر", "verdiği": "ویردیكی", "demiştir": "دیمشدر", "dediğimiz": "دیدیكمز",
+    "ettiği": "ایتدیگی", "edilmiştir": "ایدیلمشدر", "verdiği": "ویردیگی", "demiştir": "دیمشدر", "dediğimiz": "دیدیگمز",
     "anlam": "آڭلام", "açık": "آچیق", "almak": "آلمق",
     # sık kelimeler ve özel adlar
     "nitekim": "نیته‌كیم", "buna": "بوڭا", "birşey": "بر شی", "Ali": "علی", "Hasan": "حسن", "Mısır": "مصر",
@@ -69,7 +69,7 @@ CUMLE = {
     "MESNEVÎ-İ NURİYE": "مثنوئ نوریه",   # Hayrat: مثنوئ نوریه (î-i -> ئ, 9 Ekim)
     "zikredilen": "ذكر ایدیلن",
     "hissedilir": "حسّ ایدیلیر",
-    "zannettiğin": "ظن ایتدیكڭ",
+    "zannettiğin": "ظن ایتدیگڭ",
     "âhirette": "آخرتده",
     "rahmettir": "رحمتدر",
     "etmez": "ایتمز",
