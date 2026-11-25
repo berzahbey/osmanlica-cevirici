@@ -2017,7 +2017,9 @@ def _yabancilari_geri_koy(metin: str, saklanan) -> str:
 
 # Dua kısaltmaları açık yazılır: (s.a.v) -> (صلّی الله علیه وسلّم), (a.s) -> (علیه السلام), (r.a) -> (رضی الله عنه)
 _KISALTMA = [
-    (re.compile(r"(?<![\w.])s\.\s?a\.\s?v\.?(?![\w])", re.I), "صلّی الله علیه وسلّم"),
+    # 25 Kasım (Zahir): (sav), (s.a.v.), (sas), (s.a.s.) Hayrat'taki (a.s.m.) gibi yazılır; "(sav)" harf harf صاو oluyordu (El Camiul 9.046 kez)
+    (re.compile(r"(?<![\w.])s\.\s?a\.\s?[vs]\.?(?![\w])", re.I), "علیه الصلاة والسلام"),
+    (re.compile(r"(?<=\()\s*sa[vs]\s*(?=\))", re.I), "علیه الصلاة والسلام"),
     (re.compile(r"(?<=\()\s*a\.?\s?s\.?\s?m\.?\s*(?=\))", re.I), "علیه الصلاة والسلام"),   # (asm), (a.s.m.)
     (re.compile(r"(?<=\()\s*as\s*(?=\))", re.I), "علیه السلام"),                          # (as)
     (re.compile(r"(?<=\()\s*ra\s*(?=\))", re.I), "رضی الله عنه"),                          # (ra)

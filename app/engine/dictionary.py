@@ -494,12 +494,14 @@ def lookup_with_suffix(word: str):
         if m:
             h2, s2 = lookup_with_suffix(m.group(1))
             if h2 and " " not in h2[0]:
-                return h2, list(s2) + ["ki", m.group(2)]   # Tur C: …daki + ni (önlerindekini اوڭلرنده‌كینی، yanlarındakini)
+                # Tur C: …daki + ni (önlerindekini اوڭلرنده‌كینی، yanlarındakini); 25 Kasım: yalın -daki de (anlamındaki آڭلامنده‌كی:
+                # "anlam" sözlükte, "anlamında" doğru yazılıyor, -ki gelince kural motoruna düşüp آنلامنده‌كی oluyordu; El Camiul 684 kez)
+                return h2, list(s2) + ["ki"] + ([m.group(2)] if m.group(2) else [])
     return hit, sufs
 
 
 _KI_RE = re.compile(r"^(.{3,}?[dt][ae])ki(ni|nı|ne|na|nde|nda|nden|ndan|nin|nın|ler|lar|leri|ları|lerini|larını|lerine|larına|"
-                    r"lerinin|larının|lerinden|larından|lerde|larda|lerden|lardan|yle|yla)$")
+                    r"lerinin|larının|lerinden|larından|lerde|larda|lerden|lardan|yle|yla)?$")
 
 
 def _lookup_with_suffix_ic(word: str):
