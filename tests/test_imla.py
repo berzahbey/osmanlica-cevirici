@@ -35,7 +35,7 @@ BEKLENEN = {
     # derin ek ayırma (Arapça kök + iyelik/hâl ekleri)
     "âyetlerimizi": "آیتلریمزی", "kalbiniz": "قلبڭز", "şeklindeki": "شكلندهكی",
     # imlâ turu 3: OpenITI sıklık listesiyle gözden geçirilen kelimeler
-    "tevilat": "تأویلات", "istidadı": "استعدادی", "münezzehtir": "منزّهدر", "rububiyet": "ربوبیت", "muvahhid": "موحّد",
+    "tevilat": "تأویلات", "istidadı": "استعدادی", "münezzehtir": "منزّهدر", "rububiyet": "ربوبیّت", "muvahhid": "موحّد",
     "mübiyn": "مبین", "risalet": "رسالت", "bizzat": "بالذّات",
 }
 

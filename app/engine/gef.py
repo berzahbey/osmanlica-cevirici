@@ -11,6 +11,8 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
+from . import birlik as _birlik
+
 ACIK = os.environ.get("OSM_GEF", "1") != "0"
 KEF, GEF = "ك", "گ"
 _KEFLER = "كگقغک"      # ك گ ق غ ک (Latin k/g/ğ karşılıkları)
@@ -228,7 +230,7 @@ def _esle(L, O, bant=10):
 def metin(latin, osm_metin):
     """Çevirinin bütün metni: Latin kelimeler Osmanlıca kelimelerle sırayla eşlenir (kısa ileri bakışla), eşlenen kelimeye
     kef/gef kuralı uygulanır. Eşlenmeyen kelimede yalnız Hayrat tablosu."""
-    if not ACIK or not osm_metin or KEF not in osm_metin and GEF not in osm_metin:
+    if not osm_metin or not (ACIK or _birlik.ACIK):
         return osm_metin
     L = _LAT_TOK.findall(latin or "")
     O = list(_OSM_TOK.finditer(osm_metin))
@@ -245,7 +247,8 @@ def metin(latin, osm_metin):
     for k, m in enumerate(O):
         w = m.group(0)
         e = esler.get(k, "")
-        yeni = e[1] if isinstance(e, tuple) else kelime(e, w)
+        yeni = e[1] if isinstance(e, tuple) else (kelime(e, w) if ACIK else w)
+        yeni = _birlik.duzelt("" if isinstance(e, tuple) else e, yeni)   # Tur ÇY: Hayrat'ın çift yazımlarında kurala uyan
         if yeni != w:
             parcalar.append(osm_metin[son:m.start()])
             parcalar.append(yeni)
