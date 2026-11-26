@@ -1,1 +1,9 @@
-# Tur YZ6: ikinci modelin onaylamadığı köken kökleri (kök	ilk yazılış	ikinci model	sebep). Stüdyo koken_ikinci.py üretir; henüz boş.
+# Tur YZ6: uygulanmayan köken kökleri (kök	yanlış yazılış	doğrusu	sebep). Kayıt silinmez; çevirici bu kökü uygulamaz (sözlük ya da Türkçe kurallar yazar).
+# 26 Kasım 2026: ikinci görüş (Gemini, MiniMax) + köken denetimi incelemesi, Zahir onayı.
+kule	كوله	قله	Arapça قلّة; Gemini قله
+pehlevi	بهلوی	پهلوی	Farsça پهلوی
+pazı	بازو	پازی	بازو "kol"; pazı (sebze) پازی
+hilafiyet	خلافت	خلافیات	Hilâfiyât خلافیات; خلافت başka kelime (hilâfet)
+felasifetu	فلاسفتو	فلاسفه	el-Felâsife الفلاسفه; فلاسفتو bozuk
+tehafüt al-felasife	تهافوت الفلاسفه	تهافت الفلاسفه	Tehâfüt تهافت
+tehafütü'l-felasife	تهافوت الفلاسفه	تهافت الفلاسفه	Tehâfüt تهافت
